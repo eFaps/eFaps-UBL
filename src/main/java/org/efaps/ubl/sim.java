@@ -1,6 +1,8 @@
 package org.efaps.ubl;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
@@ -21,19 +23,25 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Par
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxCategoryType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSchemeType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSubtotalType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxableAmountType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
+import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
 public class sim
 {
 
     public static String AGENCYNAME = "PE:SUNAT";
-
 
     public static void main(final String[] args)
         throws DatatypeConfigurationException
@@ -47,13 +55,61 @@ public class sim
         invoice.setDocumentCurrencyCode(getDocumentCurrencyCodeType("PEN"));
         invoice.setAccountingSupplierParty(getSupplier("Tiendas Mass", "6", "20601327318", "150101", "1000", "Lima",
                         "JR. CRESPO Y CASTILLO NRO. 2087"));
+        invoice.setAccountingCustomerParty(getCustomer("Tovar Lopez, Julio Odair", "1", "43289672",
+                        "Av parque alto 291-A Lima - Lima - Santiago De Surco"));
 
-        invoice.setAccountingCustomerParty(getCustomer("Tovar Lopez, Julio Odair", "1", "43289672" , "Av parque alto 291-A Lima - Lima - Santiago De Surco"));
+        invoice.setTaxTotal(Collections.singletonList(getTaxTotal()));
 
         UBL21Writer.invoice()
-            .setCharset(StandardCharsets.UTF_8)
-            .setFormattedOutput(true)
-            .write(invoice, new File("target/dummy-invoice.xml"));
+                        .setCharset(StandardCharsets.UTF_8)
+                        .setFormattedOutput(true)
+                        .write(invoice, new File("target/dummy-invoice.xml"));
+    }
+
+    public static TaxTotalType getTaxTotal()
+    {
+        final var ret = new TaxTotalType();
+        ret.setTaxAmount(getAmount(TaxAmountType.class, BigDecimal.TEN));
+        ret.setTaxSubtotal(Collections.singletonList(getTaxSubtotal()));
+        return ret;
+    }
+
+    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount) {
+        T ret = null;
+        try {
+            ret = type.getConstructor().newInstance();
+            ret.setCurrencyID("PEN");
+            ret.setValue(amount);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                        | NoSuchMethodException | SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    public static TaxSubtotalType getTaxSubtotal()
+    {
+        final var ret = new TaxSubtotalType();
+        ret.setTaxableAmount(getAmount(TaxableAmountType.class, new BigDecimal("1807.63")));
+        ret.setTaxAmount(getAmount(TaxAmountType.class, new BigDecimal("325.37")));
+        ret.setPercent(new BigDecimal("18"));
+        ret.setTaxCategory(getTaxCategory());
+        return ret;
+    }
+
+    public static TaxCategoryType getTaxCategory() {
+        final var ret = new TaxCategoryType();
+        final var taxScheme = new TaxSchemeType();
+        final var idType = new IDType();
+        idType.setSchemeAgencyID("6");
+        idType.setSchemeID("UN/ECE 5153");
+        idType.setValue("1000");
+        taxScheme.setID(idType);
+        taxScheme.setName("IGV");
+        taxScheme.setTaxTypeCode("VAT");
+        ret.setTaxScheme(taxScheme);
+        return ret;
     }
 
     public static InvoiceTypeCodeType getReceipt()
@@ -77,7 +133,8 @@ public class sim
         return ret;
     }
 
-    public static SupplierPartyType getSupplier(final String name, final String doiType, final String doi, final String ubigeo,
+    public static SupplierPartyType getSupplier(final String name, final String doiType, final String doi,
+                                                final String ubigeo,
                                                 final String anexo, final String district, final String streetName)
     {
         final var ret = new SupplierPartyType();
@@ -147,7 +204,8 @@ public class sim
         return ret;
     }
 
-    public static CountryType getCountryType(final String isoCode) {
+    public static CountryType getCountryType(final String isoCode)
+    {
         final var ret = new CountryType();
         final var identificationCodeType = new IdentificationCodeType();
         identificationCodeType.setListAgencyName("United Nations Economic Commission for Europe");
