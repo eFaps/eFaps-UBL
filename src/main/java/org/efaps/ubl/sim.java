@@ -72,7 +72,6 @@ public class sim
     {
         UBL21NamespaceContext.getInstance().addMapping("sac", "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1");
 
-
         final InvoiceType invoice = new InvoiceType();
         invoice.setUBLVersionID("2.1");
         invoice.setID("F001-000126");

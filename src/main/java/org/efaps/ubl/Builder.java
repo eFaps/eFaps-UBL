@@ -5,6 +5,8 @@ import javax.xml.bind.JAXBException;
 
 import org.efaps.ubl.extension.AdditionalInformation;
 
+import com.helger.commons.collection.impl.CommonsArrayList;
+import com.helger.jaxb.JAXBContextCache;
 import com.helger.ubl21.UBL21WriterBuilder;
 
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
@@ -22,19 +24,16 @@ public class Builder
     protected JAXBContext getJAXBContext()
         throws JAXBException
     {
+        final var clazzes = new CommonsArrayList<Class<?>>();
+        clazzes.add(InvoiceType.class);
+        clazzes.add(AdditionalInformation.class);
+
         JAXBContext jaxbContext;
-       // if (isUseJAXBContextCache()) {
-        //jaxbContext = JAXBContextCache.getInstance().getFromCache(m_aDocType.getImplementationClass(),
-        //                  getClassLoader());
-            // } else {
-             //jaxbContext = JAXBContext.newInstance(m_aDocType.getImplementationClass().getPackage().getName(),
-              //              getClassLoader());
-                            // }
-
-
-
-        jaxbContext = JAXBContext.newInstance(InvoiceType.class, AdditionalInformation.class);
-
+        if (isUseJAXBContextCache()) {
+            jaxbContext = JAXBContextCache.getInstance().getFromCache(clazzes);
+        } else {
+            jaxbContext = JAXBContext.newInstance(clazzes.toArray(new Class[clazzes.size()]));
+        }
         return jaxbContext;
     }
 }
