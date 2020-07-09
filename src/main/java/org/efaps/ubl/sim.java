@@ -4,7 +4,9 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -18,22 +20,37 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Add
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemIdentificationType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxCategoryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSchemeType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSubtotalType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AllowanceTotalAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ChargeTotalAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxInclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxableAmountType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
@@ -60,10 +77,72 @@ public class sim
 
         invoice.setTaxTotal(Collections.singletonList(getTaxTotal()));
 
+        invoice.setLegalMonetaryTotal(getMonetaryTotal());
+
+        invoice.setInvoiceLine(getInvoiceLines());
         UBL21Writer.invoice()
                         .setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .write(invoice, new File("target/dummy-invoice.xml"));
+    }
+
+    private static List<InvoiceLineType> getInvoiceLines()
+    {
+        final var ret = new ArrayList<InvoiceLineType>();
+
+        final var invoiceLine = new InvoiceLineType();
+        ret.add(invoiceLine);
+        invoiceLine.setID("1");
+        invoiceLine.setInvoicedQuantity(getInvoicedQuantity(new BigDecimal("2"), "NIU"));
+        invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, new BigDecimal("339")));
+
+        final var pricingReference = new PricingReferenceType();
+        final var priceType = new PriceType();
+        priceType.setPriceAmount(getAmount(PriceAmountType.class, new BigDecimal("400.02")));
+        priceType.setPriceTypeCode("01");
+        pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
+        invoiceLine.setPricingReference(pricingReference);
+        invoiceLine.setTaxTotal(Collections.singletonList(getTaxTotal()));
+        invoiceLine.setItem(getItem());
+
+        final var priceType2 = new PriceType();
+        priceType2.setPriceAmount(getAmount(PriceAmountType.class, new BigDecimal("339")));
+        invoiceLine.setPrice(priceType2);
+
+        return ret;
+    }
+
+    public static ItemType getItem() {
+        final var ret = new ItemType();
+        final var description = new DescriptionType();
+        description.setValue("Lenovo Tablet 7\" TB-7305F 1GB / 16GB Cam post 2MP / Front 2MP");
+        ret.setDescription(Collections.singletonList(description));
+        final var itemIdentificationType = new ItemIdentificationType();
+        itemIdentificationType.setID("1010204.0013");
+        ret.setSellersItemIdentification(itemIdentificationType);
+        return ret;
+    }
+
+    public static InvoicedQuantityType getInvoicedQuantity(final BigDecimal quantity, final String unitCode) {
+        final var ret = new InvoicedQuantityType();
+        ret.setUnitCode(unitCode);
+        ret.setUnitCodeListAgencyName("United Nations Economic Commission for Europe");
+        ret.setUnitCodeListID("UN/ECE rec 20");
+        ret.setValue(quantity);
+        return ret;
+    }
+
+
+    public static MonetaryTotalType getMonetaryTotal()
+    {
+        final var ret = new MonetaryTotalType();
+        ret.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, new BigDecimal("2133")));
+        ret.setTaxExclusiveAmount(getAmount(TaxExclusiveAmountType.class, new BigDecimal("1807.63")));
+        ret.setTaxInclusiveAmount(getAmount(TaxInclusiveAmountType.class, new BigDecimal("2516.94")));
+        ret.setAllowanceTotalAmount(getAmount(AllowanceTotalAmountType.class, new BigDecimal("0")));
+        ret.setChargeTotalAmount(getAmount(ChargeTotalAmountType.class, new BigDecimal("0")));
+        ret.setPayableAmount(getAmount(PayableAmountType.class, new BigDecimal("2133")));
+        return ret;
     }
 
     public static TaxTotalType getTaxTotal()
