@@ -62,7 +62,7 @@ import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBL
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
-public class sim
+public class Sim
 {
 
     public static String AGENCYNAME = "PE:SUNAT";
@@ -92,13 +92,12 @@ public class sim
 
         invoice.setUBLExtensions(getWordsForAmount(new BigDecimal("2133")));
 
-       new Builder()
-                        .setCharset(StandardCharsets.UTF_8)
+        new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .write(invoice, new File("target/dummy-invoice.xml"));
     }
 
-    private static UBLExtensionsType getWordsForAmount(final BigDecimal amount) {
+    public static UBLExtensionsType getWordsForAmount(final BigDecimal amount) {
         final var ret = new UBLExtensionsType();
         final var ublExtension = new UBLExtensionType();
 
@@ -124,7 +123,7 @@ public class sim
     }
 
 
-    private static List<InvoiceLineType> getInvoiceLines()
+    public static List<InvoiceLineType> getInvoiceLines()
     {
         final var ret = new ArrayList<InvoiceLineType>();
 
