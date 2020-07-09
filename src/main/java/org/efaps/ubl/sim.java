@@ -3,18 +3,22 @@ package org.efaps.ubl;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
+import org.efaps.ubl.extension.AdditionalInformation;
+import org.efaps.ubl.extension.AdditionalProperty;
 
-import com.helger.ubl21.UBL21Writer;
+import com.helger.ubl21.UBL21NamespaceContext;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
@@ -52,6 +56,9 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmou
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxInclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxableAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
@@ -63,6 +70,9 @@ public class sim
     public static void main(final String[] args)
         throws DatatypeConfigurationException
     {
+        UBL21NamespaceContext.getInstance().addMapping("sac", "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1");
+
+
         final InvoiceType invoice = new InvoiceType();
         invoice.setUBLVersionID("2.1");
         invoice.setID("F001-000126");
@@ -80,11 +90,40 @@ public class sim
         invoice.setLegalMonetaryTotal(getMonetaryTotal());
 
         invoice.setInvoiceLine(getInvoiceLines());
-        UBL21Writer.invoice()
+
+        invoice.setUBLExtensions(getWordsForAmount(new BigDecimal("2133")));
+
+       new Builder()
                         .setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .write(invoice, new File("target/dummy-invoice.xml"));
     }
+
+    private static UBLExtensionsType getWordsForAmount(final BigDecimal amount) {
+        final var ret = new UBLExtensionsType();
+        final var ublExtension = new UBLExtensionType();
+
+        final var extension = new ExtensionContentType();
+        ublExtension.setExtensionContent(extension);
+        final var additionalInformation = new AdditionalInformation();
+        extension.setAny(additionalInformation);
+        final var additionalProperty = new AdditionalProperty();
+        additionalInformation.setAdditionalProperty(additionalProperty);
+        additionalProperty.setId("1000");
+        additionalProperty.setValue(getWords4Number(amount));
+        ret.addUBLExtension(ublExtension);
+        return ret;
+    }
+
+    protected static String getWords4Number(final BigDecimal _amount)
+
+    {
+        return new StringBuilder().append(org.efaps.number2words.Converter.getMaleConverter(
+                        new Locale("es")).convert(_amount.longValue())).append(" y ")
+                        .append(_amount.setScale(2, RoundingMode.HALF_UP).toPlainString().replaceAll("^.*\\.", ""))
+                        .append("/100 ").toString().toUpperCase();
+    }
+
 
     private static List<InvoiceLineType> getInvoiceLines()
     {
