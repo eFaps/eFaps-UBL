@@ -20,7 +20,8 @@ package org.efaps.ubl.documents;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -46,6 +47,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private LocalDate date;
     private BigDecimal netTotal;
     private BigDecimal crossTotal;
+    private List<ITaxEntry> taxes = new ArrayList<ITaxEntry>();
 
     public String getCurrency()
     {
@@ -127,6 +129,21 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
+    public List<ITaxEntry> getTaxes()
+    {
+        return taxes;
+    }
+
+    public T withTaxes(final List<ITaxEntry> taxes) {
+        this.taxes  = taxes;
+        return getThis();
+    }
+
+    public T withTax(final ITaxEntry tax) {
+        this.taxes.add(tax);
+        return getThis();
+    }
+
     protected abstract T getThis();
 
     protected abstract String getDocType();
@@ -166,7 +183,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setAccountingCustomerParty(Sim.getCustomer("Tovar Lopez, Julio Odair", "1", "43289672",
                         "Av parque alto 291-A Lima - Lima - Santiago De Surco"));
 
-        invoice.setTaxTotal(Collections.singletonList(Sim.getTaxTotal()));
+        invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes()));
 
         invoice.setInvoiceLine(Sim.getInvoiceLines());
 

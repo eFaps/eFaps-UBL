@@ -19,7 +19,10 @@ public class DocTest
                         .withName("F001-000156")
                         .withDate(LocalDate.of(2020, 8, 16))
                         .withNetTotal(new BigDecimal("100"))
-                        .withCrossTotal(new BigDecimal("118"));
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")));
 
         final var ubl = invoice.getUBL();
         new Signing()
