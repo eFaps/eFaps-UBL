@@ -47,6 +47,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private LocalDate date;
     private BigDecimal netTotal;
     private BigDecimal crossTotal;
+    private ISupplier supplier;
+    private ICustomer customer;
     private List<ITaxEntry> taxes = new ArrayList<ITaxEntry>();
 
     public String getCurrency()
@@ -144,6 +146,38 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
+    public ISupplier getSupplier()
+    {
+        return supplier;
+    }
+
+    public void setSupplier(final ISupplier supplier)
+    {
+        this.supplier = supplier;
+    }
+
+    public T withSupplier(final ISupplier supplier)
+    {
+        setSupplier(supplier);
+        return getThis();
+    }
+
+    public ICustomer getCustomer()
+    {
+        return customer;
+    }
+
+    public void setCustomer(final ICustomer customer)
+    {
+        this.customer = customer;
+    }
+
+    public T withCustomer(final ICustomer customer)
+    {
+        setCustomer(customer);
+        return getThis();
+    }
+
     protected abstract T getThis();
 
     protected abstract String getDocType();
@@ -176,18 +210,16 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
         invoice.setUBLExtensions(Utils.getWordsForAmount(getCrossTotal()));
         invoice.setLegalMonetaryTotal(getMonetaryTotal());
-
-
-        invoice.setAccountingSupplierParty(Sim.getSupplier("Tiendas Mass", "6", "20601327318", "150101", "1000", "Lima",
-                        "JR. CRESPO Y CASTILLO NRO. 2087"));
-        invoice.setAccountingCustomerParty(Sim.getCustomer("Tovar Lopez, Julio Odair", "1", "43289672",
-                        "Av parque alto 291-A Lima - Lima - Santiago De Surco"));
-
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes()));
+        invoice.addSignature(Utils.getSignature());
+        invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
+        invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
+
+
 
         invoice.setInvoiceLine(Sim.getInvoiceLines());
 
-        invoice.addSignature(Utils.getSignature());
+
 
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)

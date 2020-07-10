@@ -22,18 +22,28 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.efaps.ubl.extension.AdditionalInformation;
 import org.efaps.ubl.extension.AdditionalProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressLineType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
@@ -42,6 +52,9 @@ import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountTy
 
 public class Utils
 {
+
+    public static String AGENCYNAME = "PE:SUNAT";
+
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
     public static InvoiceTypeCodeType getInvoiceType(final String type)
@@ -65,7 +78,8 @@ public class Utils
         return ret;
     }
 
-    public static UBLExtensionsType getWordsForAmount(final BigDecimal amount) {
+    public static UBLExtensionsType getWordsForAmount(final BigDecimal amount)
+    {
         final var ret = new UBLExtensionsType();
         final var ublExtension = new UBLExtensionType();
 
@@ -89,7 +103,8 @@ public class Utils
                         .append("/100 ").toString().toUpperCase();
     }
 
-    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount) {
+    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount)
+    {
         T ret = null;
         try {
             ret = type.getConstructor().newInstance();
@@ -120,6 +135,104 @@ public class Utils
         externalReference.setURI("SB001-000095");
         attachment.setExternalReference(externalReference);
         ret.setDigitalSignatureAttachment(attachment);
+        return ret;
+    }
+
+    public static SupplierPartyType getSupplier(final ISupplier supplier)
+    {
+        final var ret = new SupplierPartyType();
+        final var party = new PartyType();
+        ret.setParty(party);
+        party.setPartyIdentification(Collections.singletonList(getPartyIdentificationType(supplier)));
+
+        final var partyNameType = new PartyNameType();
+        partyNameType.setName(supplier.getName());
+        party.setPartyName(Collections.singletonList(partyNameType));
+        party.setPartyLegalEntity(
+                        Collections.singletonList(getPartyLegalEntityType(supplier)));
+        return ret;
+    }
+
+    public static CustomerPartyType getCustomer(final ICustomer customer)
+    {
+        final var ret = new CustomerPartyType();
+        final var party = new PartyType();
+        ret.setParty(party);
+        party.setPartyIdentification(Collections.singletonList(getPartyIdentificationType(customer)));
+        party.setPartyLegalEntity(
+                        Collections.singletonList(getPartyLegalEntityType(customer)));
+        return ret;
+    }
+
+    public static PartyIdentificationType getPartyIdentificationType(final IParty party)
+    {
+        final var ret = new PartyIdentificationType();
+        final var idType = new IDType();
+        idType.setSchemeAgencyName(AGENCYNAME);
+        idType.setSchemeID(party.getDoiType());
+        idType.setSchemeName("Documento de Identidad");
+        idType.setSchemeURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06");
+        idType.setValue(party.getDOI());
+        ret.setID(idType);
+        return ret;
+    }
+
+    public static PartyLegalEntityType getPartyLegalEntityType(final IParty party)
+    {
+        final var ret = new PartyLegalEntityType();
+        ret.setRegistrationName(party.getName());
+        ret.setRegistrationAddress(getAddress(party));
+        return ret;
+    }
+
+    public static AddressType getAddress(final IParty party)
+    {
+        final var ret = new AddressType();
+        if (party instanceof ISupplier) {
+            final var supplier = (ISupplier) party;
+
+            if (StringUtils.isNotEmpty(supplier.getUbigeo())) {
+                ret.setID(supplier.getUbigeo());
+            }
+            if (StringUtils.isNotEmpty(supplier.getAnexo())) {
+                ret.setAddressTypeCode(getAddressTypeCode(supplier.getAnexo()));
+            }
+            if (StringUtils.isNotEmpty(supplier.getDistrict())) {
+                ret.setDistrict(supplier.getDistrict());
+            }
+            if (StringUtils.isNotEmpty(supplier.getStreetName())) {
+                ret.setStreetName(supplier.getStreetName());
+            }
+        }
+
+        final var addressLineType = new AddressLineType();
+        addressLineType.setLine(party.getAddressLine());
+        ret.setAddressLine(Collections.singletonList(addressLineType));
+
+        if (StringUtils.isNotEmpty(party.getCountry())) {
+            ret.setCountry(getCountryType(party.getCountry()));
+        }
+        return ret;
+    }
+
+    public static AddressTypeCodeType getAddressTypeCode(final String anexo)
+    {
+        final var ret = new AddressTypeCodeType();
+        ret.setListAgencyName(AGENCYNAME);
+        ret.setListName("Establecimientos anexos");
+        ret.setValue(anexo);
+        return ret;
+    }
+
+    public static CountryType getCountryType(final String isoCode)
+    {
+        final var ret = new CountryType();
+        final var identificationCodeType = new IdentificationCodeType();
+        identificationCodeType.setListAgencyName("United Nations Economic Commission for Europe");
+        identificationCodeType.setListID("ISO 3166-1");
+        identificationCodeType.setListName("Country");
+        identificationCodeType.setValue(isoCode);
+        ret.setIdentificationCode(identificationCodeType);
         return ret;
     }
 
