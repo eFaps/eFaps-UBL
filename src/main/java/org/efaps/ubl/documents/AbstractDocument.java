@@ -27,7 +27,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.efaps.ubl.Builder;
-import org.efaps.ubl.Sim;
 import org.efaps.ubl.extension.Definitions;
 
 import com.helger.ubl21.UBL21NamespaceContext;
@@ -49,7 +48,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private BigDecimal crossTotal;
     private ISupplier supplier;
     private ICustomer customer;
-    private List<ITaxEntry> taxes = new ArrayList<ITaxEntry>();
+    private List<ITaxEntry> taxes = new ArrayList<>();
+    private List<ILine> lines = new ArrayList<>();
 
     public String getCurrency()
     {
@@ -178,6 +178,21 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
+    public List<ILine> getLines()
+    {
+        return lines;
+    }
+
+    public void setLines(final List<ILine> lines)
+    {
+        this.lines = lines;
+    }
+
+    public T withLines(final List<ILine> lines) {
+        setLines(lines);
+        return getThis();
+    }
+
     protected abstract T getThis();
 
     protected abstract String getDocType();
@@ -214,13 +229,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.addSignature(Utils.getSignature());
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
-
-
-
-        invoice.setInvoiceLine(Sim.getInvoiceLines());
-
-
-
+        invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);

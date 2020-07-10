@@ -2,6 +2,8 @@ package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
@@ -47,7 +49,8 @@ public class DocTest
                         .withCrossTotal(new BigDecimal("118"))
                         .withTax(new Taxes.IGV()
                                         .setAmount(new BigDecimal("18"))
-                                        .setTaxableAmount(new BigDecimal("100")));
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getLines());
 
         final var ubl = invoice.getUBL();
         new Signing()
@@ -55,5 +58,22 @@ public class DocTest
             .withKeyStorePwd("changeit")
             .withKeyAlias("mykey")
             .signInvoice(ubl);
+    }
+
+    private List<ILine> getLines()
+    {
+        final var ret = new ArrayList<ILine>();
+        ret.add(Line.builder().withSku("123.456")
+                        .withDescription("Lenovo Tablet 7\" TB-7305F 1GB / 16GB Cam post 2MP / Front 2MP")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("118"))
+                        .withCrossPrice(new BigDecimal("118"))
+                        .withNetUnitPrice(new BigDecimal("100"))
+                        .withNetPrice(new BigDecimal("100"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .build());
+        return ret;
     }
 }

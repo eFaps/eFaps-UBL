@@ -19,7 +19,9 @@ package org.efaps.ubl.documents;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,17 +36,26 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Att
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemIdentificationType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
@@ -233,6 +244,54 @@ public class Utils
         identificationCodeType.setListName("Country");
         identificationCodeType.setValue(isoCode);
         ret.setIdentificationCode(identificationCodeType);
+        return ret;
+    }
+
+    public static List<InvoiceLineType> getInvoiceLines(final List<ILine> lines)
+    {
+        final var ret = new ArrayList<InvoiceLineType>();
+        for (final var line : lines) {
+            final var invoiceLine = new InvoiceLineType();
+            ret.add(invoiceLine);
+            invoiceLine.setID("1");
+            invoiceLine.setInvoicedQuantity(getInvoicedQuantity(line));
+            invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
+
+            final var pricingReference = new PricingReferenceType();
+            final var priceType = new PriceType();
+            priceType.setPriceAmount(getAmount(PriceAmountType.class, line.getCrossPrice()));
+            priceType.setPriceTypeCode("01");
+            pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
+            invoiceLine.setPricingReference(pricingReference);
+            invoiceLine.setTaxTotal(Taxes.getTaxTotal(line.getTaxEntries()));
+            invoiceLine.setItem(getItem(line));
+
+            final var priceType2 = new PriceType();
+            priceType2.setPriceAmount(getAmount(PriceAmountType.class, line.getNetUnitPrice()));
+            invoiceLine.setPrice(priceType2);
+        }
+        return ret;
+    }
+
+    public static InvoicedQuantityType getInvoicedQuantity(final ILine line)
+    {
+        final var ret = new InvoicedQuantityType();
+        ret.setUnitCode(line.getUoMCode());
+        ret.setUnitCodeListAgencyName("United Nations Economic Commission for Europe");
+        ret.setUnitCodeListID("UN/ECE rec 20");
+        ret.setValue(line.getQuantity());
+        return ret;
+    }
+
+    public static ItemType getItem(final ILine line)
+    {
+        final var ret = new ItemType();
+        final var description = new DescriptionType();
+        description.setValue(line.getDescription());
+        ret.setDescription(Collections.singletonList(description));
+        final var itemIdentificationType = new ItemIdentificationType();
+        itemIdentificationType.setID(line.getSku());
+        ret.setSellersItemIdentification(itemIdentificationType);
         return ret;
     }
 
