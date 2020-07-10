@@ -32,6 +32,7 @@ import org.efaps.ubl.extension.Definitions;
 import com.helger.ubl21.UBL21NamespaceContext;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
@@ -218,6 +219,10 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         }
         final InvoiceType invoice = new InvoiceType();
         invoice.setUBLVersionID("2.1");
+        final var customizationID = new CustomizationIDType();
+        customizationID.setSchemeAgencyName(Utils.AGENCYNAME);
+        customizationID.setValue("2.0");
+        invoice.setCustomizationID(customizationID);
         invoice.setID(getName());
         invoice.setIssueDate(
                         new IssueDateType(DatatypeFactory.newInstance().newXMLGregorianCalendar(getDate().toString())));
@@ -226,7 +231,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setUBLExtensions(Utils.getWordsForAmount(getCrossTotal()));
         invoice.setLegalMonetaryTotal(getMonetaryTotal());
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes()));
-        invoice.addSignature(Utils.getSignature());
+        invoice.addSignature(Utils.getSignature(getSupplier()));
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));

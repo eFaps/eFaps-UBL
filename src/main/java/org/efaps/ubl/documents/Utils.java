@@ -128,17 +128,17 @@ public class Utils
         return ret;
     }
 
-    public static SignatureType getSignature()
+    public static SignatureType getSignature(final ISupplier supplier)
     {
         final var ret = new SignatureType();
         ret.setID("SB001-000095");
 
         final var party = new PartyType();
         final var partyIdentification = new PartyIdentificationType();
-        partyIdentification.setID("20601327318");
+        partyIdentification.setID(supplier.getDOI());
         party.setPartyIdentification(Collections.singletonList(partyIdentification));
         final var partyName = new PartyNameType();
-        partyName.setName("SUNAT");
+        partyName.setName(supplier.getName());
         party.setPartyName(Collections.singletonList(partyName));
         ret.setSignatoryParty(party);
         final var attachment = new AttachmentType();
@@ -203,7 +203,11 @@ public class Utils
             final var supplier = (ISupplier) party;
 
             if (StringUtils.isNotEmpty(supplier.getUbigeo())) {
-                ret.setID(supplier.getUbigeo());
+                final var id = new IDType();
+                id.setSchemeAgencyName("PE:INEI");
+                id.setSchemeName("Ubigeos");
+                id.setValue(supplier.getUbigeo());
+                ret.setID(id);
             }
             if (StringUtils.isNotEmpty(supplier.getAnexo())) {
                 ret.setAddressTypeCode(getAddressTypeCode(supplier.getAnexo()));
