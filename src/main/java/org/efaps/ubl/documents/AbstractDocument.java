@@ -43,7 +43,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 {
 
     private String currency;
-    private String name;
+    private String number;
     private LocalDate date;
     private BigDecimal netTotal;
     private BigDecimal crossTotal;
@@ -68,19 +68,19 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
-    public String getName()
+    public String getNumber()
     {
-        return name;
+        return number;
     }
 
-    public void setName(final String name)
+    public void setNumber(final String number)
     {
-        this.name = name;
+        this.number = number;
     }
 
-    public T withName(final String name)
+    public T withNumber(final String number)
     {
-        setName(name);
+        setNumber(number);
         return getThis();
     }
 
@@ -223,7 +223,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         customizationID.setSchemeAgencyName(Utils.AGENCYNAME);
         customizationID.setValue("2.0");
         invoice.setCustomizationID(customizationID);
-        invoice.setID(getName());
+        invoice.setID(getNumber());
         invoice.setIssueDate(
                         new IssueDateType(DatatypeFactory.newInstance().newXMLGregorianCalendar(getDate().toString())));
         invoice.setInvoiceTypeCode(Utils.getInvoiceType(getDocType()));

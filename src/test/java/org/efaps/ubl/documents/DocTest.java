@@ -43,7 +43,7 @@ public class DocTest
                         .withSupplier(getSupplier())
                         .withCustomer(getCustomer())
                         .withCurrency("PEN")
-                        .withName("F001-000156")
+                        .withNumber("F001-000156")
                         .withDate(LocalDate.of(2020, 8, 16))
                         .withNetTotal(new BigDecimal("100"))
                         .withCrossTotal(new BigDecimal("118"))
