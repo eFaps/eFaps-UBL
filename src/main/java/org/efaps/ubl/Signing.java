@@ -70,6 +70,27 @@ public class Signing
 {
 
     private static final Logger LOG = LoggerFactory.getLogger(Signing.class);
+    private String keyStorePath;
+    private String keyStorePwd;
+    private String keyAlias;
+
+    public Signing withKeyStorePath(final String keyStorePath)
+    {
+        this.keyStorePath = keyStorePath;
+        return this;
+    }
+
+    public Signing withKeyStorePwd(final String keyStorePwd)
+    {
+        this.keyStorePwd = keyStorePwd;
+        return this;
+    }
+
+    public Signing withKeyAlias(final String keyAlias)
+    {
+        this.keyAlias = keyAlias;
+        return this;
+    }
 
     public void signInvoice(final String xml)
     {
@@ -187,13 +208,28 @@ public class Signing
         PrivateKeyEntry ret = null;
         try {
             final KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
-            ret = (KeyStore.PrivateKeyEntry) ks.getEntry("mykey",
-                            new KeyStore.PasswordProtection("changeit".toCharArray()));
+            ks.load(new FileInputStream(getKeyStorePath()), getKeyStorePwd().toCharArray());
+            ret = (KeyStore.PrivateKeyEntry) ks.getEntry(getKeyAlias(),
+                            new KeyStore.PasswordProtection(getKeyStorePwd().toCharArray()));
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException
                         | IOException e) {
             LOG.error("Catched", e);
         }
         return ret;
+    }
+
+    protected String getKeyStorePwd()
+    {
+        return keyStorePwd;
+    }
+
+    protected String getKeyAlias()
+    {
+        return keyAlias;
+    }
+
+    protected String getKeyStorePath()
+    {
+        return keyStorePath;
     }
 }

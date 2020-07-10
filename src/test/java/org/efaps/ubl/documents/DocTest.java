@@ -22,6 +22,10 @@ public class DocTest
                         .withCrossTotal(new BigDecimal("118"));
 
         final var ubl = invoice.getUBL();
-        new Signing().signInvoice(ubl);
+        new Signing()
+            .withKeyStorePath(".keystore")
+            .withKeyStorePwd("changeit")
+            .withKeyAlias("mykey")
+            .signInvoice(ubl);
     }
 }
