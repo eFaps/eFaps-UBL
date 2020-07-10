@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
@@ -51,19 +50,9 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
-import org.efaps.ubl.extension.AdditionalInformation;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.helger.xsds.xmldsig.CanonicalizationMethodType;
@@ -98,10 +87,6 @@ public class Signing
                         fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (C14NMethodParameterSpec) null),
                         fac.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
                         Collections.singletonList(ref));
-        System.out.println(si);
-
-
-
 
         final var invoice = new Reader().read(xml);
         final var extension = new UBLExtensionType();
@@ -109,37 +94,9 @@ public class Signing
         extension.setExtensionContent(extensionContent);
         invoice.getUBLExtensions().addUBLExtension(extension);
 
-        extensionContent.setAny(new AdditionalInformation());
-
         final var doc = new Builder().setCharset(StandardCharsets.UTF_8)
+                        .setUseSchema(false)
                         .setFormattedOutput(false).getAsDocument(invoice);
-
-        final TransformerFactory tf = TransformerFactory.newInstance();
-        final Transformer transformer = tf.newTransformer();
-        final StringWriter writer = new StringWriter();
-        transformer.transform(new DOMSource(doc), new StreamResult(writer));
-        final String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-        System.out.println(output);
-
-        final XPath xPath = XPathFactory.newInstance().newXPath();
-        final var tmm=  (NodeList) xPath.compile("//sac:AdditionalInformation").evaluate(doc.getFirstChild(), XPathConstants.NODESET);
-
-        System.out.println(invoice);
-        System.out.println(tmm.getLength());
-        Node signParentNode = null;
-        final var root = doc.getFirstChild();
-        final NodeList children = root.getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            final Node childNode = children.item(i);
-            if (childNode.getLocalName().equals("UBLExtensions")) {
-                final var lastChild = childNode.getLastChild();
-                signParentNode = lastChild.getFirstChild();
-                break;
-            }
-        }
-System.out.println(signParentNode);
-signParentNode.removeChild(signParentNode.getFirstChild());
-
 
         final KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
