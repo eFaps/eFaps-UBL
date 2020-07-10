@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.efaps.ubl.Builder;
 import org.efaps.ubl.extension.Definitions;
 
@@ -137,12 +138,14 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return taxes;
     }
 
-    public T withTaxes(final List<ITaxEntry> taxes) {
-        this.taxes  = taxes;
+    public T withTaxes(final List<ITaxEntry> taxes)
+    {
+        this.taxes = taxes;
         return getThis();
     }
 
-    public T withTax(final ITaxEntry tax) {
+    public T withTax(final ITaxEntry tax)
+    {
         this.taxes.add(tax);
         return getThis();
     }
@@ -189,9 +192,16 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         this.lines = lines;
     }
 
-    public T withLines(final List<ILine> lines) {
+    public T withLines(final List<ILine> lines)
+    {
         setLines(lines);
         return getThis();
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this);
     }
 
     protected abstract T getThis();
@@ -205,8 +215,10 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         // new BigDecimal("2133")));
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, getCrossTotal()));
-        //ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class, new BigDecimal("0")));
-        //ret.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, new BigDecimal("0")));
+        // ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class,
+        // new BigDecimal("0")));
+        // ret.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class,
+        // new BigDecimal("0")));
         ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
         return ret;
     }

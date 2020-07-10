@@ -16,6 +16,8 @@
  */
 package org.efaps.ubl.documents;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class Party
     implements IParty
 {
@@ -80,4 +82,11 @@ public class Party
     {
         this.country = country;
     }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
 }
