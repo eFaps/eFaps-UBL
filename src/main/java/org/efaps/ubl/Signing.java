@@ -22,14 +22,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
+import java.security.KeyStore.PrivateKeyEntry;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.crypto.MarshalException;
@@ -46,6 +47,9 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.xsds.xmldsig.CanonicalizationMethodType;
 import com.helger.xsds.xmldsig.DigestMethodType;
@@ -64,6 +68,8 @@ import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBL
 
 public class Signing
 {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Signing.class);
 
     public void signInvoice(final String xml)
     {
@@ -91,20 +97,15 @@ public class Signing
                             .setUseSchema(false)
                             .setFormattedOutput(false).getAsDocument(invoice);
 
-            final KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
-            final KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("mykey",
-                            new KeyStore.PasswordProtection("changeit".toCharArray()));
-            final X509Certificate cert = (X509Certificate) keyEntry.getCertificate();
-            // Create the KeyInfo containing the X509Data.
+            final var certificate = getCertificate();
             final KeyInfoFactory kif = xmlSignatureFactory.getKeyInfoFactory();
-            final List x509Content = new ArrayList();
-            x509Content.add(cert.getSubjectX500Principal().getName());
-            x509Content.add(cert);
+            final var x509Content = new ArrayList<Object>();
+            x509Content.add(certificate.getSubjectX500Principal().getName());
+            x509Content.add(certificate);
             final X509Data xd = kif.newX509Data(x509Content);
             final KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
 
-            final DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), doc.getDocumentElement());
+            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), doc.getDocumentElement());
 
             final XMLSignature signature = xmlSignatureFactory.newXMLSignature(info, ki);
             signature.sign(dsc);
@@ -153,24 +154,46 @@ public class Signing
 
             final var X509SubjectNameEle = new JAXBElement<String>(
                             new QName("http://www.w3.org/2000/09/xmldsig#", "X509SubjectName"), String.class,
-                            cert.getSubjectX500Principal().getName());
+                            certificate.getSubjectX500Principal().getName());
             x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509SubjectNameEle);
 
             final var X509CertificateEle = new JAXBElement<byte[]>(
                             new QName("http://www.w3.org/2000/09/xmldsig#", "X509Certificate"), byte[].class,
-                            cert.getPublicKey().getEncoded());
+                            certificate.getPublicKey().getEncoded());
             x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509CertificateEle);
 
             signatureT.setKeyInfo(keyInfo);
 
             new Builder().setCharset(StandardCharsets.UTF_8)
                             .setFormattedOutput(false).write(invoice, new File("target/dummy-invoice1.xml"));
-        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | KeyStoreException
-                        | CertificateException | IOException | UnrecoverableEntryException | MarshalException
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | MarshalException
                         | XMLSignatureException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("Catched", e);
         }
+    }
 
+    protected X509Certificate getCertificate()
+    {
+        return (X509Certificate) getKeyEntry().getCertificate();
+    }
+
+    protected PrivateKey getPrivateKey()
+    {
+        return getKeyEntry().getPrivateKey();
+    }
+
+    protected PrivateKeyEntry getKeyEntry()
+    {
+        PrivateKeyEntry ret = null;
+        try {
+            final KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
+            ret = (KeyStore.PrivateKeyEntry) ks.getEntry("mykey",
+                            new KeyStore.PasswordProtection("changeit".toCharArray()));
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException
+                        | IOException e) {
+            LOG.error("Catched", e);
+        }
+        return ret;
     }
 }
