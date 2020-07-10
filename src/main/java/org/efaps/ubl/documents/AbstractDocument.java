@@ -170,6 +170,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 
         invoice.setInvoiceLine(Sim.getInvoiceLines());
 
+        invoice.addSignature(Utils.getSignature());
+
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);

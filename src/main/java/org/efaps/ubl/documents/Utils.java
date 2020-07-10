@@ -19,6 +19,7 @@ package org.efaps.ubl.documents;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
 import java.util.Locale;
 
 import org.efaps.ubl.extension.AdditionalInformation;
@@ -26,6 +27,12 @@ import org.efaps.ubl.extension.AdditionalProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
@@ -92,6 +99,27 @@ public class Utils
                         | NoSuchMethodException | SecurityException e) {
             LOG.error("Catched", e);
         }
+        return ret;
+    }
+
+    public static SignatureType getSignature()
+    {
+        final var ret = new SignatureType();
+        ret.setID("SB001-000095");
+
+        final var party = new PartyType();
+        final var partyIdentification = new PartyIdentificationType();
+        partyIdentification.setID("20601327318");
+        party.setPartyIdentification(Collections.singletonList(partyIdentification));
+        final var partyName = new PartyNameType();
+        partyName.setName("SUNAT");
+        party.setPartyName(Collections.singletonList(partyName));
+        ret.setSignatoryParty(party);
+        final var attachment = new AttachmentType();
+        final var externalReference = new ExternalReferenceType();
+        externalReference.setURI("SB001-000095");
+        attachment.setExternalReference(externalReference);
+        ret.setDigitalSignatureAttachment(attachment);
         return ret;
     }
 
