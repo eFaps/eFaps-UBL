@@ -18,7 +18,6 @@ package org.efaps.ubl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -36,8 +35,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
-import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.SignedInfo;
 import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
@@ -49,11 +46,6 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
-
-import org.xml.sax.SAXException;
 
 import com.helger.xsds.xmldsig.CanonicalizationMethodType;
 import com.helger.xsds.xmldsig.DigestMethodType;
@@ -73,103 +65,112 @@ import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBL
 public class Signing
 {
 
-    public void sign(final String xml)
-        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, UnrecoverableEntryException,
-        KeyStoreException, CertificateException, FileNotFoundException, IOException, SAXException,
-        ParserConfigurationException, MarshalException, XMLSignatureException, XPathExpressionException, TransformerException
+    public void signInvoice(final String xml)
     {
-        final XMLSignatureFactory fac = XMLSignatureFactory.getInstance();
-        final Reference ref = fac.newReference("", fac.newDigestMethod(DigestMethod.SHA1, null),
-                        Collections.singletonList(fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)),
-                        null, null);
+        try {
+            final var xmlSignatureFactory = XMLSignatureFactory.getInstance();
+            final var ref = xmlSignatureFactory.newReference("",
+                            xmlSignatureFactory.newDigestMethod(DigestMethod.SHA1, null),
+                            Collections.singletonList(
+                                            xmlSignatureFactory.newTransform(Transform.ENVELOPED,
+                                                            (TransformParameterSpec) null)),
+                            null, null);
+            final var info = xmlSignatureFactory.newSignedInfo(
+                            xmlSignatureFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
+                                            (C14NMethodParameterSpec) null),
+                            xmlSignatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
+                            Collections.singletonList(ref));
 
-        final SignedInfo si = fac.newSignedInfo(
-                        fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE, (C14NMethodParameterSpec) null),
-                        fac.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
-                        Collections.singletonList(ref));
+            final var invoice = new Reader().read(xml);
+            final var extension = new UBLExtensionType();
+            final var extensionContent = new ExtensionContentType();
+            extension.setExtensionContent(extensionContent);
+            invoice.getUBLExtensions().addUBLExtension(extension);
 
-        final var invoice = new Reader().read(xml);
-        final var extension = new UBLExtensionType();
-        final var extensionContent = new ExtensionContentType();
-        extension.setExtensionContent(extensionContent);
-        invoice.getUBLExtensions().addUBLExtension(extension);
+            final var doc = new Builder().setCharset(StandardCharsets.UTF_8)
+                            .setUseSchema(false)
+                            .setFormattedOutput(false).getAsDocument(invoice);
 
-        final var doc = new Builder().setCharset(StandardCharsets.UTF_8)
-                        .setUseSchema(false)
-                        .setFormattedOutput(false).getAsDocument(invoice);
+            final KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
+            final KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("mykey",
+                            new KeyStore.PasswordProtection("changeit".toCharArray()));
+            final X509Certificate cert = (X509Certificate) keyEntry.getCertificate();
+            // Create the KeyInfo containing the X509Data.
+            final KeyInfoFactory kif = xmlSignatureFactory.getKeyInfoFactory();
+            final List x509Content = new ArrayList();
+            x509Content.add(cert.getSubjectX500Principal().getName());
+            x509Content.add(cert);
+            final X509Data xd = kif.newX509Data(x509Content);
+            final KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
 
-        final KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(".keystore"), "changeit".toCharArray());
-        final KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) ks.getEntry("mykey",
-                        new KeyStore.PasswordProtection("changeit".toCharArray()));
-        final X509Certificate cert = (X509Certificate) keyEntry.getCertificate();
-        // Create the KeyInfo containing the X509Data.
-        final KeyInfoFactory kif = fac.getKeyInfoFactory();
-        final List x509Content = new ArrayList();
-        x509Content.add(cert.getSubjectX500Principal().getName());
-        x509Content.add(cert);
-        final X509Data xd = kif.newX509Data(x509Content);
-        final KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
+            final DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), doc.getDocumentElement());
 
-        final DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), doc.getDocumentElement());
+            final XMLSignature signature = xmlSignatureFactory.newXMLSignature(info, ki);
+            signature.sign(dsc);
 
-        final XMLSignature signature = fac.newXMLSignature(si, ki);
-        signature.sign(dsc);
+            final var signatureT = new SignatureType();
 
-        final var signatureT = new SignatureType();
+            final var ele = new JAXBElement<SignatureType>(new QName("http://www.w3.org/2000/09/xmldsig#", "Signature"),
+                            SignatureType.class, signatureT);
+            extensionContent.setAny(ele);
+            signatureT.setId("SB001-000095");
+            final var signatureValue = new SignatureValueType();
+            signatureValue.setValue(signature.getSignatureValue().getValue());
+            signatureT.setSignatureValue(signatureValue);
+            final var signedInfo = new SignedInfoType();
+            signatureT.setSignedInfo(signedInfo);
 
-        final var ele = new JAXBElement<SignatureType>(new QName("http://www.w3.org/2000/09/xmldsig#", "Signature" ), SignatureType.class, signatureT);
-        extensionContent.setAny(ele);
-        signatureT.setId("SB001-000095");
-        final var signatureValue = new SignatureValueType();
-        signatureValue.setValue(signature.getSignatureValue().getValue());
-        signatureT.setSignatureValue(signatureValue);
-        final var signedInfo = new SignedInfoType();
-        signatureT.setSignedInfo(signedInfo);
+            final var canonicalizationMethod = new CanonicalizationMethodType();
+            canonicalizationMethod.setAlgorithm(signature.getSignedInfo().getCanonicalizationMethod().getAlgorithm());
+            signedInfo.setCanonicalizationMethod(canonicalizationMethod);
 
-        final var canonicalizationMethod = new CanonicalizationMethodType();
-        canonicalizationMethod.setAlgorithm(signature.getSignedInfo().getCanonicalizationMethod().getAlgorithm());
-        signedInfo.setCanonicalizationMethod(canonicalizationMethod);
+            final var signatureMethod = new SignatureMethodType();
+            signatureMethod.setAlgorithm(signature.getSignedInfo().getSignatureMethod().getAlgorithm());
+            signedInfo.setSignatureMethod(signatureMethod);
 
-        final var signatureMethod = new SignatureMethodType();
-        signatureMethod.setAlgorithm(signature.getSignedInfo().getSignatureMethod().getAlgorithm());
-        signedInfo.setSignatureMethod(signatureMethod);
+            final var reference = new ReferenceType();
+            final var digestMethod = new DigestMethodType();
+            digestMethod.setAlgorithm(
+                            signature.getSignedInfo().getReferences().get(0).getDigestMethod().getAlgorithm());
+            reference.setDigestMethod(digestMethod);
+            final var transforms = new TransformsType();
+            final var transform = new TransformType();
+            transform.setAlgorithm(
+                            signature.getSignedInfo().getReferences().get(0).getTransforms().get(0).getAlgorithm());
+            transforms.setTransform(Collections.singletonList(transform));
+            reference.setTransforms(transforms);
+            reference.setDigestValue(signature.getSignedInfo().getReferences().get(0).getDigestValue());
 
+            signedInfo.setReference(Collections.singletonList(reference));
 
+            final var keyInfo = new KeyInfoType();
 
-        final var reference = new ReferenceType();
-        final var digestMethod = new DigestMethodType();
-        digestMethod.setAlgorithm(signature.getSignedInfo().getReferences().get(0).getDigestMethod().getAlgorithm());
-        reference.setDigestMethod(digestMethod);
-        final var transforms = new TransformsType();
-        final var transform = new TransformType();
-        transform.setAlgorithm(signature.getSignedInfo().getReferences().get(0).getTransforms().get(0).getAlgorithm());
-        transforms.setTransform(Collections.singletonList(transform));
-        reference.setTransforms(transforms);
-        reference.setDigestValue(signature.getSignedInfo().getReferences().get(0).getDigestValue());
+            final var x509Data = new X509DataType();
+            final var x509DataEle = new JAXBElement<X509DataType>(
+                            new QName("http://www.w3.org/2000/09/xmldsig#", "X509Data"), X509DataType.class, x509Data);
+            keyInfo.setContent(Collections.singletonList(x509DataEle));
 
-        signedInfo.setReference(Collections.singletonList(reference));
+            final var X509SubjectNameEle = new JAXBElement<String>(
+                            new QName("http://www.w3.org/2000/09/xmldsig#", "X509SubjectName"), String.class,
+                            cert.getSubjectX500Principal().getName());
+            x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509SubjectNameEle);
 
-        final var keyInfo = new KeyInfoType();
+            final var X509CertificateEle = new JAXBElement<byte[]>(
+                            new QName("http://www.w3.org/2000/09/xmldsig#", "X509Certificate"), byte[].class,
+                            cert.getPublicKey().getEncoded());
+            x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509CertificateEle);
 
-        final var x509Data = new X509DataType();
-        final var x509DataEle = new JAXBElement<X509DataType>(new QName("http://www.w3.org/2000/09/xmldsig#", "X509Data" ), X509DataType.class, x509Data);
-        keyInfo.setContent(Collections.singletonList(x509DataEle));
+            signatureT.setKeyInfo(keyInfo);
 
-        final var X509SubjectNameEle = new JAXBElement<String>(new QName("http://www.w3.org/2000/09/xmldsig#", "X509SubjectName" ), String.class, cert.getSubjectX500Principal().getName());
-        x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509SubjectNameEle);
-
-
-        final var X509CertificateEle = new JAXBElement<byte[]>(new QName("http://www.w3.org/2000/09/xmldsig#", "X509Certificate" ), byte[].class, cert.getPublicKey().getEncoded());
-        x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509CertificateEle);
-
-
-        signatureT.setKeyInfo(keyInfo);
-
-
-
-        new Builder().setCharset(StandardCharsets.UTF_8)
-        .setFormattedOutput(false).write(invoice, new File("target/dummy-invoice1.xml"));
+            new Builder().setCharset(StandardCharsets.UTF_8)
+                            .setFormattedOutput(false).write(invoice, new File("target/dummy-invoice1.xml"));
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | KeyStoreException
+                        | CertificateException | IOException | UnrecoverableEntryException | MarshalException
+                        | XMLSignatureException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 }
