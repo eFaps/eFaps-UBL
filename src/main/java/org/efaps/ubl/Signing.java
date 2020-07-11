@@ -16,7 +16,6 @@
  */
 package org.efaps.ubl;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +47,7 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 
+import org.efaps.ubl.dto.SignResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,8 +92,9 @@ public class Signing
         return this;
     }
 
-    public void signInvoice(final String xml)
+    public SignResponseDto signInvoice(final String xml)
     {
+        SignResponseDto ret = null;
         try {
             final var xmlSignatureFactory = XMLSignatureFactory.getInstance();
             final var ref = xmlSignatureFactory.newReference("",
@@ -162,6 +163,7 @@ public class Signing
                             signature.getSignedInfo().getReferences().get(0).getTransforms().get(0).getAlgorithm());
             transforms.setTransform(Collections.singletonList(transform));
             reference.setTransforms(transforms);
+            final var hash = signature.getSignedInfo().getReferences().get(0).getDigestValue();
             reference.setDigestValue(signature.getSignedInfo().getReferences().get(0).getDigestValue());
 
             signedInfo.setReference(Collections.singletonList(reference));
@@ -185,12 +187,19 @@ public class Signing
 
             signatureT.setKeyInfo(keyInfo);
 
-            new Builder().setCharset(StandardCharsets.UTF_8)
-                            .setFormattedOutput(false).write(invoice, new File("target/dummy-invoice1.xml"));
+            final var ubl = new Builder().setCharset(StandardCharsets.UTF_8)
+                            .setFormattedOutput(false).getAsString(invoice);
+
+            ret = SignResponseDto.builder()
+                            .withUbl(ubl)
+                            .withHash(new String(hash))
+                            .build();
+
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | MarshalException
                         | XMLSignatureException e) {
             LOG.error("Catched", e);
         }
+        return ret;
     }
 
     protected X509Certificate getCertificate()

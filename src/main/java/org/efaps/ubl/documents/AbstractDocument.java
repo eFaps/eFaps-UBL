@@ -29,6 +29,8 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.efaps.ubl.Builder;
 import org.efaps.ubl.extension.Definitions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.ubl21.UBL21NamespaceContext;
 
@@ -42,6 +44,7 @@ import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
 public abstract class AbstractDocument<T extends AbstractDocument<T>>
 {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDocument.class);
 
     private String currency;
     private String number;
@@ -223,8 +226,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return ret;
     }
 
-    public String getUBL()
-        throws DatatypeConfigurationException
+    public String getUBLXml()
     {
         if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
             UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
@@ -236,8 +238,12 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         customizationID.setValue("2.0");
         invoice.setCustomizationID(customizationID);
         invoice.setID(getNumber());
-        invoice.setIssueDate(
-                        new IssueDateType(DatatypeFactory.newInstance().newXMLGregorianCalendar(getDate().toString())));
+        try {
+            invoice.setIssueDate(
+                            new IssueDateType(DatatypeFactory.newInstance().newXMLGregorianCalendar(getDate().toString())));
+        } catch (final DatatypeConfigurationException e) {
+            LOG.error("Catched", e);
+        }
         invoice.setInvoiceTypeCode(Utils.getInvoiceType(getDocType()));
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
         invoice.setUBLExtensions(Utils.getWordsForAmount(getCrossTotal()));

@@ -52,7 +52,7 @@ public class DocTest
                                         .setTaxableAmount(new BigDecimal("100")))
                         .withLines(getLines());
 
-        final var ubl = invoice.getUBL();
+        final var ubl = invoice.getUBLXml();
         new Signing()
             .withKeyStorePath(".keystore")
             .withKeyStorePwd("changeit")
