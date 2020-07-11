@@ -29,6 +29,7 @@ import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBElement;
@@ -192,7 +193,7 @@ public class Signing
 
             ret = SignResponseDto.builder()
                             .withUbl(ubl)
-                            .withHash(new String(hash))
+                            .withHash(Base64.getEncoder().encodeToString(hash))
                             .build();
 
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | MarshalException
