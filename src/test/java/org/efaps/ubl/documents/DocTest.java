@@ -85,7 +85,7 @@ public class DocTest
     }
 
     @Test
-    public void invoiceWithOneItem() throws IOException {
+    public void invoiceWithOneItemTaxAndCharge() throws IOException {
 
         final var lines = new ArrayList<ILine>();
         lines.add(Line.builder().withSku("123.456")
@@ -125,6 +125,66 @@ public class DocTest
         final var ubl = invoice.getUBLXml();
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice1.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl,  xml);
+    }
+
+    @Test
+    public void invoiceWithPerUnitTax() throws IOException {
+
+        final var lines = new ArrayList<ILine>();
+        lines.add(Line.builder().withSku("123.456")
+                        .withDescription("Agua mineral")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("13.23"))
+                        .withCrossPrice(new BigDecimal("13.23"))
+                        .withNetUnitPrice(new BigDecimal("10.50"))
+                        .withNetPrice(new BigDecimal("10.50"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("1.89"))
+                                        .setTaxableAmount(new BigDecimal("10.50")))
+                        .withCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("10.50"))
+                                        .setAmount(new BigDecimal("0.84"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .build());
+
+        lines.add(Line.builder().withSku("333.4567")
+                        .withDescription("Bolsa Plástica")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("0.30"))
+                        .withCrossPrice(new BigDecimal("0.30"))
+                        .withNetUnitPrice(new BigDecimal("0.10"))
+                        .withNetPrice(new BigDecimal("0.10"))
+                        .withTax(new Taxes.ICB()
+                                        .setAmount(new BigDecimal("0.20"))
+                                        .setTaxableAmount(new BigDecimal("0")))
+                        .build());
+
+        final var invoice = new Invoice()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 6, 13))
+                        .withNetTotal(new BigDecimal("10.10"))
+                        .withCrossTotal(new BigDecimal("13.53"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("1.89"))
+                                        .setTaxableAmount(new BigDecimal("10.50")))
+                        .withTax(new Taxes.ICB()
+                                        .setAmount(new BigDecimal("0.20"))
+                                        .setTaxableAmount(new BigDecimal("0")))
+                        .withCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("10.50"))
+                                        .setAmount(new BigDecimal("0.84"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .withLines(lines);
+        final var ubl = invoice.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice2.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         assertEquals(ubl,  xml);
     }

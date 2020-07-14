@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sac="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cec:UBLExtensions>
+    <cec:UBLExtension>
+      <cec:ExtensionContent>
+        <sac:AdditionalInformation>
+          <sac:AdditionalProperty>
+            <cbc:ID schemeID="1000" />
+                      <cbc:Value>TRECE Y 53/100 </cbc:Value>
+          </sac:AdditionalProperty>
+        </sac:AdditionalInformation>
+      </cec:ExtensionContent>
+    </cec:UBLExtension>
+  </cec:UBLExtensions>
+  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
+  <cbc:CustomizationID schemeAgencyName="PE:SUNAT">2.0</cbc:CustomizationID>
+  <cbc:ID>F001-000156</cbc:ID>
+  <cbc:IssueDate>2020-06-13</cbc:IssueDate>
+  <cbc:InvoiceTypeCode listID="0101" listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">03</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listAgencyName="United Nations Economic Commission for Europe" listName="Currency">PEN</cbc:DocumentCurrencyCode>
+  <cac:Signature>
+    <cbc:ID>SB001-000095</cbc:ID>
+      <cac:SignatoryParty>
+      <cac:PartyIdentification>
+        <cbc:ID>20601327318</cbc:ID>
+      </cac:PartyIdentification>
+          <cac:PartyName>
+        <cbc:Name>Tiendas Mass</cbc:Name>
+      </cac:PartyName>
+    </cac:SignatoryParty>
+      <cac:DigitalSignatureAttachment>
+      <cac:ExternalReference>
+        <cbc:URI>SB001-000095</cbc:URI>
+      </cac:ExternalReference>
+    </cac:DigitalSignatureAttachment>
+  </cac:Signature>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20601327318</cbc:ID>
+      </cac:PartyIdentification>
+          <cac:PartyName>
+        <cbc:Name>Tiendas Mass</cbc:Name>
+      </cac:PartyName>
+          <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Tiendas Mass</cbc:RegistrationName>
+              <cac:RegistrationAddress>
+          <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">150101</cbc:ID>
+                  <cbc:AddressTypeCode listAgencyName="PE:SUNAT" listName="Establecimientos anexos">1000</cbc:AddressTypeCode>
+                  <cbc:District>Lima</cbc:District>
+                  <cac:AddressLine>
+            <cbc:Line>JR. CRESPO Y CASTILLO NRO. 2087</cbc:Line>
+          </cac:AddressLine>
+                  <cac:Country>
+            <cbc:IdentificationCode listID="ISO 3166-1" listAgencyName="United Nations Economic Commission for Europe" listName="Country">PE</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:RegistrationAddress>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">43289672</cbc:ID>
+      </cac:PartyIdentification>
+          <cac:PartyLegalEntity>
+        <cbc:RegistrationName>ovar Lopez, Julio Odair</cbc:RegistrationName>
+              <cac:RegistrationAddress>
+          <cac:AddressLine>
+            <cbc:Line>Av parque alto 291-A Lima - Lima - Santiago De Surco</cbc:Line>
+          </cac:AddressLine>
+                  <cac:Country>
+            <cbc:IdentificationCode listID="ISO 3166-1" listAgencyName="United Nations Economic Commission for Europe" listName="Country">PE</cbc:IdentificationCode>
+          </cac:Country>
+        </cac:RegistrationAddress>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:AllowanceCharge>
+    <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+      <cbc:AllowanceChargeReasonCode listAgencyName="PE:SUNAT" listName="Cargo/descuento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo53">50</cbc:AllowanceChargeReasonCode>
+      <cbc:MultiplierFactorNumeric>0.08</cbc:MultiplierFactorNumeric>
+      <cbc:Amount currencyID="PEN">0.84</cbc:Amount>
+      <cbc:BaseAmount currencyID="PEN">10.50</cbc:BaseAmount>
+  </cac:AllowanceCharge>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="PEN">10.50</cbc:TaxableAmount>
+          <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
+          <cbc:Percent>18</cbc:Percent>
+          <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">1000</cbc:ID>
+                  <cbc:Name>IGV</cbc:Name>
+                  <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="PEN">0</cbc:TaxableAmount>
+          <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
+          <cbc:Percent>0</cbc:Percent>
+          <cac:TaxCategory>
+        <cac:TaxScheme>
+          <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">9999</cbc:ID>
+                  <cbc:Name>OTROS</cbc:Name>
+                  <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:TaxExclusiveAmount currencyID="PEN">10.10</cbc:TaxExclusiveAmount>
+      <cbc:TaxInclusiveAmount currencyID="PEN">13.53</cbc:TaxInclusiveAmount>
+      <cbc:PayableAmount currencyID="PEN">13.53</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+      <cbc:InvoicedQuantity unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="PEN">10.50</cbc:LineExtensionAmount>
+      <cac:PricingReference>
+      <cac:AlternativeConditionPrice>
+        <cbc:PriceAmount currencyID="PEN">13.23</cbc:PriceAmount>
+              <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
+      </cac:AlternativeConditionPrice>
+    </cac:PricingReference>
+      <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
+          <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="PEN">10.50</cbc:TaxableAmount>
+              <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
+              <cbc:Percent>18</cbc:Percent>
+              <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">1000</cbc:ID>
+                      <cbc:Name>IGV</cbc:Name>
+                      <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+      <cac:Item>
+      <cbc:Description>Agua mineral</cbc:Description>
+          <cac:SellersItemIdentification>
+        <cbc:ID>123.456</cbc:ID>
+      </cac:SellersItemIdentification>
+    </cac:Item>
+      <cac:Price>
+      <cbc:PriceAmount currencyID="PEN">10.50</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+      <cbc:InvoicedQuantity unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="PEN">0.10</cbc:LineExtensionAmount>
+      <cac:PricingReference>
+      <cac:AlternativeConditionPrice>
+        <cbc:PriceAmount currencyID="PEN">0.30</cbc:PriceAmount>
+              <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
+      </cac:AlternativeConditionPrice>
+    </cac:PricingReference>
+      <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
+          <cac:TaxSubtotal>
+        <cbc:TaxableAmount currencyID="PEN">0</cbc:TaxableAmount>
+              <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
+              <cbc:Percent>0</cbc:Percent>
+              <cac:TaxCategory>
+          <cac:TaxScheme>
+            <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">9999</cbc:ID>
+                      <cbc:Name>OTROS</cbc:Name>
+                      <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
+          </cac:TaxScheme>
+        </cac:TaxCategory>
+      </cac:TaxSubtotal>
+    </cac:TaxTotal>
+      <cac:Item>
+      <cbc:Description>Bolsa Plástica</cbc:Description>
+          <cac:SellersItemIdentification>
+        <cbc:ID>333.4567</cbc:ID>
+      </cac:SellersItemIdentification>
+    </cac:Item>
+      <cac:Price>
+      <cbc:PriceAmount currencyID="PEN">0.10</cbc:PriceAmount>
+    </cac:Price>
+  </cac:InvoiceLine>
+</Invoice>

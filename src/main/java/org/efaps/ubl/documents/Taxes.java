@@ -130,32 +130,32 @@ public class Taxes
         }
     }
 
-    public static class RC
+    public static class ICB
         extends TaxEntry
     {
 
         @Override
         public BigDecimal getPercent()
         {
-            return new BigDecimal("8");
+            return new BigDecimal("0");
         }
 
         @Override
         public String getId()
         {
-            return "50";
+            return "9999";
         }
 
         @Override
         public String getName()
         {
-            return "RC";
+            return "OTROS";
         }
 
         @Override
         public String getCode()
         {
-            return "N/A";
+            return "OTH";
         }
     }
 
