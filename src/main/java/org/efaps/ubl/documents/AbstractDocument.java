@@ -54,6 +54,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private ISupplier supplier;
     private ICustomer customer;
     private List<ITaxEntry> taxes = new ArrayList<>();
+    private List<IChargeEntry> charges = new ArrayList<>();
     private List<ILine> lines = new ArrayList<>();
 
     public String getCurrency()
@@ -152,6 +153,29 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         this.taxes.add(tax);
         return getThis();
     }
+
+    public List<IChargeEntry> getCharges()
+    {
+        return charges;
+    }
+
+    public void setCharges(final List<IChargeEntry> charges)
+    {
+        this.charges = charges;
+    }
+
+    public T withCharges(final List<IChargeEntry> charges)
+    {
+        this.charges = charges;
+        return getThis();
+    }
+
+    public T withCharge(final IChargeEntry charge)
+    {
+        this.charges.add(charge);
+        return getThis();
+    }
+
 
     public ISupplier getSupplier()
     {
@@ -253,6 +277,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
+        invoice.setAllowanceCharge(Charges.getAllowanceCharge(getCharges()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);

@@ -1,13 +1,20 @@
 package org.efaps.ubl.documents;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
+import org.efaps.ubl.documents.Charges.ChargeEntry;
 import org.testng.annotations.Test;
 
 public class DocTest
@@ -75,5 +82,50 @@ public class DocTest
                                         .setTaxableAmount(new BigDecimal("100")))
                         .build());
         return ret;
+    }
+
+    @Test
+    public void invoiceWithOneItem() throws IOException {
+
+        final var lines = new ArrayList<ILine>();
+        lines.add(Line.builder().withSku("123.456")
+                        .withDescription("Pasta larga salsa tradicional")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("42.70"))
+                        .withCrossPrice(new BigDecimal("42.70"))
+                        .withNetUnitPrice(new BigDecimal("35"))
+                        .withNetPrice(new BigDecimal("35"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("6.30"))
+                                        .setTaxableAmount(new BigDecimal("35")))
+                        .withCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("35"))
+                                        .setAmount(new BigDecimal("2.80"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .build());
+
+        final var invoice = new Invoice()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 6, 13))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("6.30"))
+                                        .setTaxableAmount(new BigDecimal("35")))
+                        .withCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("35"))
+                                        .setAmount(new BigDecimal("2.80"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .withLines(lines);
+        final var ubl = invoice.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice1.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl,  xml);
     }
 }

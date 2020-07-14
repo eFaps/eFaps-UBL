@@ -48,6 +48,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Pri
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AllowanceChargeReasonCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -297,6 +298,16 @@ public class Utils
         itemIdentificationType.setID(line.getSku());
         ret.setSellersItemIdentification(itemIdentificationType);
         return ret;
+    }
+
+    public static AllowanceChargeReasonCodeType getAllowanceChargeReasonCode(final String reason)
+    {
+        final var allowanceChargeReasonCodeType = new AllowanceChargeReasonCodeType();
+        allowanceChargeReasonCodeType.setListAgencyName(AGENCYNAME);
+        allowanceChargeReasonCodeType.setListName("Cargo/descuento");
+        allowanceChargeReasonCodeType.setListURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo53");
+        allowanceChargeReasonCodeType.setValue(reason);
+        return allowanceChargeReasonCodeType;
     }
 
 }

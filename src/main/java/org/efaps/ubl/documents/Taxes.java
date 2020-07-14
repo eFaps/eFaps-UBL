@@ -129,4 +129,34 @@ public class Taxes
             return "VAT";
         }
     }
+
+    public static class RC
+        extends TaxEntry
+    {
+
+        @Override
+        public BigDecimal getPercent()
+        {
+            return new BigDecimal("8");
+        }
+
+        @Override
+        public String getId()
+        {
+            return "50";
+        }
+
+        @Override
+        public String getName()
+        {
+            return "RC";
+        }
+
+        @Override
+        public String getCode()
+        {
+            return "N/A";
+        }
+    }
+
 }

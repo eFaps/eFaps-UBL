@@ -8,6 +8,8 @@ public interface ILine
 
     List<ITaxEntry> getTaxEntries();
 
+    List<IChargeEntry> getCharges();
+
     BigDecimal getNetPrice();
 
     BigDecimal getCrossPrice();

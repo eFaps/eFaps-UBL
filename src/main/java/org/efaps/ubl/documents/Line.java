@@ -27,6 +27,8 @@ public class Line
 
     private List<ITaxEntry> taxEntries;
 
+    private List<IChargeEntry> charges = new ArrayList<>();
+
     private BigDecimal netPrice;
 
     private BigDecimal crossPrice;
@@ -69,6 +71,17 @@ public class Line
     public void setTaxEntries(final List<ITaxEntry> taxEntries)
     {
         this.taxEntries = taxEntries;
+    }
+
+    @Override
+    public List<IChargeEntry> getCharges()
+    {
+        return charges;
+    }
+
+    public void setCharges(final List<IChargeEntry> charges)
+    {
+        this.charges = charges;
     }
 
     @Override
@@ -176,6 +189,7 @@ public class Line
     {
 
         private List<ITaxEntry> taxEntries = new ArrayList<>();
+        private List<IChargeEntry> charges = new ArrayList<>();
         private BigDecimal netPrice;
         private BigDecimal crossPrice;
         private BigDecimal netUnitPrice;
@@ -197,6 +211,17 @@ public class Line
         public Builder withTaxEntries(final List<ITaxEntry> taxEntries)
         {
             this.taxEntries = taxEntries;
+            return this;
+        }
+
+        public Builder withCharge(final IChargeEntry charge) {
+            charges.add(charge);
+            return this;
+        }
+
+        public Builder withCharges(final List<IChargeEntry> charges)
+        {
+            this.charges = charges;
             return this;
         }
 
