@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import com.helger.ubl21.UBL21NamespaceContext;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ChargeTotalAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
@@ -51,6 +52,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private LocalDate date;
     private BigDecimal netTotal;
     private BigDecimal crossTotal;
+    private BigDecimal chargeTotal;
     private ISupplier supplier;
     private ICustomer customer;
     private List<ITaxEntry> taxes = new ArrayList<>();
@@ -225,6 +227,16 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
+    public BigDecimal getChargeTotal()
+    {
+        return chargeTotal;
+    }
+
+    public void setChargeTotal(final BigDecimal chargeTotal)
+    {
+        this.chargeTotal = chargeTotal;
+    }
+
     @Override
     public String toString()
     {
@@ -244,10 +256,21 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, getCrossTotal()));
         // ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class,
         // new BigDecimal("0")));
-        // ret.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class,
-        // new BigDecimal("0")));
         ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
+        evalChargeTotal(ret);
         return ret;
+    }
+
+    protected void evalChargeTotal(final MonetaryTotalType total)
+    {
+        if (getChargeTotal() != null) {
+            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getChargeTotal()));
+        } else if (!getCharges().isEmpty()) {
+            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getCharges().stream()
+                .map(entry -> {
+                    return entry.getAmount();
+                }).reduce(BigDecimal.ZERO, BigDecimal::add)));
+        }
     }
 
     public String getUBLXml()
