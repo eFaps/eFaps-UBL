@@ -64,6 +64,7 @@ public class DocTest
             .withKeyStorePath(".keystore")
             .withKeyStorePwd("changeit")
             .withKeyAlias("mykey")
+            .withKeyPwd("changeit")
             .signInvoice(ubl);
     }
 

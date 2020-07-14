@@ -74,6 +74,7 @@ public class Signing
     private String keyStorePath;
     private String keyStorePwd;
     private String keyAlias;
+    private String keyPwd;
 
     public Signing withKeyStorePath(final String keyStorePath)
     {
@@ -91,6 +92,17 @@ public class Signing
     {
         this.keyAlias = keyAlias;
         return this;
+    }
+
+    public Signing withKeyPwd(final String keyPwd)
+    {
+        this.keyPwd = keyPwd;
+        return this;
+    }
+
+    public boolean verify()
+    {
+        return getPrivateKey() != null && getCertificate() != null;
     }
 
     public SignResponseDto signInvoice(final String xml)
@@ -220,7 +232,7 @@ public class Signing
             final KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(new FileInputStream(getKeyStorePath()), getKeyStorePwd().toCharArray());
             ret = (KeyStore.PrivateKeyEntry) ks.getEntry(getKeyAlias(),
-                            new KeyStore.PasswordProtection(getKeyStorePwd().toCharArray()));
+                            new KeyStore.PasswordProtection(getKeyPwd().toCharArray()));
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableEntryException
                         | IOException e) {
             LOG.error("Catched", e);
@@ -241,5 +253,10 @@ public class Signing
     protected String getKeyStorePath()
     {
         return keyStorePath;
+    }
+
+    protected String getKeyPwd()
+    {
+        return keyPwd;
     }
 }
