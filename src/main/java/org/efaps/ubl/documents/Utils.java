@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
-import org.efaps.ubl.extension.AdditionalInformation;
-import org.efaps.ubl.extension.AdditionalProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +54,8 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Identif
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
-import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
 public class Utils
@@ -90,20 +86,11 @@ public class Utils
         return ret;
     }
 
-    public static UBLExtensionsType getWordsForAmount(final BigDecimal amount)
+    public static NoteType getWordsForAmount(final BigDecimal amount)
     {
-        final var ret = new UBLExtensionsType();
-        final var ublExtension = new UBLExtensionType();
-
-        final var extension = new ExtensionContentType();
-        ublExtension.setExtensionContent(extension);
-        final var additionalInformation = new AdditionalInformation();
-        extension.setAny(additionalInformation);
-        final var additionalProperty = new AdditionalProperty();
-        additionalInformation.setAdditionalProperty(additionalProperty);
-        additionalProperty.setId("1000");
-        additionalProperty.setValue(getWords4Number(amount));
-        ret.addUBLExtension(ublExtension);
+        final var ret = new NoteType();
+        ret.setLanguageLocaleID("1000");
+        ret.setValue(getWords4Number(amount));
         return ret;
     }
 
@@ -269,7 +256,7 @@ public class Utils
             priceType.setPriceTypeCode("01");
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             invoiceLine.setPricingReference(pricingReference);
-            invoiceLine.setTaxTotal(Taxes.getTaxTotal(line.getTaxEntries()));
+            invoiceLine.setTaxTotal(Taxes.getTaxTotal(line.getTaxEntries(), true));
             invoiceLine.setItem(getItem(line));
 
             final var priceType2 = new PriceType();

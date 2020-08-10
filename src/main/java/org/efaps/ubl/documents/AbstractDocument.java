@@ -293,7 +293,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         }
         invoice.setInvoiceTypeCode(Utils.getInvoiceType(getDocType()));
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
-        invoice.setUBLExtensions(Utils.getWordsForAmount(getCrossTotal()));
+        invoice.getNote().add(Utils.getWordsForAmount(getCrossTotal()));
         invoice.setLegalMonetaryTotal(getMonetaryTotal());
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.addSignature(Utils.getSignature(getSupplier()));

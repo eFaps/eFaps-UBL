@@ -66,6 +66,7 @@ import com.helger.xsds.xmldsig.X509DataType;
 
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 public class Signing
 {
@@ -126,6 +127,9 @@ public class Signing
             final var extension = new UBLExtensionType();
             final var extensionContent = new ExtensionContentType();
             extension.setExtensionContent(extensionContent);
+            if (invoice.getUBLExtensions() == null) {
+                invoice.setUBLExtensions(new UBLExtensionsType());
+            }
             invoice.getUBLExtensions().addUBLExtension(extension);
 
             final var doc = new Builder().setCharset(StandardCharsets.UTF_8)

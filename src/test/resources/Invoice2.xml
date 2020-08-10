@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sac="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
-  <cec:UBLExtensions>
-    <cec:UBLExtension>
-      <cec:ExtensionContent>
-        <sac:AdditionalInformation>
-          <sac:AdditionalProperty>
-            <cbc:ID schemeID="1000" />
-                      <cbc:Value>TRECE Y 53/100 </cbc:Value>
-          </sac:AdditionalProperty>
-        </sac:AdditionalInformation>
-      </cec:ExtensionContent>
-    </cec:UBLExtension>
-  </cec:UBLExtensions>
   <cbc:UBLVersionID>2.1</cbc:UBLVersionID>
   <cbc:CustomizationID schemeAgencyName="PE:SUNAT">2.0</cbc:CustomizationID>
   <cbc:ID>F001-000156</cbc:ID>
   <cbc:IssueDate>2020-06-13</cbc:IssueDate>
   <cbc:InvoiceTypeCode listID="0101" listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">03</cbc:InvoiceTypeCode>
+  <cbc:Note languageLocaleID="1000">TRECE Y 53/100 </cbc:Note>
   <cbc:DocumentCurrencyCode listID="ISO 4217 Alpha" listAgencyName="United Nations Economic Commission for Europe" listName="Currency">PEN</cbc:DocumentCurrencyCode>
   <cac:Signature>
     <cbc:ID>SB001-000095</cbc:ID>
@@ -88,9 +77,9 @@
       <cac:TaxSubtotal>
       <cbc:TaxableAmount currencyID="PEN">10.50</cbc:TaxableAmount>
           <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
-          <cbc:Percent>18</cbc:Percent>
           <cac:TaxCategory>
-        <cac:TaxScheme>
+        <cbc:Percent>18</cbc:Percent>
+              <cac:TaxScheme>
           <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">1000</cbc:ID>
                   <cbc:Name>IGV</cbc:Name>
                   <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
@@ -103,9 +92,9 @@
       <cac:TaxSubtotal>
       <cbc:TaxableAmount currencyID="PEN">0</cbc:TaxableAmount>
           <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
-          <cbc:Percent>0</cbc:Percent>
           <cac:TaxCategory>
-        <cac:TaxScheme>
+        <cbc:Percent>0</cbc:Percent>
+              <cac:TaxScheme>
           <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">9999</cbc:ID>
                   <cbc:Name>OTROS</cbc:Name>
                   <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
@@ -134,9 +123,10 @@
           <cac:TaxSubtotal>
         <cbc:TaxableAmount currencyID="PEN">10.50</cbc:TaxableAmount>
               <cbc:TaxAmount currencyID="PEN">1.89</cbc:TaxAmount>
-              <cbc:Percent>18</cbc:Percent>
               <cac:TaxCategory>
-          <cac:TaxScheme>
+          <cbc:Percent>18</cbc:Percent>
+                  <cbc:TaxExemptionReasonCode>40</cbc:TaxExemptionReasonCode>
+                  <cac:TaxScheme>
             <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">1000</cbc:ID>
                       <cbc:Name>IGV</cbc:Name>
                       <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
@@ -155,7 +145,7 @@
     </cac:Price>
   </cac:InvoiceLine>
   <cac:InvoiceLine>
-    <cbc:ID>1</cbc:ID>
+    <cbc:ID>2</cbc:ID>
       <cbc:InvoicedQuantity unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">1</cbc:InvoicedQuantity>
       <cbc:LineExtensionAmount currencyID="PEN">0.10</cbc:LineExtensionAmount>
       <cac:PricingReference>
@@ -169,9 +159,10 @@
           <cac:TaxSubtotal>
         <cbc:TaxableAmount currencyID="PEN">0</cbc:TaxableAmount>
               <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
-              <cbc:Percent>0</cbc:Percent>
               <cac:TaxCategory>
-          <cac:TaxScheme>
+          <cbc:Percent>0</cbc:Percent>
+                  <cbc:TaxExemptionReasonCode />
+                  <cac:TaxScheme>
             <cbc:ID schemeID="UN/ECE 5153" schemeAgencyID="6">9999</cbc:ID>
                       <cbc:Name>OTROS</cbc:Name>
                       <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
