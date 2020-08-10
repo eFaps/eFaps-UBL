@@ -255,10 +255,11 @@ public class Utils
     public static List<InvoiceLineType> getInvoiceLines(final List<ILine> lines)
     {
         final var ret = new ArrayList<InvoiceLineType>();
+        var idx = 1;
         for (final var line : lines) {
             final var invoiceLine = new InvoiceLineType();
             ret.add(invoiceLine);
-            invoiceLine.setID("1");
+            invoiceLine.setID(String.valueOf(idx));
             invoiceLine.setInvoicedQuantity(getInvoicedQuantity(line));
             invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
 
@@ -274,6 +275,7 @@ public class Utils
             final var priceType2 = new PriceType();
             priceType2.setPriceAmount(getAmount(PriceAmountType.class, line.getNetUnitPrice()));
             invoiceLine.setPrice(priceType2);
+            idx++;
         }
         return ret;
     }

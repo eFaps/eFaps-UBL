@@ -33,4 +33,6 @@ public interface ITaxEntry
 
     String getCode();
 
+    String getTaxExemptionReasonCode();
+
 }

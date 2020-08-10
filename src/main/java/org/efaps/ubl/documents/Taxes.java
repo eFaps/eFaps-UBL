@@ -32,31 +32,34 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Taxable
 public class Taxes
 {
 
-    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries)
+    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean includeTaxExemption)
     {
         final var ret = new ArrayList<TaxTotalType>();
         for (final var taxEntry : taxEntries) {
             final var taxTotal = new TaxTotalType();
             ret.add(taxTotal);
             taxTotal.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
-            taxTotal.setTaxSubtotal(Collections.singletonList(getTaxSubtotal(taxEntry)));
+            taxTotal.setTaxSubtotal(Collections.singletonList(getTaxSubtotal(taxEntry, includeTaxExemption)));
         }
         return ret;
     }
 
-    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry)
+    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry, final boolean includeTaxExemption)
     {
         final var ret = new TaxSubtotalType();
         ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()));
         ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
-        ret.setPercent(taxEntry.getPercent());
-        ret.setTaxCategory(getTaxCategory(taxEntry));
+        ret.setTaxCategory(getTaxCategory(taxEntry, includeTaxExemption));
         return ret;
     }
 
-    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry)
+    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry, final boolean includeTaxExemption)
     {
         final var ret = new TaxCategoryType();
+        if (includeTaxExemption) {
+            ret.setTaxExemptionReasonCode(taxEntry.getTaxExemptionReasonCode());
+        }
+        ret.setPercent(taxEntry.getPercent());
         final var taxScheme = new TaxSchemeType();
         final var idType = new IDType();
         idType.setSchemeAgencyID("6");
@@ -128,6 +131,12 @@ public class Taxes
         {
             return "VAT";
         }
+
+        @Override
+        public String getTaxExemptionReasonCode()
+        {
+            return "40";
+        }
     }
 
     public static class ICB
@@ -156,6 +165,12 @@ public class Taxes
         public String getCode()
         {
             return "OTH";
+        }
+
+        @Override
+        public String getTaxExemptionReasonCode()
+        {
+            return null;
         }
     }
 

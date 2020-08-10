@@ -295,7 +295,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
         invoice.setUBLExtensions(Utils.getWordsForAmount(getCrossTotal()));
         invoice.setLegalMonetaryTotal(getMonetaryTotal());
-        invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes()));
+        invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.addSignature(Utils.getSignature(getSupplier()));
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
