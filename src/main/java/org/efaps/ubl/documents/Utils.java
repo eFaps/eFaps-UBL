@@ -72,7 +72,7 @@ public class Utils
         ret.setListID("0101");
         ret.setListName("Tipo de Documento");
         ret.setListURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01");
-        ret.setValue("03");
+        ret.setValue(type);
         return ret;
     }
 
