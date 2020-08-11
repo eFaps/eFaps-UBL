@@ -32,6 +32,7 @@ import org.efaps.ubl.extension.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
@@ -277,6 +278,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     {
         if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
             UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+            UBL21NamespaceContext.getInstance().removeMapping("cec");
+            UBL21NamespaceContext.getInstance().addMapping ("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
         }
         final InvoiceType invoice = new InvoiceType();
         invoice.setUBLVersionID("2.1");
