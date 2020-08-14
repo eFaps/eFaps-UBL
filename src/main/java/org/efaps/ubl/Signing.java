@@ -33,7 +33,9 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Iterator;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -48,6 +50,7 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -242,12 +245,26 @@ public class Signing
     {
         SignResponseDto ret = null;
         try {
+            final var invoice = new Reader().read(xml);
+            final var extension = new UBLExtensionType();
+            final var extensionContent = new ExtensionContentType();
+            extension.setExtensionContent(extensionContent);
+            if (invoice.getUBLExtensions() == null) {
+                invoice.setUBLExtensions(new UBLExtensionsType());
+            }
+            invoice.getUBLExtensions().addUBLExtension(extension);
+
+            final var xml2 = new Builder().setCharset(StandardCharsets.UTF_8)
+                            .setUseSchema(false)
+                            .setFormattedOutput(true).getAsString(invoice);
+
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             final DocumentBuilder builder = dbf.newDocumentBuilder();
-            final var doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes()));
             final XPathFactory factory = XPathFactory.newInstance();
             final XPath xPath = factory.newXPath();
+            xPath.setNamespaceContext(new UniversalNamespaceResolver(doc));
 
             if (doc != null) {
                 final NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc,
@@ -284,7 +301,7 @@ public class Signing
             final X509Data xd = keyInfoFactory.newX509Data(x509Content);
             final KeyInfo ki = keyInfoFactory.newKeyInfo(Collections.singletonList(xd));
 
-            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), doc.getDocumentElement());
+            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), getNodeToSign(doc, xPath));
             final XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, ki);
             dsc.setDefaultNamespacePrefix("ds");
             signature.sign(dsc);
@@ -319,11 +336,23 @@ public class Signing
         return ret;
     }
 
+    protected Node getNodeToSign(final Document doc, final XPath xpath)
+        throws XPathExpressionException
+    {
+        final var nodeToSign = (Node) xpath.evaluate(
+                        "//ext:UBLExtensions/ext:UBLExtension/ext:ExtensionContent", doc,
+                        XPathConstants.NODE);
+        if (nodeToSign == null) {
+
+        }
+        return nodeToSign;
+    }
+
     protected String getSignReference(final Document doc, final XPath xpath)
         throws XPathExpressionException
     {
         final String value = (String) xpath.evaluate(
-                        "Invoice/cac:Signature/cac:DigitalSignatureAttachment/cac:ExternalReference/cbc:URI", doc,
+                        "//cac:Signature/cac:DigitalSignatureAttachment/cac:ExternalReference/cbc:URI", doc,
                         XPathConstants.STRING);
         return value;
     }
@@ -371,5 +400,40 @@ public class Signing
     protected String getKeyPwd()
     {
         return keyPwd;
+    }
+
+    public static class UniversalNamespaceResolver
+        implements NamespaceContext
+    {
+
+        private final Document sourceDocument;
+
+        public UniversalNamespaceResolver(final Document document)
+        {
+            sourceDocument = document;
+        }
+
+        @Override
+        public String getNamespaceURI(final String prefix)
+        {
+            if (prefix.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+                return sourceDocument.lookupNamespaceURI(null);
+            } else {
+                return sourceDocument.lookupNamespaceURI(prefix);
+            }
+        }
+
+        @Override
+        public String getPrefix(final String namespaceURI)
+        {
+            return sourceDocument.lookupPrefix(namespaceURI);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Iterator getPrefixes(final String namespaceURI)
+        {
+            return null;
+        }
     }
 }

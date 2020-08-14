@@ -78,11 +78,11 @@ public class SignTest
     }
 
     @Test
-    public void verifySignature()
+    public void verifySignature1()
         throws IOException, SAXException, ParserConfigurationException, XMLSignatureException
     {
         final ClassLoader classLoader = getClass().getClassLoader();
-        final File file = new File(classLoader.getResource("InvoiceWithSignature.xml").getFile());
+        final File file = new File(classLoader.getResource("InvoiceWithSignature1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
