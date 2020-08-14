@@ -1,3 +1,19 @@
+/*
+ * Copyright 2003 - 2020 The eFaps Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package org.efaps.ubl.documents;
 
 import static org.testng.Assert.assertEquals;
@@ -20,7 +36,8 @@ import org.testng.annotations.Test;
 public class DocTest
 {
 
-    private Supplier getSupplier() {
+    public static Supplier getSupplier()
+    {
         final var ret = new Supplier();
         ret.setCountry("PE");
         ret.setAnexo("1000");
@@ -33,7 +50,8 @@ public class DocTest
         return ret;
     }
 
-    private Customer getCustomer() {
+    public static Customer getCustomer()
+    {
         final var ret = new Customer();
         ret.setCountry("PE");
         ret.setDOI("43289672");
@@ -43,32 +61,7 @@ public class DocTest
         return ret;
     }
 
-    @Test
-    public void createInvoice() throws DatatypeConfigurationException
-    {
-        final var invoice = new Invoice()
-                        .withSupplier(getSupplier())
-                        .withCustomer(getCustomer())
-                        .withCurrency("PEN")
-                        .withNumber("F001-000156")
-                        .withDate(LocalDate.of(2020, 8, 16))
-                        .withNetTotal(new BigDecimal("100"))
-                        .withCrossTotal(new BigDecimal("118"))
-                        .withTax(new Taxes.IGV()
-                                        .setAmount(new BigDecimal("18"))
-                                        .setTaxableAmount(new BigDecimal("100")))
-                        .withLines(getLines());
-
-        final var ubl = invoice.getUBLXml();
-        new Signing()
-            .withKeyStorePath(".keystore")
-            .withKeyStorePwd("changeit")
-            .withKeyAlias("mykey")
-            .withKeyPwd("changeit")
-            .signInvoice(ubl);
-    }
-
-    private List<ILine> getLines()
+    public static List<ILine> getLines()
     {
         final var ret = new ArrayList<ILine>();
         ret.add(Line.builder().withSku("123.456")
@@ -86,7 +79,35 @@ public class DocTest
     }
 
     @Test
-    public void invoiceWithOneItemTaxAndCharge() throws IOException {
+    public void createInvoice()
+        throws DatatypeConfigurationException
+    {
+        final var invoice = new Invoice()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 8, 16))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getLines());
+
+        final var ubl = invoice.getUBLXml();
+        new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signInvoice(ubl);
+    }
+
+    @Test
+    public void invoiceWithOneItemTaxAndCharge()
+        throws IOException
+    {
 
         final var lines = new ArrayList<ILine>();
         lines.add(Line.builder().withSku("123.456")
@@ -127,11 +148,13 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl,  xml);
+        assertEquals(ubl, xml);
     }
 
     @Test
-    public void invoiceWithPerUnitTax() throws IOException {
+    public void invoiceWithPerUnitTax()
+        throws IOException
+    {
 
         final var lines = new ArrayList<ILine>();
         lines.add(Line.builder().withSku("123.456")
@@ -187,6 +210,6 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice2.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl,  xml);
+        assertEquals(ubl, xml);
     }
 }

@@ -16,8 +16,10 @@
  */
 package org.efaps.ubl;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
@@ -47,10 +49,27 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.efaps.ubl.dto.SignResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.helger.xsds.xmldsig.CanonicalizationMethodType;
 import com.helger.xsds.xmldsig.DigestMethodType;
@@ -106,7 +125,7 @@ public class Signing
         return getPrivateKey() != null && getCertificate() != null;
     }
 
-    public SignResponseDto signInvoice(final String xml)
+    public SignResponseDto signInvoiceV1(final String xml)
     {
         SignResponseDto ret = null;
         try {
@@ -144,7 +163,7 @@ public class Signing
             final X509Data xd = kif.newX509Data(x509Content);
             final KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
 
-            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), doc.getDocumentElement());
+            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), doc.getDocumentElement().getFirstChild());
 
             final XMLSignature signature = xmlSignatureFactory.newXMLSignature(info, ki);
             signature.sign(dsc);
@@ -217,6 +236,96 @@ public class Signing
             LOG.error("Catched", e);
         }
         return ret;
+    }
+
+    public SignResponseDto signInvoice(final String xml)
+    {
+        SignResponseDto ret = null;
+        try {
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            final DocumentBuilder builder = dbf.newDocumentBuilder();
+            final var doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+            final XPathFactory factory = XPathFactory.newInstance();
+            final XPath xPath = factory.newXPath();
+
+            if (doc != null) {
+                final NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc,
+                                XPathConstants.NODESET);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    final Node nodeO = nodeList.item(i);
+                    final Node nodeN = nodeO.cloneNode(true);
+                    nodeN.setNodeValue(nodeO.getNodeValue().replaceAll("(\\t|\\ )", ""));
+                    nodeO.getParentNode().replaceChild(nodeN, nodeO);
+                }
+            }
+
+            final var signatureFactory = XMLSignatureFactory.getInstance("DOM");
+            final var ref = signatureFactory.newReference("",
+                            signatureFactory.newDigestMethod("http://www.w3.org/2000/09/xmldsig#sha1", null),
+                            Collections.singletonList(
+                                            signatureFactory.newTransform(
+                                                            "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
+                                                            (TransformParameterSpec) null)),
+                            null, null);
+            final var signedInfo = signatureFactory.newSignedInfo(
+                            signatureFactory.newCanonicalizationMethod(
+                                            "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
+                                            (C14NMethodParameterSpec) null),
+                            signatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
+                            Collections.singletonList(ref));
+
+            final var x509Content = new ArrayList<Object>();
+            final var cert = getCertificate();
+            x509Content.add(cert.getSubjectX500Principal().getName());
+            x509Content.add(cert);
+
+            final var keyInfoFactory = signatureFactory.getKeyInfoFactory();
+            final X509Data xd = keyInfoFactory.newX509Data(x509Content);
+            final KeyInfo ki = keyInfoFactory.newKeyInfo(Collections.singletonList(xd));
+
+            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), doc.getDocumentElement());
+            final XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, ki);
+            dsc.setDefaultNamespacePrefix("ds");
+            signature.sign(dsc);
+
+            final var hash = signature.getSignedInfo().getReferences().get(0).getDigestValue();
+
+            final var idReference = getSignReference(doc, xPath);
+            final Element elementParent = (Element) dsc.getParent();
+            if (idReference != null && elementParent.getElementsByTagName("ds:Signature") != null) {
+                final Element elementSignature = (Element) elementParent.getElementsByTagName("ds:Signature").item(0);
+                elementSignature.setAttribute("Id", idReference);
+            }
+
+            final DOMSource source = new DOMSource(doc);
+            final StringWriter out = new StringWriter();
+            final StreamResult result = new StreamResult(out);
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
+
+            transformer.setOutputProperty("encoding", "UTF-8");
+            transformer.transform(source, result);
+
+            ret = SignResponseDto.builder()
+                            .withUbl(out.toString())
+                            .withHash(Base64.getEncoder().encodeToString(hash))
+                            .build();
+        } catch (final NoSuchAlgorithmException | ParserConfigurationException | SAXException | IOException
+                        | InvalidAlgorithmParameterException | MarshalException | XMLSignatureException
+                        | XPathExpressionException | TransformerException e) {
+            LOG.error("Catched", e);
+        }
+        return ret;
+    }
+
+    protected String getSignReference(final Document doc, final XPath xpath)
+        throws XPathExpressionException
+    {
+        final String value = (String) xpath.evaluate(
+                        "Invoice/cac:Signature/cac:DigitalSignatureAttachment/cac:ExternalReference/cbc:URI", doc,
+                        XPathConstants.STRING);
+        return value;
     }
 
     protected X509Certificate getCertificate()
