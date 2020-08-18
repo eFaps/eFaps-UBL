@@ -66,6 +66,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.efaps.ubl.dto.SignResponseDto;
+import org.efaps.ubl.extension.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -74,6 +75,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.helger.ubl21.CUBL21;
+import com.helger.ubl21.UBL21NamespaceContext;
 import com.helger.xsds.xmldsig.CanonicalizationMethodType;
 import com.helger.xsds.xmldsig.DigestMethodType;
 import com.helger.xsds.xmldsig.KeyInfoType;
@@ -254,6 +257,12 @@ public class Signing
             }
             invoice.getUBLExtensions().addUBLExtension(extension);
 
+            if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
+                UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                UBL21NamespaceContext.getInstance().removeMapping("cec");
+                UBL21NamespaceContext.getInstance().addMapping ("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+            }
+
             final var xml2 = new Builder().setCharset(StandardCharsets.UTF_8)
                             .setUseSchema(false)
                             .setFormattedOutput(true).getAsString(invoice);
@@ -261,7 +270,7 @@ public class Signing
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             final DocumentBuilder builder = dbf.newDocumentBuilder();
-            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes()));
+            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes(StandardCharsets.UTF_8)));
             final XPathFactory factory = XPathFactory.newInstance();
             final XPath xPath = factory.newXPath();
             xPath.setNamespaceContext(new UniversalNamespaceResolver(doc));

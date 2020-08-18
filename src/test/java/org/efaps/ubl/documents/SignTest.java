@@ -16,6 +16,7 @@
  */
 package org.efaps.ubl.documents;
 
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -87,6 +88,30 @@ public class SignTest
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         final Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+        final var validation = XMLDSigValidator.validateSignature(doc);
+        assertTrue(validation.isSignatureValid());
+    }
+
+
+    @Test
+    public void signFromFile()
+        throws IOException, SAXException, ParserConfigurationException, XMLSignatureException
+    {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice3.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        final var signResponseDto = new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signInvoice(xml);
+        final var signed = signResponseDto.getUbl();
+        assertNotNull(signed);
+
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        final Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signed.getBytes()));
         final var validation = XMLDSigValidator.validateSignature(doc);
         assertTrue(validation.isSignatureValid());
     }
