@@ -18,7 +18,6 @@ package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxCategoryType;
@@ -35,12 +34,16 @@ public class Taxes
     public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean includeTaxExemption)
     {
         final var ret = new ArrayList<TaxTotalType>();
+        final var taxTotal = new TaxTotalType();
+        ret.add(taxTotal);
+        final var subTotals = new ArrayList<TaxSubtotalType>();
         for (final var taxEntry : taxEntries) {
-            final var taxTotal = new TaxTotalType();
-            ret.add(taxTotal);
-            taxTotal.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
-            taxTotal.setTaxSubtotal(Collections.singletonList(getTaxSubtotal(taxEntry, includeTaxExemption)));
+            subTotals.add(getTaxSubtotal(taxEntry, includeTaxExemption));
         }
+        taxTotal.setTaxSubtotal(subTotals);
+        taxTotal.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntries.stream()
+                        .map(entry -> { return entry.getAmount(); })
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)));
         return ret;
     }
 
