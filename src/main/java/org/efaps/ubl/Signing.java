@@ -438,7 +438,7 @@ public class Signing
             return sourceDocument.lookupPrefix(namespaceURI);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         @Override
         public Iterator getPrefixes(final String namespaceURI)
         {
