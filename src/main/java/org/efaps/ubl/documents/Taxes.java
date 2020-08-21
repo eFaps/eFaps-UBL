@@ -24,21 +24,23 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Tax
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSchemeType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxSubtotalType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.BaseUnitMeasureType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PerUnitAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxableAmountType;
 
 public class Taxes
 {
 
-    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean includeTaxExemption)
+    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean isItem)
     {
         final var ret = new ArrayList<TaxTotalType>();
         final var taxTotal = new TaxTotalType();
         ret.add(taxTotal);
         final var subTotals = new ArrayList<TaxSubtotalType>();
         for (final var taxEntry : taxEntries) {
-            subTotals.add(getTaxSubtotal(taxEntry, includeTaxExemption));
+            subTotals.add(getTaxSubtotal(taxEntry, isItem));
         }
         taxTotal.setTaxSubtotal(subTotals);
         taxTotal.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntries.stream()
@@ -47,22 +49,39 @@ public class Taxes
         return ret;
     }
 
-    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry, final boolean includeTaxExemption)
+    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry, final boolean isItem)
     {
         final var ret = new TaxSubtotalType();
-        ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()));
+        if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
+            ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()));
+        }
+        if (TaxType.PERUNIT.equals(taxEntry.getTaxType())) {
+            final var baseUnitMeasure = new BaseUnitMeasureType();
+            baseUnitMeasure.setUnitCode("NIU");
+            baseUnitMeasure.setValue(BigDecimal.ONE);
+            ret.setBaseUnitMeasure(baseUnitMeasure);
+        }
         ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
-        ret.setTaxCategory(getTaxCategory(taxEntry, includeTaxExemption));
+        ret.setTaxCategory(getTaxCategory(taxEntry, isItem));
         return ret;
     }
 
-    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry, final boolean includeTaxExemption)
+    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry, final boolean isItem)
     {
         final var ret = new TaxCategoryType();
-        if (includeTaxExemption) {
+        if (isItem) {
             ret.setTaxExemptionReasonCode(taxEntry.getTaxExemptionReasonCode());
         }
-        ret.setPercent(taxEntry.getPercent());
+
+        if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
+            ret.setPercent(taxEntry.getPercent());
+        }
+
+        if (TaxType.PERUNIT.equals(taxEntry.getTaxType())) {
+            ret.setPercent(taxEntry.getAmount());
+            ret.setPerUnitAmount(Utils.getAmount(PerUnitAmountType.class, taxEntry.getAmount()));
+        }
+
         final var taxScheme = new TaxSchemeType();
         final var idType = new IDType();
         idType.setSchemeAgencyID("6");

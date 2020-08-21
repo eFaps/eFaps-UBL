@@ -14,29 +14,11 @@
  * limitations under the License.
  *
  */
+
 package org.efaps.ubl.documents;
 
-import java.math.BigDecimal;
-
-public interface ITaxEntry
+public enum TaxType
 {
-
-    BigDecimal getAmount();
-
-    BigDecimal getTaxableAmount();
-
-    BigDecimal getPercent();
-
-    String getId();
-
-    String getName();
-
-    String getCode();
-
-    String getTaxExemptionReasonCode();
-
-    default TaxType getTaxType()
-    {
-        return TaxType.ADVALOREM;
-    }
+    ADVALOREM,
+    PERUNIT;
 }
