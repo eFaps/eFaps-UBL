@@ -70,8 +70,8 @@ public class Utils
         final var ret = new InvoiceTypeCodeType();
         ret.setListAgencyName("PE:SUNAT");
         ret.setListID("0101");
-        ret.setListName("Tipo de Documento");
-        ret.setListURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01");
+        ret.setListName(Catalogs.TDOC.getName());
+        ret.setListURI(Catalogs.TDOC.getURI());
         ret.setValue(type);
         return ret;
     }
@@ -169,8 +169,8 @@ public class Utils
         final var idType = new IDType();
         idType.setSchemeAgencyName(AGENCYNAME);
         idType.setSchemeID(party.getDoiType());
-        idType.setSchemeName("Documento de Identidad");
-        idType.setSchemeURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06");
+        idType.setSchemeName(Catalogs.DOI.getName());
+        idType.setSchemeURI(Catalogs.DOI.getURI());
         idType.setValue(party.getDOI());
         ret.setID(idType);
         return ret;
@@ -293,10 +293,9 @@ public class Utils
     {
         final var allowanceChargeReasonCodeType = new AllowanceChargeReasonCodeType();
         allowanceChargeReasonCodeType.setListAgencyName(AGENCYNAME);
-        allowanceChargeReasonCodeType.setListName("Cargo/descuento");
-        allowanceChargeReasonCodeType.setListURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo53");
+        allowanceChargeReasonCodeType.setListName(Catalogs.CADE.getName());
+        allowanceChargeReasonCodeType.setListURI(Catalogs.CADE.getURI());
         allowanceChargeReasonCodeType.setValue(reason);
         return allowanceChargeReasonCodeType;
     }
-
 }

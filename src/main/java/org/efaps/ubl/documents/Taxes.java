@@ -28,6 +28,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.BaseUni
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PerUnitAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExemptionReasonCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxableAmountType;
 
 public class Taxes
@@ -56,10 +57,15 @@ public class Taxes
             ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()));
         }
         if (TaxType.PERUNIT.equals(taxEntry.getTaxType())) {
-            final var baseUnitMeasure = new BaseUnitMeasureType();
-            baseUnitMeasure.setUnitCode("NIU");
-            baseUnitMeasure.setValue(BigDecimal.ONE);
-            ret.setBaseUnitMeasure(baseUnitMeasure);
+            if (isItem) {
+                final var baseUnitMeasure = new BaseUnitMeasureType();
+                baseUnitMeasure.setUnitCode("NIU");
+                baseUnitMeasure.setValue(BigDecimal.ONE);
+                ret.setBaseUnitMeasure(baseUnitMeasure);
+            } else {
+                // for per unit the taxable amount for the doc is the same as the amount
+                ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getAmount()));
+            }
         }
         ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
         ret.setTaxCategory(getTaxCategory(taxEntry, isItem));
@@ -69,23 +75,30 @@ public class Taxes
     public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry, final boolean isItem)
     {
         final var ret = new TaxCategoryType();
-        if (isItem) {
-            ret.setTaxExemptionReasonCode(taxEntry.getTaxExemptionReasonCode());
-        }
-
         if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
             ret.setPercent(taxEntry.getPercent());
+            if (isItem) {
+                final var taxExemptionReasonCode = new TaxExemptionReasonCodeType();
+                taxExemptionReasonCode.setListAgencyName(Utils.AGENCYNAME);
+                taxExemptionReasonCode.setListName(Catalogs.AIGV.getName());
+                taxExemptionReasonCode.setListURI(Catalogs.AIGV.getURI());
+                taxExemptionReasonCode.setValue(taxEntry.getTaxExemptionReasonCode());
+                ret.setTaxExemptionReasonCode(taxExemptionReasonCode);
+            }
         }
 
         if (TaxType.PERUNIT.equals(taxEntry.getTaxType())) {
-            ret.setPercent(taxEntry.getAmount());
-            ret.setPerUnitAmount(Utils.getAmount(PerUnitAmountType.class, taxEntry.getAmount()));
+            if (isItem) {
+                ret.setPercent(taxEntry.getAmount());
+                ret.setPerUnitAmount(Utils.getAmount(PerUnitAmountType.class, taxEntry.getAmount()));
+            }
         }
 
         final var taxScheme = new TaxSchemeType();
         final var idType = new IDType();
-        idType.setSchemeAgencyID("6");
-        idType.setSchemeID("UN/ECE 5153");
+        idType.setSchemeAgencyName(Utils.AGENCYNAME);
+        idType.setSchemeName(Catalogs.TAX.getName());
+        idType.setSchemeURI(Catalogs.TAX.getURI());
         idType.setValue(taxEntry.getId());
         taxScheme.setID(idType);
         taxScheme.setName(taxEntry.getName());
@@ -193,6 +206,12 @@ public class Taxes
         public String getTaxExemptionReasonCode()
         {
             return null;
+        }
+
+        @Override
+        public TaxType getTaxType()
+        {
+            return TaxType.PERUNIT;
         }
     }
 
