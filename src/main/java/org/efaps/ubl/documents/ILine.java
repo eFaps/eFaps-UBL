@@ -8,7 +8,7 @@ public interface ILine
 
     List<ITaxEntry> getTaxEntries();
 
-    List<IChargeEntry> getCharges();
+    List<IAllowanceChargeEntry> getAllowancesCharges();
 
     BigDecimal getNetPrice();
 

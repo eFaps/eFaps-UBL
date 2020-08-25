@@ -30,7 +30,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
-import org.efaps.ubl.documents.Charges.ChargeEntry;
+import org.efaps.ubl.documents.AllowancesCharges.ChargeEntry;
 import org.testng.annotations.Test;
 
 public class DocTest
@@ -120,7 +120,7 @@ public class DocTest
                         .withTax(new Taxes.IGV()
                                         .setAmount(new BigDecimal("6.30"))
                                         .setTaxableAmount(new BigDecimal("35")))
-                        .withCharge(new ChargeEntry()
+                        .withAllowanceCharge(new ChargeEntry()
                                         .setReason("50")
                                         .setBaseAmount(new BigDecimal("35"))
                                         .setAmount(new BigDecimal("2.80"))
@@ -138,7 +138,7 @@ public class DocTest
                         .withTax(new Taxes.IGV()
                                         .setAmount(new BigDecimal("6.30"))
                                         .setTaxableAmount(new BigDecimal("35")))
-                        .withCharge(new ChargeEntry()
+                        .withAllowanceCharge(new ChargeEntry()
                                         .setReason("50")
                                         .setBaseAmount(new BigDecimal("35"))
                                         .setAmount(new BigDecimal("2.80"))
@@ -167,7 +167,7 @@ public class DocTest
                         .withTax(new Taxes.IGV()
                                         .setAmount(new BigDecimal("1.89"))
                                         .setTaxableAmount(new BigDecimal("10.50")))
-                        .withCharge(new ChargeEntry()
+                        .withAllowanceCharge(new ChargeEntry()
                                         .setReason("50")
                                         .setBaseAmount(new BigDecimal("10.50"))
                                         .setAmount(new BigDecimal("0.84"))
@@ -200,7 +200,7 @@ public class DocTest
                         .withTax(new Taxes.ICB()
                                         .setAmount(new BigDecimal("0.20"))
                                         .setTaxableAmount(new BigDecimal("0")))
-                        .withCharge(new ChargeEntry()
+                        .withAllowanceCharge(new ChargeEntry()
                                         .setReason("50")
                                         .setBaseAmount(new BigDecimal("10.50"))
                                         .setAmount(new BigDecimal("0.84"))

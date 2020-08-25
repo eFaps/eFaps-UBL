@@ -16,13 +16,19 @@
  */
 package org.efaps.ubl.documents;
 
-public interface IChargeEntry
-    extends IAllowanceChargeEntry
+import java.math.BigDecimal;
+
+public interface IAllowanceChargeEntry
 {
 
-    @Override
-    default boolean isCharge()
-    {
-        return true;
-    }
+    String getReason();
+
+    BigDecimal getFactor();
+
+    BigDecimal getAmount();
+
+    BigDecimal getBaseAmount();
+
+    boolean isCharge();
+
 }

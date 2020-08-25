@@ -16,13 +16,13 @@
  */
 package org.efaps.ubl.documents;
 
-public interface IChargeEntry
+public interface IAllowanceEntry
     extends IAllowanceChargeEntry
 {
 
     @Override
     default boolean isCharge()
     {
-        return true;
+        return false;
     }
 }

@@ -24,20 +24,21 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.All
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.BaseAmountType;
 
-public class Charges
+public class AllowancesCharges
 {
 
-    public static List<AllowanceChargeType> getAllowanceCharge(final List<IChargeEntry> chargeEntries)
+    public static List<AllowanceChargeType> getAllowanceCharge(final List<IAllowanceChargeEntry> allowanceChargeEntries)
     {
         final var ret = new ArrayList<AllowanceChargeType>();
-        for (final var chargeEntry : chargeEntries) {
+        for (final var allowanceChargeEntry : allowanceChargeEntries) {
             final var allowanceCharge = new AllowanceChargeType();
             ret.add(allowanceCharge);
-            allowanceCharge.setChargeIndicator(true);
-            allowanceCharge.setAllowanceChargeReasonCode(Utils.getAllowanceChargeReasonCode(chargeEntry.getReason()));
-            allowanceCharge.setMultiplierFactorNumeric(chargeEntry.getFactor());
-            allowanceCharge.setAmount(Utils.getAmount(AmountType.class, chargeEntry.getAmount()));
-            allowanceCharge.setBaseAmount(Utils.getAmount(BaseAmountType.class, chargeEntry.getBaseAmount()));
+            allowanceCharge.setChargeIndicator(allowanceChargeEntry.isCharge());
+            allowanceCharge.setAllowanceChargeReasonCode(
+                            Utils.getAllowanceChargeReasonCode(allowanceChargeEntry.getReason()));
+            allowanceCharge.setMultiplierFactorNumeric(allowanceChargeEntry.getFactor());
+            allowanceCharge.setAmount(Utils.getAmount(AmountType.class, allowanceChargeEntry.getAmount()));
+            allowanceCharge.setBaseAmount(Utils.getAmount(BaseAmountType.class, allowanceChargeEntry.getBaseAmount()));
         }
         return ret;
     }

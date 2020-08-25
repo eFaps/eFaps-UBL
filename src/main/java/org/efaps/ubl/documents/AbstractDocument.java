@@ -57,7 +57,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private ISupplier supplier;
     private ICustomer customer;
     private List<ITaxEntry> taxes = new ArrayList<>();
-    private List<IChargeEntry> charges = new ArrayList<>();
+    private List<IAllowanceChargeEntry> allowancesCharges = new ArrayList<>();
     private List<ILine> lines = new ArrayList<>();
 
     public String getCurrency()
@@ -157,25 +157,25 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
-    public List<IChargeEntry> getCharges()
+    public List<IAllowanceChargeEntry> getAllowancesCharges()
     {
-        return charges;
+        return allowancesCharges;
     }
 
-    public void setCharges(final List<IChargeEntry> charges)
+    public void setAllowancesCharges(final List<IAllowanceChargeEntry> allowancesCharges)
     {
-        this.charges = charges;
+        this.allowancesCharges = allowancesCharges;
     }
 
-    public T withCharges(final List<IChargeEntry> charges)
+    public T withAllowancesCharges(final List<IAllowanceChargeEntry> allowancesCharges)
     {
-        this.charges = charges;
+        this.allowancesCharges = allowancesCharges;
         return getThis();
     }
 
-    public T withCharge(final IChargeEntry charge)
+    public T withAllowanceCharge(final IAllowanceChargeEntry charge)
     {
-        this.charges.add(charge);
+        allowancesCharges.add(charge);
         return getThis();
     }
 
@@ -266,11 +266,15 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     {
         if (getChargeTotal() != null) {
             total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getChargeTotal()));
-        } else if (!getCharges().isEmpty()) {
-            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getCharges().stream()
-                .map(entry -> {
-                    return entry.getAmount();
-                }).reduce(BigDecimal.ZERO, BigDecimal::add)));
+        } else if (!getAllowancesCharges().isEmpty()) {
+            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getAllowancesCharges().stream()
+                            .map(entry -> {
+                                if (entry.isCharge()) {
+                                    return entry.getAmount();
+                                } else {
+                                    return BigDecimal.ZERO;
+                                }
+                            }).reduce(BigDecimal.ZERO, BigDecimal::add)));
         }
     }
 
@@ -303,7 +307,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
-        invoice.setAllowanceCharge(Charges.getAllowanceCharge(getCharges()));
+        invoice.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);
