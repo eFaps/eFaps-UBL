@@ -60,7 +60,7 @@ public class Taxes
             if (isItem) {
                 final var baseUnitMeasure = new BaseUnitMeasureType();
                 baseUnitMeasure.setUnitCode("NIU");
-                baseUnitMeasure.setValue(BigDecimal.ONE);
+                baseUnitMeasure.setValue(taxEntry.getTaxableAmount().stripTrailingZeros());
                 ret.setBaseUnitMeasure(baseUnitMeasure);
             } else {
                 // for per unit the taxable amount for the doc is the same as the amount

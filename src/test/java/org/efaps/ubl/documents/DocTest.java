@@ -183,7 +183,7 @@ public class DocTest
                         .withNetPrice(new BigDecimal("0.10"))
                         .withTax(new Taxes.ICB()
                                         .setAmount(new BigDecimal("0.20"))
-                                        .setTaxableAmount(new BigDecimal("0")))
+                                        .setTaxableAmount(new BigDecimal("1")))
                         .build());
 
         final var invoice = new Invoice()
