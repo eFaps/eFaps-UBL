@@ -314,44 +314,46 @@ public class Utils
     public static List<PaymentTermsType> getPaymentTerms(final IPaymentTerms paymentTerms)
     {
         final List<PaymentTermsType> ret = new ArrayList<>();
-        if (paymentTerms.isCredit()) {
-            final var paymentTermsType = new PaymentTermsType();
-            ret.add(paymentTermsType);
-            paymentTermsType.setID("FormaPago");
-            final var paymentMeansIDType = new PaymentMeansIDType();
-            paymentMeansIDType.setValue("Credito");
-            paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
-            paymentTermsType.setAmount(getAmount(
-                            oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
-                            paymentTerms.getTotal(), paymentTerms.getCurrencyId()));
-            int i = 1;
-            for (final var installment : paymentTerms.getInstallments()) {
-                final var paymentTermsType4Installment = new PaymentTermsType();
-                ret.add(paymentTermsType4Installment);
-                paymentTermsType4Installment.setID("FormaPago");
-                final var paymentMeansIDType4Installment = new PaymentMeansIDType();
-                paymentMeansIDType4Installment.setValue(String.format("Cuoata%03d", i));
-                paymentTermsType4Installment
-                                .setPaymentMeansID(Collections.singletonList(paymentMeansIDType4Installment));
-                paymentTermsType4Installment.setAmount(getAmount(
+        if (paymentTerms != null) {
+            if (paymentTerms.isCredit()) {
+                final var paymentTermsType = new PaymentTermsType();
+                ret.add(paymentTermsType);
+                paymentTermsType.setID("FormaPago");
+                final var paymentMeansIDType = new PaymentMeansIDType();
+                paymentMeansIDType.setValue("Credito");
+                paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
+                paymentTermsType.setAmount(getAmount(
                                 oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
-                                installment.getAmount(), installment.getCurrencyId()));
-                try {
-                    paymentTermsType4Installment.setInstallmentDueDate(
-                                    new InstallmentDueDateType(DatatypeFactory.newInstance()
-                                                    .newXMLGregorianCalendar(installment.getDueDate().toString())));
-                } catch (final DatatypeConfigurationException e) {
-                    LOG.error("Catched", e);
+                                paymentTerms.getTotal(), paymentTerms.getCurrencyId()));
+                int i = 1;
+                for (final var installment : paymentTerms.getInstallments()) {
+                    final var paymentTermsType4Installment = new PaymentTermsType();
+                    ret.add(paymentTermsType4Installment);
+                    paymentTermsType4Installment.setID("FormaPago");
+                    final var paymentMeansIDType4Installment = new PaymentMeansIDType();
+                    paymentMeansIDType4Installment.setValue(String.format("Cuoata%03d", i));
+                    paymentTermsType4Installment
+                                    .setPaymentMeansID(Collections.singletonList(paymentMeansIDType4Installment));
+                    paymentTermsType4Installment.setAmount(getAmount(
+                                    oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
+                                    installment.getAmount(), installment.getCurrencyId()));
+                    try {
+                        paymentTermsType4Installment.setInstallmentDueDate(
+                                        new InstallmentDueDateType(DatatypeFactory.newInstance()
+                                                        .newXMLGregorianCalendar(installment.getDueDate().toString())));
+                    } catch (final DatatypeConfigurationException e) {
+                        LOG.error("Catched", e);
+                    }
+                    i++;
                 }
-                i++;
+            } else {
+                final var paymentTermsType = new PaymentTermsType();
+                ret.add(paymentTermsType);
+                paymentTermsType.setID("FormaPago");
+                final var paymentMeansIDType = new PaymentMeansIDType();
+                paymentMeansIDType.setValue("Contado");
+                paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
             }
-        } else {
-            final var paymentTermsType = new PaymentTermsType();
-            ret.add(paymentTermsType);
-            paymentTermsType.setID("FormaPago");
-            final var paymentMeansIDType = new PaymentMeansIDType();
-            paymentMeansIDType.setValue("Contado");
-            paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
         }
         return ret;
     }

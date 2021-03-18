@@ -212,4 +212,123 @@ public class DocTest
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         assertEquals(ubl, xml);
     }
+
+    @Test
+    public void invoiceWithCashPayment()
+        throws IOException
+    {
+        final var invoice = new Invoice()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 8, 16))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getLines())
+                        .withPaymentTerms(new IPaymentTerms()
+                        {
+
+                            @Override
+                            public boolean isCredit()
+                            {
+                                return false;
+                            }
+
+                            @Override
+                            public BigDecimal getTotal()
+                            {
+                                return new BigDecimal("512.26");
+                            }
+
+                            @Override
+                            public List<IInstallment> getInstallments()
+                            {
+                                return null;
+                            }
+                        });
+
+        final var ubl = invoice.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice4.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl, xml);
+    }
+
+    @Test
+    public void invoiceWithInstallments()
+        throws IOException
+    {
+        final var invoice = new Invoice()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 8, 16))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getLines())
+                        .withPaymentTerms(new IPaymentTerms()
+                        {
+
+                            @Override
+                            public boolean isCredit()
+                            {
+                                return true;
+                            }
+
+                            @Override
+                            public BigDecimal getTotal()
+                            {
+                                return new BigDecimal("512.26");
+                            }
+
+                            @Override
+                            public List<IInstallment> getInstallments()
+                            {
+                                final List<IInstallment> ret = new ArrayList<>();
+                                ret.add(new IInstallment() {
+
+                                    @Override
+                                    public BigDecimal getAmount()
+                                    {
+                                        return new BigDecimal("150");
+                                    }
+
+                                    @Override
+                                    public LocalDate getDueDate()
+                                    {
+                                        return LocalDate.of(2022, 4, 1);
+                                    }
+                                });
+                                ret.add(new IInstallment() {
+
+                                    @Override
+                                    public BigDecimal getAmount()
+                                    {
+                                        return new BigDecimal("250");
+                                    }
+
+                                    @Override
+                                    public LocalDate getDueDate()
+                                    {
+                                        return LocalDate.of(2022, 5, 1);
+                                    }
+                                });
+                                return ret;
+                            }
+                        });
+
+        final var ubl = invoice.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice5.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl, xml);
+    }
 }
