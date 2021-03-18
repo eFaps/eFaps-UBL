@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Par
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PaymentTermsType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
@@ -51,10 +55,12 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Descrip
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstallmentDueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentMeansIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
@@ -104,10 +110,16 @@ public class Utils
 
     public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount)
     {
+        return getAmount(type, amount, "PEN");
+    }
+
+    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount,
+                                                     final String currencyId)
+    {
         T ret = null;
         try {
             ret = type.getConstructor().newInstance();
-            ret.setCurrencyID("PEN");
+            ret.setCurrencyID(currencyId);
             ret.setValue(amount);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException | SecurityException e) {
@@ -297,5 +309,50 @@ public class Utils
         allowanceChargeReasonCodeType.setListURI(Catalogs.CADE.getURI());
         allowanceChargeReasonCodeType.setValue(reason);
         return allowanceChargeReasonCodeType;
+    }
+
+    public static List<PaymentTermsType> getPaymentTerms(final IPaymentTerms paymentTerms)
+    {
+        final List<PaymentTermsType> ret = new ArrayList<>();
+        if (paymentTerms.isCredit()) {
+            final var paymentTermsType = new PaymentTermsType();
+            ret.add(paymentTermsType);
+            paymentTermsType.setID("FormaPago");
+            final var paymentMeansIDType = new PaymentMeansIDType();
+            paymentMeansIDType.setValue("Credito");
+            paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
+            paymentTermsType.setAmount(getAmount(
+                            oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
+                            paymentTerms.getTotal(), paymentTerms.getCurrencyId()));
+            int i = 1;
+            for (final var installment : paymentTerms.getInstallments()) {
+                final var paymentTermsType4Installment = new PaymentTermsType();
+                ret.add(paymentTermsType4Installment);
+                paymentTermsType4Installment.setID("FormaPago");
+                final var paymentMeansIDType4Installment = new PaymentMeansIDType();
+                paymentMeansIDType4Installment.setValue(String.format("Cuoata%03d", i));
+                paymentTermsType4Installment
+                                .setPaymentMeansID(Collections.singletonList(paymentMeansIDType4Installment));
+                paymentTermsType4Installment.setAmount(getAmount(
+                                oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
+                                installment.getAmount(), installment.getCurrencyId()));
+                try {
+                    paymentTermsType4Installment.setInstallmentDueDate(
+                                    new InstallmentDueDateType(DatatypeFactory.newInstance()
+                                                    .newXMLGregorianCalendar(installment.getDueDate().toString())));
+                } catch (final DatatypeConfigurationException e) {
+                    LOG.error("Catched", e);
+                }
+                i++;
+            }
+        } else {
+            final var paymentTermsType = new PaymentTermsType();
+            ret.add(paymentTermsType);
+            paymentTermsType.setID("FormaPago");
+            final var paymentMeansIDType = new PaymentMeansIDType();
+            paymentMeansIDType.setValue("Contado");
+            paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
+        }
+        return ret;
     }
 }

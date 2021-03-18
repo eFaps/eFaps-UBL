@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2021 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private List<ITaxEntry> taxes = new ArrayList<>();
     private List<IAllowanceChargeEntry> allowancesCharges = new ArrayList<>();
     private List<ILine> lines = new ArrayList<>();
+    private IPaymentTerms paymentTerms;
 
     public String getCurrency()
     {
@@ -179,6 +180,16 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return getThis();
     }
 
+    public IPaymentTerms getPaymentTerms()
+    {
+        return this.paymentTerms;
+    }
+
+    public T withPaymentTerms(final IPaymentTerms paymentTerms)
+    {
+        this.paymentTerms = paymentTerms;
+        return getThis();
+    }
 
     public ISupplier getSupplier()
     {
@@ -308,6 +319,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
         invoice.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
+        invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);
