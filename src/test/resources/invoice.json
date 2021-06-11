@@ -1,0 +1,24 @@
+{
+  "ID": "F001-000156",
+  "IssueDate": "2020-08-1",
+  "InvoiceTypeCode": "01",
+  "Notes": [
+    {
+      "ID": "1000",
+      "Value": "CIENTO DIECIOCHO Y 00/100"
+    }
+  ],
+  "DocumentCurrencyCode": "PEN",
+  "AccountingSupplierParty": {
+
+  },
+  "AccountingCustomerParty": {
+
+  },
+  "PaymentTerms":[],
+  "TaxTotal": {
+  },
+  "LegalMonetaryTotal": {
+  },
+  "InvoiceLines":[]
+}
