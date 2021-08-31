@@ -263,11 +263,23 @@ public class Utils
             invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
 
             final var pricingReference = new PricingReferenceType();
+            // Precio de Venta Unitario = (Valor de venta por ítem + Monto total
+            // de tributos del ítem
+            // + Cargo no afecto por ítem - Descuento no afecto por ítem) /
+            // Cantidad de unidades por ítem
+            final var conditionPrice = line.getNetPrice()
+                            .add(line.getTaxEntries().stream().map(entry -> entry.getAmount()).reduce(BigDecimal.ZERO,
+                                            BigDecimal::add))
+                            .add(line.getAllowancesCharges().stream().map(entry -> entry.getAmount()).reduce(
+                                            BigDecimal.ZERO, BigDecimal::add))
+                            .divide(line.getQuantity(), RoundingMode.HALF_UP);
+
             final var priceType = new PriceType();
-            priceType.setPriceAmount(getAmount(PriceAmountType.class, line.getCrossPrice()));
+            priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
             priceType.setPriceTypeCode("01");
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             invoiceLine.setPricingReference(pricingReference);
+
             invoiceLine.setTaxTotal(Taxes.getTaxTotal(line.getTaxEntries(), true));
             invoiceLine.setItem(getItem(line));
 

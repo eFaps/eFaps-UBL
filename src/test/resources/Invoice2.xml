@@ -110,7 +110,7 @@
       <cbc:LineExtensionAmount currencyID="PEN">10.50</cbc:LineExtensionAmount>
       <cac:PricingReference>
       <cac:AlternativeConditionPrice>
-        <cbc:PriceAmount currencyID="PEN">13.23</cbc:PriceAmount>
+        <cbc:PriceAmount currencyID="PEN">12.39</cbc:PriceAmount>
               <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
       </cac:AlternativeConditionPrice>
     </cac:PricingReference>
