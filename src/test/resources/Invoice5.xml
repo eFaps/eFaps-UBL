@@ -98,7 +98,8 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:TaxExclusiveAmount currencyID="PEN">100</cbc:TaxExclusiveAmount>
+    <cbc:LineExtensionAmount currencyID="PEN">100</cbc:LineExtensionAmount>
+      <cbc:TaxExclusiveAmount currencyID="PEN">100</cbc:TaxExclusiveAmount>
       <cbc:TaxInclusiveAmount currencyID="PEN">118</cbc:TaxInclusiveAmount>
       <cbc:PayableAmount currencyID="PEN">118</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>

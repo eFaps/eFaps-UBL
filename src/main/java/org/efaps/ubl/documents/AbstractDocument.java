@@ -39,6 +39,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Mon
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ChargeTotalAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxInclusiveAmountType;
@@ -259,11 +260,10 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 
     protected abstract String getDocType();
 
-    protected MonetaryTotalType getMonetaryTotal()
+    protected MonetaryTotalType getMonetaryTotal(final InvoiceType invoice)
     {
         final var ret = new MonetaryTotalType();
-        // ret.setLineExtensionAmount(Utils.getAmount(LineExtensionAmountType.class,
-        // new BigDecimal("2133")));
+        ret.setLineExtensionAmount(Utils.getAmount(LineExtensionAmountType.class, evalLineExtensionForTotal(invoice)));
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, getCrossTotal()));
         // ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class,
@@ -271,6 +271,13 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
         evalChargeTotal(ret);
         return ret;
+    }
+
+    protected BigDecimal evalLineExtensionForTotal(final InvoiceType invoice)
+    {
+        return invoice.getInvoiceLine().stream().map(line -> {
+            return line.getLineExtensionAmountValue();
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     protected void evalChargeTotal(final MonetaryTotalType total)
@@ -312,13 +319,13 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setInvoiceTypeCode(Utils.getInvoiceType(getDocType()));
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
         invoice.getNote().add(Utils.getWordsForAmount(getCrossTotal()));
-        invoice.setLegalMonetaryTotal(getMonetaryTotal());
-        invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.addSignature(Utils.getSignature(getSupplier()));
         invoice.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
         invoice.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
+        invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
+        invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
