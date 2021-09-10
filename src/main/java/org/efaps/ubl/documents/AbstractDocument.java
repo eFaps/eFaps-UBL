@@ -265,10 +265,22 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         final var ret = new MonetaryTotalType();
         ret.setLineExtensionAmount(Utils.getAmount(LineExtensionAmountType.class, evalLineExtensionForTotal(invoice)));
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
-        ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, getCrossTotal()));
+
+        // TaxExclusiveAmount + all taxes
+        final var taxInclusive = getNetTotal().add(invoice.getTaxTotal().stream().map(tax -> {
+            return tax.getTaxAmountValue();
+        }).reduce(BigDecimal.ZERO, BigDecimal::add));
+        ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
+
+        // we do not have allowances yet
         // ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class,
         // new BigDecimal("0")));
+
+        // 2021-09-09 Bizlinks:
+        // Total precio venta + Sumatoria otros cargos - Sumatoria otros
+        // descuentas (que no afecta la base imponible)
         ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
+
         evalChargeTotal(ret);
         return ret;
     }
@@ -325,8 +337,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
         invoice.setInvoiceLine(Utils.getInvoiceLines(getLines()));
         invoice.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
-        invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
+        invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
         invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
         return new Builder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
