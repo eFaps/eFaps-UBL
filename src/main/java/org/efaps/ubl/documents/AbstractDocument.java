@@ -272,7 +272,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         evalChargeTotal(ret);
         return ret;
     }
-
+    // 2021-09-09 Bizlinks:
+    // LegalMonetaryTotal/LineExtensionAmount = SUM of all InvoiceLine/LineExtensionAmount
     protected BigDecimal evalLineExtensionForTotal(final InvoiceType invoice)
     {
         return invoice.getInvoiceLine().stream().map(line -> {
