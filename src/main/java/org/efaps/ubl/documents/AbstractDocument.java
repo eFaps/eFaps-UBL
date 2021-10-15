@@ -284,13 +284,32 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         evalChargeTotal(ret);
         return ret;
     }
+
     // 2021-09-09 Bizlinks:
     // LegalMonetaryTotal/LineExtensionAmount = SUM of all InvoiceLine/LineExtensionAmount
+
+    // 2021-10-14
+    // 'Valor de venta por ítem' (cbc:LineExtensionAmount): sumatoria de los ítems con 'Código de tributo por línea'
+    // igual a  '1000', '1016', '9995', '9997' y '9998'  y cuyo 'Monto base' es mayor a cero (cbc:TaxableAmount > 0),
+    // menos 'Montos de descuentos globales' (cbc:AllowanceCharge) que afectan la base ('Código de motivo de descuento' igual a '02') (cbc:AllowanceChargeReasonCode)
+    // más 'Montos de cargos globales' (cbc:AllowanceCharge) que afectan la base ('Código de motivo de cargo' igual a '49')(cbc:AllowanceChargeReasonCode), con una tolerancia de + - 1
+    //
     protected BigDecimal evalLineExtensionForTotal(final InvoiceType invoice)
     {
-        return invoice.getInvoiceLine().stream().map(line -> {
+        var lineExt = invoice.getInvoiceLine().stream().map(line -> {
             return line.getLineExtensionAmountValue();
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (invoice.hasAllowanceChargeEntries()) {
+            for (final var allowanceCharge : invoice.getAllowanceCharge()) {
+                if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
+                    lineExt = lineExt.subtract(allowanceCharge.getAmountValue());
+                }
+                if ("49".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
+                    lineExt = lineExt.add(allowanceCharge.getAmountValue());
+                }
+            }
+        }
+        return lineExt;
     }
 
     protected void evalChargeTotal(final MonetaryTotalType total)
