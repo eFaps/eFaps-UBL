@@ -31,9 +31,11 @@ import org.slf4j.LoggerFactory;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.BillingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CreditNoteLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemIdentificationType;
@@ -53,6 +55,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditN
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstallmentDueDateType;
@@ -425,6 +428,19 @@ public class Utils
                 paymentTermsType.setPaymentMeansID(Collections.singletonList(paymentMeansIDType));
             }
         }
+        return ret;
+    }
+
+    public static List<BillingReferenceType> getBillingReferenceType(final Reference reference) {
+        final var ret = new ArrayList<BillingReferenceType>();
+        final var billingReferenceType = new BillingReferenceType();
+        final var documentReferenceType = new DocumentReferenceType();
+        billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
+        documentReferenceType.setID(reference.getNumber());
+        documentReferenceType.setIssueDate(reference.getDate());
+        final var documentTypeCodeType  = new DocumentTypeCodeType(reference.getDocType());
+        documentReferenceType.setDocumentTypeCode(documentTypeCodeType);
+        ret.add(billingReferenceType);
         return ret;
     }
 }

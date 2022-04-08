@@ -31,6 +31,9 @@ import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 public class CreditNote
     extends AbstractDocument<CreditNote>
 {
+
+    private Reference reference;
+
     @Override
     protected CreditNote getThis()
     {
@@ -41,6 +44,22 @@ public class CreditNote
     protected String getDocType()
     {
         return "07";
+    }
+
+    public Reference getReference()
+    {
+        return reference;
+    }
+
+    public void setReference(final Reference reference)
+    {
+        this.reference = reference;
+    }
+
+    public CreditNote withReference(final Reference reference)
+    {
+        this.reference = reference;
+        return this;
     }
 
     @Override
@@ -70,6 +89,7 @@ public class CreditNote
         creditNote.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         creditNote.setLegalMonetaryTotal(getMonetaryTotal(creditNote));
         creditNote.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
+        creditNote.setBillingReference(Utils.getBillingReferenceType(getReference()));
         return new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(creditNote);

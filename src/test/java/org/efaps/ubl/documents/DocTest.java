@@ -337,6 +337,10 @@ public class DocTest
         throws DatatypeConfigurationException
     {
         final var creditNOte = new CreditNote()
+                        .withReference(new Reference()
+                                        .setNumber("F001-000156")
+                                        .setDate(LocalDate.of(2020, 6, 12))
+                                        .setDocType("01"))
                         .withSupplier(getSupplier())
                         .withCustomer(getCustomer())
                         .withCurrency("PEN")
@@ -382,10 +386,14 @@ public class DocTest
                         .build());
 
         final var invoice = new CreditNote()
+                        .withReference(new Reference()
+                                        .setNumber("F001-000156")
+                                        .setDate(LocalDate.of(2020, 6, 12))
+                                        .setDocType("01"))
                         .withSupplier(getSupplier())
                         .withCustomer(getCustomer())
                         .withCurrency("PEN")
-                        .withNumber("F001-000156")
+                        .withNumber("NF01-000156")
                         .withDate(LocalDate.of(2020, 6, 13))
                         .withNetTotal(new BigDecimal("100"))
                         .withCrossTotal(new BigDecimal("118"))
