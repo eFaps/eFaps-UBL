@@ -16,6 +16,18 @@
  */
 package org.efaps.ubl.documents;
 
+import java.nio.charset.StandardCharsets;
+
+import org.efaps.ubl.CreditNoteBuilder;
+import org.efaps.ubl.extension.Definitions;
+
+import com.helger.ubl21.CUBL21;
+import com.helger.ubl21.UBL21NamespaceContext;
+
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
+
 public class CreditNote
     extends AbstractDocument<CreditNote>
 {
@@ -29,5 +41,37 @@ public class CreditNote
     protected String getDocType()
     {
         return "07";
+    }
+
+    @Override
+    public String getUBLXml()
+    {
+        if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
+            UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+            UBL21NamespaceContext.getInstance().removeMapping("cec");
+            UBL21NamespaceContext.getInstance().addMapping ("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+        }
+        final var creditNote = new CreditNoteType();
+        creditNote.setUBLVersionID("2.1");
+        final var customizationID = new CustomizationIDType();
+        customizationID.setSchemeAgencyName(Utils.AGENCYNAME);
+        customizationID.setValue("2.0");
+        creditNote.setCustomizationID(customizationID);
+        creditNote.setID(getNumber());
+        creditNote.setIssueDate(new IssueDateType(getDate()));
+        creditNote.setCreditNoteTypeCode(Utils.getCreditNoteType(getDocType()));
+        creditNote.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
+        creditNote.getNote().add(Utils.getWordsForAmount(getCrossTotal()));
+        creditNote.addSignature(Utils.getSignature(getSupplier()));
+        creditNote.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
+        creditNote.setAccountingCustomerParty(Utils.getCustomer(getCustomer()));
+        creditNote.setCreditNoteLine(Utils.getCreditNoteLines(getLines()));
+        creditNote.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
+        creditNote.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
+        creditNote.setLegalMonetaryTotal(getMonetaryTotal(creditNote));
+        creditNote.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
+        return new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
+                        .setFormattedOutput(true)
+                        .getAsString(creditNote);
     }
 }

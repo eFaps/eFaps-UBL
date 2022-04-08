@@ -24,9 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +32,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Add
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AddressType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.AttachmentType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CreditNoteLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
@@ -51,6 +49,8 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Sig
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AllowanceChargeReasonCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditNoteTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -74,6 +74,17 @@ public class Utils
     public static InvoiceTypeCodeType getInvoiceType(final String type)
     {
         final var ret = new InvoiceTypeCodeType();
+        ret.setListAgencyName("PE:SUNAT");
+        ret.setListID("0101");
+        ret.setListName(Catalogs.TDOC.getName());
+        ret.setListURI(Catalogs.TDOC.getURI());
+        ret.setValue(type);
+        return ret;
+    }
+
+    public static CreditNoteTypeCodeType getCreditNoteType(final String type)
+    {
+        final var ret = new CreditNoteTypeCodeType();
         ret.setListAgencyName("PE:SUNAT");
         ret.setListID("0101");
         ret.setListName(Catalogs.TDOC.getName());
@@ -291,6 +302,47 @@ public class Utils
         return ret;
     }
 
+
+    public static List<CreditNoteLineType> getCreditNoteLines(final List<ILine> lines)
+    {
+        final var ret = new ArrayList<CreditNoteLineType>();
+        var idx = 1;
+        for (final var line : lines) {
+            final var creditNoteLine = new CreditNoteLineType();
+            ret.add(creditNoteLine);
+            creditNoteLine.setID(String.valueOf(idx));
+            creditNoteLine.setCreditedQuantity(getCreditedQuantity(line));
+            creditNoteLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
+
+            final var pricingReference = new PricingReferenceType();
+            // Precio de Venta Unitario = (Valor de venta por ítem + Monto total
+            // de tributos del ítem
+            // + Cargo no afecto por ítem - Descuento no afecto por ítem) /
+            // Cantidad de unidades por ítem
+            final var conditionPrice = line.getNetPrice()
+                            .add(line.getTaxEntries().stream().map(entry -> entry.getAmount()).reduce(BigDecimal.ZERO,
+                                            BigDecimal::add))
+                            .add(line.getAllowancesCharges().stream().map(entry -> entry.getAmount()).reduce(
+                                            BigDecimal.ZERO, BigDecimal::add))
+                            .divide(line.getQuantity(), RoundingMode.HALF_UP);
+
+            final var priceType = new PriceType();
+            priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
+            priceType.setPriceTypeCode("01");
+            pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
+            creditNoteLine.setPricingReference(pricingReference);
+
+            creditNoteLine.setTaxTotal(Taxes.getTaxTotal(line.getTaxEntries(), true));
+            creditNoteLine.setItem(getItem(line));
+
+            final var priceType2 = new PriceType();
+            priceType2.setPriceAmount(getAmount(PriceAmountType.class, line.getNetUnitPrice()));
+            creditNoteLine.setPrice(priceType2);
+            idx++;
+        }
+        return ret;
+    }
+
     public static InvoicedQuantityType getInvoicedQuantity(final ILine line)
     {
         final var ret = new InvoicedQuantityType();
@@ -300,6 +352,17 @@ public class Utils
         ret.setValue(line.getQuantity());
         return ret;
     }
+
+    public static CreditedQuantityType getCreditedQuantity(final ILine line)
+    {
+        final var ret = new CreditedQuantityType();
+        ret.setUnitCode(line.getUoMCode());
+        ret.setUnitCodeListAgencyName("United Nations Economic Commission for Europe");
+        ret.setUnitCodeListID("UN/ECE rec 20");
+        ret.setValue(line.getQuantity());
+        return ret;
+    }
+
 
     public static ItemType getItem(final ILine line)
     {
@@ -349,13 +412,8 @@ public class Utils
                     paymentTermsType4Installment.setAmount(getAmount(
                                     oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
                                     installment.getAmount(), installment.getCurrencyId()));
-                    try {
-                        paymentTermsType4Installment.setInstallmentDueDate(
-                                        new InstallmentDueDateType(DatatypeFactory.newInstance()
-                                                        .newXMLGregorianCalendar(installment.getDueDate().toString())));
-                    } catch (final DatatypeConfigurationException e) {
-                        LOG.error("Catched", e);
-                    }
+                    paymentTermsType4Installment.setInstallmentDueDate(
+                                    new InstallmentDueDateType(installment.getDueDate()));
                     i++;
                 }
             } else {

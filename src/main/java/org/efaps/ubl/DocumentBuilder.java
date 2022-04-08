@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2022 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,16 @@ import com.helger.jaxb.JAXBContextCache;
 import com.helger.ubl21.UBL21WriterBuilder;
 import com.helger.xsds.xmldsig.SignatureType;
 
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
-public class Builder
-    extends UBL21WriterBuilder<InvoiceType>
+public abstract class DocumentBuilder<JAXBTYPE>
+    extends UBL21WriterBuilder<JAXBTYPE>
 {
 
-    public Builder()
+    public DocumentBuilder(final Class <JAXBTYPE> clazz)
     {
-        super(InvoiceType.class);
+        super(clazz);
     }
 
     @Override
@@ -43,6 +44,7 @@ public class Builder
     {
         final var clazzes = new CommonsArrayList<Class<?>>();
         clazzes.add(InvoiceType.class);
+        clazzes.add(CreditNoteType.class);
         clazzes.add(AdditionalInformation.class);
         clazzes.add(SignatureType.class);
 

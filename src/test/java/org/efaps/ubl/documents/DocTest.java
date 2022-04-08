@@ -101,7 +101,7 @@ public class DocTest
                         .withKeyStorePwd("changeit")
                         .withKeyAlias("testkey")
                         .withKeyPwd("changeit")
-                        .signInvoice(ubl);
+                        .signDocument(ubl);
     }
 
     @Test
@@ -331,4 +331,78 @@ public class DocTest
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         assertEquals(ubl, xml);
     }
+
+    @Test
+    public void createCreditNote()
+        throws DatatypeConfigurationException
+    {
+        final var creditNOte = new CreditNote()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 8, 16))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getLines());
+
+        final var ubl = creditNOte.getUBLXml();
+        new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signDocument(ubl);
+    }
+
+    @Test
+    public void creditNoteWithOneItemTaxAndCharge()
+        throws IOException
+    {
+
+        final var lines = new ArrayList<ILine>();
+        lines.add(Line.builder().withSku("123.456")
+                        .withDescription("Pasta larga salsa tradicional")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("42.70"))
+                        .withCrossPrice(new BigDecimal("42.70"))
+                        .withNetUnitPrice(new BigDecimal("35"))
+                        .withNetPrice(new BigDecimal("35"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("6.30"))
+                                        .setTaxableAmount(new BigDecimal("35")))
+                        .withAllowanceCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("35"))
+                                        .setAmount(new BigDecimal("2.80"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .build());
+
+        final var invoice = new CreditNote()
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 6, 13))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("6.30"))
+                                        .setTaxableAmount(new BigDecimal("35")))
+                        .withAllowanceCharge(new ChargeEntry()
+                                        .setReason("50")
+                                        .setBaseAmount(new BigDecimal("35"))
+                                        .setAmount(new BigDecimal("2.80"))
+                                        .setFactor(new BigDecimal("0.08")))
+                        .withLines(lines);
+        final var ubl = invoice.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("CreditNote1.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl, xml);
+    }
+
 }

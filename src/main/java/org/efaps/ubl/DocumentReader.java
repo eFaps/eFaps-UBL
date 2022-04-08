@@ -26,15 +26,16 @@ import com.helger.jaxb.JAXBContextCache;
 import com.helger.ubl21.UBL21ReaderBuilder;
 import com.helger.xsds.xmldsig.SignatureType;
 
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
-public class Reader
-    extends UBL21ReaderBuilder<InvoiceType>
+public abstract class DocumentReader<JAXBTYPE>
+    extends UBL21ReaderBuilder<JAXBTYPE>
 {
 
-    public Reader()
+    public DocumentReader(final Class <JAXBTYPE> clazz)
     {
-        super(InvoiceType.class);
+        super(clazz);
     }
 
     @Override
@@ -43,6 +44,7 @@ public class Reader
     {
         final var clazzes = new CommonsArrayList<Class<?>>();
         clazzes.add(InvoiceType.class);
+        clazzes.add(CreditNoteType.class);
         clazzes.add(AdditionalInformation.class);
         clazzes.add(SignatureType.class);
 

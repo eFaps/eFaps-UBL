@@ -23,11 +23,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.efaps.ubl.Builder;
+import org.efaps.ubl.InvoiceBuilder;
 import org.efaps.ubl.extension.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +40,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExt
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxInclusiveAmountType;
+import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
 public abstract class AbstractDocument<T extends AbstractDocument<T>>
@@ -285,6 +283,33 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return ret;
     }
 
+
+    protected MonetaryTotalType getMonetaryTotal(final CreditNoteType creditNote)
+    {
+        final var ret = new MonetaryTotalType();
+        ret.setLineExtensionAmount(Utils.getAmount(LineExtensionAmountType.class, evalLineExtensionForTotal(creditNote)));
+        ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
+
+        // TaxExclusiveAmount + all taxes
+        final var taxInclusive = getNetTotal().add(creditNote.getTaxTotal().stream().map(tax -> {
+            return tax.getTaxAmountValue();
+        }).reduce(BigDecimal.ZERO, BigDecimal::add));
+        ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
+
+        // we do not have allowances yet
+        // ret.setAllowanceTotalAmount(Utils.getAmount(AllowanceTotalAmountType.class,
+        // new BigDecimal("0")));
+
+        // 2021-09-09 Bizlinks:
+        // Total precio venta + Sumatoria otros cargos - Sumatoria otros
+        // descuentas (que no afecta la base imponible)
+        ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
+
+        evalChargeTotal(ret);
+        return ret;
+    }
+
+
     // 2021-09-09 Bizlinks:
     // LegalMonetaryTotal/LineExtensionAmount = SUM of all InvoiceLine/LineExtensionAmount
 
@@ -301,6 +326,24 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         }).reduce(BigDecimal.ZERO, BigDecimal::add);
         if (invoice.hasAllowanceChargeEntries()) {
             for (final var allowanceCharge : invoice.getAllowanceCharge()) {
+                if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
+                    lineExt = lineExt.subtract(allowanceCharge.getAmountValue());
+                }
+                if ("49".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
+                    lineExt = lineExt.add(allowanceCharge.getAmountValue());
+                }
+            }
+        }
+        return lineExt;
+    }
+
+    protected BigDecimal evalLineExtensionForTotal(final CreditNoteType creditNote)
+    {
+        var lineExt = creditNote.getCreditNoteLine().stream().map(line -> {
+            return line.getLineExtensionAmountValue();
+        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (creditNote.hasAllowanceChargeEntries()) {
+            for (final var allowanceCharge : creditNote.getAllowanceCharge()) {
                 if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
                     lineExt = lineExt.subtract(allowanceCharge.getAmountValue());
                 }
@@ -342,12 +385,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         customizationID.setValue("2.0");
         invoice.setCustomizationID(customizationID);
         invoice.setID(getNumber());
-        try {
-            invoice.setIssueDate(
-                            new IssueDateType(DatatypeFactory.newInstance().newXMLGregorianCalendar(getDate().toString())));
-        } catch (final DatatypeConfigurationException e) {
-            LOG.error("Catched", e);
-        }
+        invoice.setIssueDate(new IssueDateType(getDate()));
         invoice.setInvoiceTypeCode(Utils.getInvoiceType(getDocType()));
         invoice.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
         invoice.getNote().add(Utils.getWordsForAmount(getCrossTotal()));
@@ -359,7 +397,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
         invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
-        return new Builder().setCharset(StandardCharsets.UTF_8)
+        return new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);
     }

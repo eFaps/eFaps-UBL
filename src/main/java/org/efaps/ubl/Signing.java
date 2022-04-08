@@ -148,7 +148,7 @@ public class Signing
                             xmlSignatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
                             Collections.singletonList(ref));
 
-            final var invoice = new Reader().read(xml);
+            final var invoice = new InvoiceReader().read(xml);
             final var extension = new UBLExtensionType();
             final var extensionContent = new ExtensionContentType();
             extension.setExtensionContent(extensionContent);
@@ -157,7 +157,7 @@ public class Signing
             }
             invoice.getUBLExtensions().addUBLExtension(extension);
 
-            final var doc = new Builder().setCharset(StandardCharsets.UTF_8)
+            final var doc = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
                             .setUseSchema(false)
                             .setFormattedOutput(false).getAsDocument(invoice);
 
@@ -229,7 +229,7 @@ public class Signing
 
             signatureT.setKeyInfo(keyInfo);
 
-            final var ubl = new Builder().setCharset(StandardCharsets.UTF_8)
+            final var ubl = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
                             .setFormattedOutput(false).getAsString(invoice);
 
             ret = SignResponseDto.builder()
@@ -244,11 +244,131 @@ public class Signing
         return ret;
     }
 
+    public SignResponseDto signDocument(final String xml)
+    {
+        SignResponseDto ret = null;
+        var xml2 = "";
+        try {
+            if (xml.contains("<CreditNote ")) {
+                final var creditNote = new CreditNoteReader().read(xml);
+                final var extension = new UBLExtensionType();
+                final var extensionContent = new ExtensionContentType();
+                extension.setExtensionContent(extensionContent);
+                if (creditNote.getUBLExtensions() == null) {
+                    creditNote.setUBLExtensions(new UBLExtensionsType());
+                }
+                creditNote.getUBLExtensions().addUBLExtension(extension);
+                if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
+                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                    UBL21NamespaceContext.getInstance().removeMapping("cec");
+                    UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+                }
+
+                xml2 = new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
+                                .setUseSchema(false)
+                                .setFormattedOutput(true).getAsString(creditNote);
+            } else {
+                final var invoice = new InvoiceReader().read(xml);
+                final var extension = new UBLExtensionType();
+                final var extensionContent = new ExtensionContentType();
+                extension.setExtensionContent(extensionContent);
+                if (invoice.getUBLExtensions() == null) {
+                    invoice.setUBLExtensions(new UBLExtensionsType());
+                }
+                invoice.getUBLExtensions().addUBLExtension(extension);
+                if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
+                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                    UBL21NamespaceContext.getInstance().removeMapping("cec");
+                    UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+                }
+
+                xml2 = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
+                                .setUseSchema(false)
+                                .setFormattedOutput(true).getAsString(invoice);
+            }
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            final DocumentBuilder builder = dbf.newDocumentBuilder();
+            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes(StandardCharsets.UTF_8)));
+            final XPathFactory factory = XPathFactory.newInstance();
+            final XPath xPath = factory.newXPath();
+            xPath.setNamespaceContext(new UniversalNamespaceResolver(doc));
+
+            if (doc != null) {
+                final NodeList nodeList = (NodeList) xPath.evaluate("//text()[normalize-space()='']", doc,
+                                XPathConstants.NODESET);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    final Node nodeO = nodeList.item(i);
+                    final Node nodeN = nodeO.cloneNode(true);
+                    nodeN.setNodeValue(nodeO.getNodeValue().replaceAll("(\\t|\\ )", ""));
+                    nodeO.getParentNode().replaceChild(nodeN, nodeO);
+                }
+            }
+
+            final var signatureFactory = XMLSignatureFactory.getInstance("DOM");
+            final var ref = signatureFactory.newReference("",
+                            signatureFactory.newDigestMethod("http://www.w3.org/2000/09/xmldsig#sha1", null),
+                            Collections.singletonList(
+                                            signatureFactory.newTransform(
+                                                            "http://www.w3.org/2000/09/xmldsig#enveloped-signature",
+                                                            (TransformParameterSpec) null)),
+                            null, null);
+            final var signedInfo = signatureFactory.newSignedInfo(
+                            signatureFactory.newCanonicalizationMethod(
+                                            "http://www.w3.org/TR/2001/REC-xml-c14n-20010315",
+                                            (C14NMethodParameterSpec) null),
+                            signatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
+                            Collections.singletonList(ref));
+
+            final var x509Content = new ArrayList<Object>();
+            final var cert = getCertificate();
+            x509Content.add(cert.getSubjectX500Principal().getName());
+            x509Content.add(cert);
+
+            final var keyInfoFactory = signatureFactory.getKeyInfoFactory();
+            final X509Data xd = keyInfoFactory.newX509Data(x509Content);
+            final KeyInfo ki = keyInfoFactory.newKeyInfo(Collections.singletonList(xd));
+
+            final DOMSignContext dsc = new DOMSignContext(getPrivateKey(), getNodeToSign(doc, xPath));
+            final XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, ki);
+            dsc.setDefaultNamespacePrefix("ds");
+            signature.sign(dsc);
+
+            final var hash = signature.getSignedInfo().getReferences().get(0).getDigestValue();
+
+            final var idReference = getSignReference(doc, xPath);
+            final Element elementParent = (Element) dsc.getParent();
+            if (idReference != null && elementParent.getElementsByTagName("ds:Signature") != null) {
+                final Element elementSignature = (Element) elementParent.getElementsByTagName("ds:Signature").item(0);
+                elementSignature.setAttribute("Id", idReference);
+            }
+
+            final DOMSource source = new DOMSource(doc);
+            final StringWriter out = new StringWriter();
+            final StreamResult result = new StreamResult(out);
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final Transformer transformer = transformerFactory.newTransformer();
+
+            transformer.setOutputProperty("encoding", "UTF-8");
+            transformer.transform(source, result);
+
+            ret = SignResponseDto.builder()
+                            .withUbl(out.toString())
+                            .withHash(Base64.getEncoder().encodeToString(hash))
+                            .build();
+        } catch (final NoSuchAlgorithmException | ParserConfigurationException | SAXException | IOException
+                        | InvalidAlgorithmParameterException | MarshalException | XMLSignatureException
+                        | XPathExpressionException | TransformerException e) {
+            LOG.error("Catched", e);
+        }
+        return ret;
+    }
+
     public SignResponseDto signInvoice(final String xml)
     {
         SignResponseDto ret = null;
         try {
-            final var invoice = new Reader().read(xml);
+            final var invoice = new InvoiceReader().read(xml);
             final var extension = new UBLExtensionType();
             final var extensionContent = new ExtensionContentType();
             extension.setExtensionContent(extensionContent);
@@ -260,10 +380,10 @@ public class Signing
             if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
                 UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
                 UBL21NamespaceContext.getInstance().removeMapping("cec");
-                UBL21NamespaceContext.getInstance().addMapping ("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+                UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
             }
 
-            final var xml2 = new Builder().setCharset(StandardCharsets.UTF_8)
+            final var xml2 = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
                             .setUseSchema(false)
                             .setFormattedOutput(true).getAsString(invoice);
 
