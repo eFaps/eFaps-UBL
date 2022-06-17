@@ -34,6 +34,8 @@ public class CreditNote
 
     private Reference reference;
 
+    private CreditNoteTypeCode creditNoteTypeCode = CreditNoteTypeCode.C01;
+
     @Override
     protected CreditNote getThis()
     {
@@ -60,6 +62,16 @@ public class CreditNote
     {
         this.reference = reference;
         return this;
+    }
+
+    public CreditNoteTypeCode getCreditNoteTypeCode()
+    {
+        return creditNoteTypeCode;
+    }
+
+    public void setCreditNoteTypeCode(final CreditNoteTypeCode creditNoteTypeCode)
+    {
+        this.creditNoteTypeCode = creditNoteTypeCode;
     }
 
     @Override
@@ -90,6 +102,8 @@ public class CreditNote
         creditNote.setLegalMonetaryTotal(getMonetaryTotal(creditNote));
         creditNote.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
         creditNote.setBillingReference(Utils.getBillingReferenceType(getReference()));
+        creditNote.setDiscrepancyResponse(Utils.getDiscrepancyResponse(getCreditNoteTypeCode()));
+
         return new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(creditNote);

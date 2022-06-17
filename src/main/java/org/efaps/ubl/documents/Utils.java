@@ -47,6 +47,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Par
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PaymentTermsType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ResponseType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
@@ -431,16 +432,29 @@ public class Utils
         return ret;
     }
 
-    public static List<BillingReferenceType> getBillingReferenceType(final Reference reference) {
+    public static List<BillingReferenceType> getBillingReferenceType(final Reference reference)
+    {
         final var ret = new ArrayList<BillingReferenceType>();
         final var billingReferenceType = new BillingReferenceType();
         final var documentReferenceType = new DocumentReferenceType();
         billingReferenceType.setInvoiceDocumentReference(documentReferenceType);
         documentReferenceType.setID(reference.getNumber());
         documentReferenceType.setIssueDate(reference.getDate());
-        final var documentTypeCodeType  = new DocumentTypeCodeType(reference.getDocType());
+        final var documentTypeCodeType = new DocumentTypeCodeType(reference.getDocType());
         documentReferenceType.setDocumentTypeCode(documentTypeCodeType);
         ret.add(billingReferenceType);
+        return ret;
+    }
+
+    public static List<ResponseType> getDiscrepancyResponse(final CreditNoteTypeCode creditNoteTypeCode)
+    {
+        final var ret = new ArrayList<ResponseType>();
+        final var responseType = new ResponseType();
+        responseType.setResponseCode(creditNoteTypeCode.getCode());
+        final var description = new DescriptionType();
+        description.setValue(creditNoteTypeCode.getDescription());
+        responseType.setDescription(Collections.singletonList(description));
+        ret.add(responseType);
         return ret;
     }
 }
