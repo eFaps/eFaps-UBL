@@ -284,14 +284,19 @@ public class Utils
             // + Cargo no afecto por ítem - Descuento no afecto por ítem) /
             // Cantidad de unidades por ítem
             final var conditionPrice = line.getNetPrice()
-                            .add(line.getTaxEntries().stream().map(entry -> entry.getAmount()).reduce(BigDecimal.ZERO,
-                                            BigDecimal::add))
+                            .add(line.getTaxEntries().stream()
+                                            .map(entry -> entry.isFreeOfCharge() ? BigDecimal.ZERO : entry.getAmount())
+                                            .reduce(BigDecimal.ZERO, BigDecimal::add))
                             .add(line.getAllowancesCharges().stream().map(entry -> entry.getAmount()).reduce(
                                             BigDecimal.ZERO, BigDecimal::add))
                             .divide(line.getQuantity(), RoundingMode.HALF_UP);
 
             final var priceType = new PriceType();
             priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
+
+
+
+
             priceType.setPriceTypeCode(getPriceTypeCode(line));
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             invoiceLine.setPricingReference(pricingReference);
