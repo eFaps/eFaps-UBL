@@ -44,8 +44,11 @@ public class Taxes
             subTotals.add(getTaxSubtotal(taxEntry, isItem));
         }
         taxTotal.setTaxSubtotal(subTotals);
+
         taxTotal.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntries.stream()
-                        .map(entry -> { return entry.getAmount(); })
+                        .map(entry -> {
+                            return entry.isFreeOfCharge() ? BigDecimal.ZERO : entry.getAmount();
+                        })
                         .reduce(BigDecimal.ZERO, BigDecimal::add)));
         return ret;
     }
