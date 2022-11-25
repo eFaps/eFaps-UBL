@@ -45,6 +45,8 @@ public class Line
 
     private String sku;
 
+    private String priceType;
+
     private Line(final Builder builder)
     {
         taxEntries = builder.taxEntries;
@@ -56,6 +58,7 @@ public class Line
         quantity = builder.quantity;
         description = builder.description;
         sku = builder.sku;
+        priceType = builder.priceType;
     }
 
     public Line()
@@ -172,6 +175,17 @@ public class Line
         this.sku = sku;
     }
 
+    @Override
+    public String getPriceType()
+    {
+        return priceType == null ? "01" : priceType;
+    }
+
+    public void setPriceType(final String priceType)
+    {
+        this.priceType = priceType;
+    }
+
     /**
      * Creates builder to build {@link Line}.
      *
@@ -198,6 +212,7 @@ public class Line
         private BigDecimal quantity;
         private String description;
         private String sku;
+        private String priceType;
 
         private Builder()
         {
@@ -270,6 +285,12 @@ public class Line
         public Builder withSku(final String sku)
         {
             this.sku = sku;
+            return this;
+        }
+
+        public Builder withPriceType(final String priceType)
+        {
+            this.priceType = priceType;
             return this;
         }
 
