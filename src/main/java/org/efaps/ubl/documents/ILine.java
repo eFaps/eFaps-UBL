@@ -25,4 +25,8 @@ public interface ILine
     String getDescription();
 
     String getSku();
+
+    default String getPriceType() {
+        return "01";
+    }
 }

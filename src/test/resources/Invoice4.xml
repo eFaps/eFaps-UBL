@@ -97,7 +97,7 @@
       <cac:PricingReference>
       <cac:AlternativeConditionPrice>
         <cbc:PriceAmount currencyID="PEN">118</cbc:PriceAmount>
-              <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
+              <cbc:PriceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Precio" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16">01</cbc:PriceTypeCode>
       </cac:AlternativeConditionPrice>
     </cac:PricingReference>
       <cac:TaxTotal>

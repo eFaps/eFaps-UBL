@@ -112,7 +112,7 @@
       <cac:PricingReference>
       <cac:AlternativeConditionPrice>
         <cbc:PriceAmount currencyID="PEN">12.39</cbc:PriceAmount>
-              <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
+              <cbc:PriceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Precio" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16">01</cbc:PriceTypeCode>
       </cac:AlternativeConditionPrice>
     </cac:PricingReference>
       <cac:TaxTotal>
@@ -148,7 +148,7 @@
       <cac:PricingReference>
       <cac:AlternativeConditionPrice>
         <cbc:PriceAmount currencyID="PEN">0.30</cbc:PriceAmount>
-              <cbc:PriceTypeCode>01</cbc:PriceTypeCode>
+              <cbc:PriceTypeCode listAgencyName="PE:SUNAT" listName="Tipo de Precio" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16">01</cbc:PriceTypeCode>
       </cac:AlternativeConditionPrice>
     </cac:PricingReference>
       <cac:TaxTotal>

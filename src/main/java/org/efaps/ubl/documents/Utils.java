@@ -66,6 +66,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExt
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentMeansIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
 public class Utils
@@ -291,7 +292,7 @@ public class Utils
 
             final var priceType = new PriceType();
             priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
-            priceType.setPriceTypeCode("01");
+            priceType.setPriceTypeCode(getPriceTypeCode(line));
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             invoiceLine.setPricingReference(pricingReference);
 
@@ -303,6 +304,15 @@ public class Utils
             invoiceLine.setPrice(priceType2);
             idx++;
         }
+        return ret;
+    }
+
+    public static PriceTypeCodeType getPriceTypeCode(final ILine line) {
+        final var ret = new PriceTypeCodeType();
+        ret.setListAgencyName(AGENCYNAME);
+        ret.setListName("Tipo de Precio");
+        ret.setListURI("urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo16");
+        ret.setValue(line.getPriceType());
         return ret;
     }
 
@@ -332,7 +342,7 @@ public class Utils
 
             final var priceType = new PriceType();
             priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
-            priceType.setPriceTypeCode("01");
+            priceType.setPriceTypeCode(getPriceTypeCode(line));
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             creditNoteLine.setPricingReference(pricingReference);
 

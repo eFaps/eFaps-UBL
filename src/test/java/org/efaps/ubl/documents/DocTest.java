@@ -148,7 +148,7 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl, xml);
+        assertEquals(ubl, xml.trim());
     }
 
     @Test
@@ -210,7 +210,7 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice2.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl, xml);
+        assertEquals(ubl, xml.trim());
     }
 
     @Test
@@ -255,7 +255,7 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice4.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl, xml);
+        assertEquals(ubl, xml.trim());
     }
 
     @Test
@@ -329,7 +329,7 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("Invoice5.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl, xml);
+        assertEquals(ubl, xml.trim());
     }
 
     @Test
@@ -410,7 +410,7 @@ public class DocTest
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("CreditNote1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        assertEquals(ubl, xml);
+        assertEquals(ubl, xml.trim());
     }
 
 }
