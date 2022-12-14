@@ -38,6 +38,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Customi
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PayableRoundingAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxExclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TaxInclusiveAmountType;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
@@ -53,6 +54,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private BigDecimal netTotal;
     private BigDecimal crossTotal;
     private BigDecimal chargeTotal;
+    private BigDecimal payableAmount;
     private ISupplier supplier;
     private ICustomer customer;
     private List<ITaxEntry> taxes = new ArrayList<>();
@@ -137,6 +139,23 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     public T withNetTotal(final BigDecimal netTotal)
     {
         setNetTotal(netTotal);
+        return getThis();
+    }
+
+
+    public BigDecimal getPayableAmount()
+    {
+        return payableAmount;
+    }
+
+    public void setPayableAmount(final BigDecimal payableAmount)
+    {
+        this.payableAmount = payableAmount;
+    }
+
+    public T withPayableAmount(final BigDecimal payableAmount)
+    {
+        setPayableAmount(payableAmount);
         return getThis();
     }
 
@@ -303,12 +322,17 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         // 2021-09-09 Bizlinks:
         // Total precio venta + Sumatoria otros cargos - Sumatoria otros
         // descuentas (que no afecta la base imponible)
-        ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, getCrossTotal()));
-
+        // PayableAmount
+        final var amount = getPayableAmount() == null || getPayableAmount().compareTo(BigDecimal.ZERO) == 0
+                        ? getCrossTotal() : getPayableAmount();
+        ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, amount));
+        if (amount.subtract(getCrossTotal()).compareTo(BigDecimal.ZERO) != 0) {
+            ret.setPayableRoundingAmount(Utils.getAmount(PayableRoundingAmountType.class,
+                            amount.subtract(getCrossTotal())));
+        }
         evalChargeTotal(ret);
         return ret;
     }
-
 
     // 2021-09-09 Bizlinks:
     // LegalMonetaryTotal/LineExtensionAmount = SUM of all InvoiceLine/LineExtensionAmount
