@@ -17,6 +17,7 @@
 package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class Taxes
 
     public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean isItem)
     {
+        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cbc:TaxAmount (Monto total de tributos del ítem) -> n(12,2)
+        // /Invoice/cac:TaxTotal/cbc:TaxAmount -> n(12,2)
         final var ret = new ArrayList<TaxTotalType>();
         final var taxTotal = new TaxTotalType();
         ret.add(taxTotal);
@@ -49,28 +52,33 @@ public class Taxes
                         .map(entry -> {
                             return entry.isFreeOfCharge() ? BigDecimal.ZERO : entry.getAmount();
                         })
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)));
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .setScale(2, RoundingMode.HALF_UP)));
         return ret;
     }
 
     public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry, final boolean isItem)
     {
+        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Monto base) -> n(12,2)
+        // /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Total valor de venta) -> n(12,2)
         final var ret = new TaxSubtotalType();
         if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
-            ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()));
+            ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()
+                            .setScale(2, RoundingMode.HALF_UP)));
         }
         if (TaxType.PERUNIT.equals(taxEntry.getTaxType())) {
             if (isItem) {
                 final var baseUnitMeasure = new BaseUnitMeasureType();
                 baseUnitMeasure.setUnitCode("NIU");
-                baseUnitMeasure.setValue(taxEntry.getTaxableAmount().stripTrailingZeros());
+                baseUnitMeasure.setValue(taxEntry.getTaxableAmount()
+                                .setScale(2, RoundingMode.HALF_UP).stripTrailingZeros());
                 ret.setBaseUnitMeasure(baseUnitMeasure);
             } else {
                 // for per unit the taxable amount for the doc is the same as the amount
                 ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getAmount()));
             }
         }
-        ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount()));
+        ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount().setScale(2, RoundingMode.HALF_UP)));
         ret.setTaxCategory(getTaxCategory(taxEntry, isItem));
         return ret;
     }

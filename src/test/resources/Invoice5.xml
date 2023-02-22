@@ -83,10 +83,10 @@
       <cbc:InstallmentDueDate>2022-05-01</cbc:InstallmentDueDate>
   </cac:PaymentTerms>
   <cac:TaxTotal>
-    <cbc:TaxAmount currencyID="PEN">18</cbc:TaxAmount>
+    <cbc:TaxAmount currencyID="PEN">18.00</cbc:TaxAmount>
       <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="PEN">100</cbc:TaxableAmount>
-          <cbc:TaxAmount currencyID="PEN">18</cbc:TaxAmount>
+      <cbc:TaxableAmount currencyID="PEN">100.00</cbc:TaxableAmount>
+          <cbc:TaxAmount currencyID="PEN">18.00</cbc:TaxAmount>
           <cac:TaxCategory>
         <cbc:Percent>18</cbc:Percent>
               <cac:TaxScheme>
@@ -100,7 +100,7 @@
   <cac:LegalMonetaryTotal>
     <cbc:LineExtensionAmount currencyID="PEN">100</cbc:LineExtensionAmount>
       <cbc:TaxExclusiveAmount currencyID="PEN">100</cbc:TaxExclusiveAmount>
-      <cbc:TaxInclusiveAmount currencyID="PEN">118</cbc:TaxInclusiveAmount>
+      <cbc:TaxInclusiveAmount currencyID="PEN">118.00</cbc:TaxInclusiveAmount>
       <cbc:PayableAmount currencyID="PEN">118</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
@@ -114,10 +114,10 @@
       </cac:AlternativeConditionPrice>
     </cac:PricingReference>
       <cac:TaxTotal>
-      <cbc:TaxAmount currencyID="PEN">18</cbc:TaxAmount>
+      <cbc:TaxAmount currencyID="PEN">18.00</cbc:TaxAmount>
           <cac:TaxSubtotal>
-        <cbc:TaxableAmount currencyID="PEN">100</cbc:TaxableAmount>
-              <cbc:TaxAmount currencyID="PEN">18</cbc:TaxAmount>
+        <cbc:TaxableAmount currencyID="PEN">100.00</cbc:TaxableAmount>
+              <cbc:TaxAmount currencyID="PEN">18.00</cbc:TaxAmount>
               <cac:TaxCategory>
           <cbc:Percent>18</cbc:Percent>
                   <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" listName="Afectacion de IGV" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">40</cbc:TaxExemptionReasonCode>
