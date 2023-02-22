@@ -18,6 +18,7 @@
 package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -381,17 +382,23 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 
     protected void evalChargeTotal(final MonetaryTotalType total)
     {
-        if (getChargeTotal() != null) {
-            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getChargeTotal()));
+        BigDecimal chargeTotalAmount = null;
+        if (getChargeTotal() != null && getChargeTotal().compareTo(BigDecimal.ZERO) != 0) {
+            chargeTotalAmount = getChargeTotal();
+
         } else if (!getAllowancesCharges().isEmpty()) {
-            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class, getAllowancesCharges().stream()
+            chargeTotalAmount = getAllowancesCharges().stream()
                             .map(entry -> {
                                 if (entry.isCharge()) {
                                     return entry.getAmount();
                                 } else {
                                     return BigDecimal.ZERO;
                                 }
-                            }).reduce(BigDecimal.ZERO, BigDecimal::add)));
+                            }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+        if (chargeTotalAmount != null && chargeTotalAmount.compareTo(BigDecimal.ZERO) != 0) {
+            total.setChargeTotalAmount(Utils.getAmount(ChargeTotalAmountType.class,
+                            chargeTotalAmount.setScale(2, RoundingMode.HALF_UP)));
         }
     }
 
