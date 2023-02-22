@@ -98,7 +98,7 @@
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="PEN">100</cbc:LineExtensionAmount>
+    <cbc:LineExtensionAmount currencyID="PEN">100.00</cbc:LineExtensionAmount>
       <cbc:TaxExclusiveAmount currencyID="PEN">100</cbc:TaxExclusiveAmount>
       <cbc:TaxInclusiveAmount currencyID="PEN">118.00</cbc:TaxInclusiveAmount>
       <cbc:PayableAmount currencyID="PEN">118</cbc:PayableAmount>
@@ -106,7 +106,7 @@
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
       <cbc:InvoicedQuantity unitCodeListID="UN/ECE rec 20" unitCodeListAgencyName="United Nations Economic Commission for Europe">1</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="PEN">100</cbc:LineExtensionAmount>
+      <cbc:LineExtensionAmount currencyID="PEN">100.00</cbc:LineExtensionAmount>
       <cac:PricingReference>
       <cac:AlternativeConditionPrice>
         <cbc:PriceAmount currencyID="PEN">118</cbc:PriceAmount>

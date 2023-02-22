@@ -124,12 +124,14 @@ public class Utils
                         .append("/100 ").toString().toUpperCase();
     }
 
-    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount)
+    public static <T extends AmountType> T getAmount(final Class<T> type,
+                                                     final BigDecimal amount)
     {
         return getAmount(type, amount, "PEN");
     }
 
-    public static <T extends AmountType> T getAmount(final Class<T> type, final BigDecimal amount,
+    public static <T extends AmountType> T getAmount(final Class<T> type,
+                                                     final BigDecimal amount,
                                                      final String currencyId)
     {
         T ret = null;
@@ -276,7 +278,9 @@ public class Utils
             ret.add(invoiceLine);
             invoiceLine.setID(String.valueOf(idx));
             invoiceLine.setInvoicedQuantity(getInvoicedQuantity(line));
-            invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
+            // /Invoice/cac:InvoiceLine/cbc:LineExtensionAmount --> n(12,2)
+            invoiceLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class,
+                            line.getNetPrice().setScale(2, RoundingMode.HALF_UP)));
 
             final var pricingReference = new PricingReferenceType();
             // Precio de Venta Unitario = (Valor de venta por ítem + Monto total
@@ -294,9 +298,6 @@ public class Utils
             final var priceType = new PriceType();
             priceType.setPriceAmount(getAmount(PriceAmountType.class, conditionPrice));
 
-
-
-
             priceType.setPriceTypeCode(getPriceTypeCode(line));
             pricingReference.setAlternativeConditionPrice(Collections.singletonList(priceType));
             invoiceLine.setPricingReference(pricingReference);
@@ -312,7 +313,8 @@ public class Utils
         return ret;
     }
 
-    public static PriceTypeCodeType getPriceTypeCode(final ILine line) {
+    public static PriceTypeCodeType getPriceTypeCode(final ILine line)
+    {
         final var ret = new PriceTypeCodeType();
         ret.setListAgencyName(AGENCYNAME);
         ret.setListName("Tipo de Precio");
@@ -320,7 +322,6 @@ public class Utils
         ret.setValue(line.getPriceType());
         return ret;
     }
-
 
     public static List<CreditNoteLineType> getCreditNoteLines(final List<ILine> lines)
     {
@@ -381,7 +382,6 @@ public class Utils
         ret.setValue(line.getQuantity());
         return ret;
     }
-
 
     public static ItemType getItem(final ILine line)
     {
