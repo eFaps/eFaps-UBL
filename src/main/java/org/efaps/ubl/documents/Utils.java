@@ -332,7 +332,9 @@ public class Utils
             ret.add(creditNoteLine);
             creditNoteLine.setID(String.valueOf(idx));
             creditNoteLine.setCreditedQuantity(getCreditedQuantity(line));
-            creditNoteLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class, line.getNetPrice()));
+            // //CreditNote/cac:CreditNoteLine/cbc:LineExtensionAmount  --> n(12,2)
+            creditNoteLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class,
+                            line.getNetPrice().setScale(2, RoundingMode.HALF_UP)));
 
             final var pricingReference = new PricingReferenceType();
             // Precio de Venta Unitario = (Valor de venta por ítem + Monto total
