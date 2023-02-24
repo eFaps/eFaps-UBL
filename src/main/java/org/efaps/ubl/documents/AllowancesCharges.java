@@ -17,6 +17,7 @@
 package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +38,14 @@ public class AllowancesCharges
             allowanceCharge.setAllowanceChargeReasonCode(
                             Utils.getAllowanceChargeReasonCode(allowanceChargeEntry.getReason()));
             allowanceCharge.setMultiplierFactorNumeric(allowanceChargeEntry.getFactor());
-            allowanceCharge.setAmount(Utils.getAmount(AmountType.class, allowanceChargeEntry.getAmount()));
-            allowanceCharge.setBaseAmount(Utils.getAmount(BaseAmountType.class, allowanceChargeEntry.getBaseAmount()));
+            // /Invoice/cac:InvoiceLine/cac:Allowancecharge/cbc:Amount (Monto de
+            // cargo/descuento) --> n(12,2)
+            allowanceCharge.setAmount(Utils.getAmount(AmountType.class,
+                            allowanceChargeEntry.getAmount().setScale(2, RoundingMode.HALF_UP)));
+            // /Invoice/cac:InvoiceLine/cac:Allowancecharge/cbc:BaseAmount
+            // (Monto base del cargo/descuento)--> n(12,2)
+            allowanceCharge.setBaseAmount(Utils.getAmount(BaseAmountType.class,
+                            allowanceChargeEntry.getBaseAmount().setScale(2, RoundingMode.HALF_UP)));
         }
         return ret;
     }
