@@ -14,11 +14,20 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl.extension;
+package org.efaps.ubl;
 
+import org.efaps.ubl.extension.SummaryDocumentsType;
 
-public interface Definitions
+import com.helger.jaxb.builder.JAXBDocumentType;
+import com.helger.jaxb.builder.JAXBWriterBuilder;
+import com.helger.ubl21.UBL21NamespaceContext;
+
+public class SummaryBuilder extends JAXBWriterBuilder
 {
-    String NAMESPACE_SUNATAGGREGATE = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1";
-    String NAMESPACE_SUMMARY = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1";
+
+    public SummaryBuilder()
+    {
+        super(new JAXBDocumentType(SummaryDocumentsType.class, null, null));
+        setNamespaceContext(UBL21NamespaceContext.getInstance());
+    }
 }

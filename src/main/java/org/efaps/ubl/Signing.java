@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,7 +163,7 @@ public class Signing
 
             final var certificate = getCertificate();
             final KeyInfoFactory kif = xmlSignatureFactory.getKeyInfoFactory();
-            final var x509Content = new ArrayList<Object>();
+            final var x509Content = new ArrayList<>();
             x509Content.add(certificate.getSubjectX500Principal().getName());
             x509Content.add(certificate);
             final X509Data xd = kif.newX509Data(x509Content);
@@ -176,7 +176,7 @@ public class Signing
 
             final var signatureT = new SignatureType();
 
-            final var ele = new JAXBElement<SignatureType>(new QName("http://www.w3.org/2000/09/xmldsig#", "Signature"),
+            final var ele = new JAXBElement<>(new QName("http://www.w3.org/2000/09/xmldsig#", "Signature"),
                             SignatureType.class, signatureT);
             extensionContent.setAny(ele);
             signatureT.setId("SB001-000095");
@@ -213,16 +213,16 @@ public class Signing
             final var keyInfo = new KeyInfoType();
 
             final var x509Data = new X509DataType();
-            final var x509DataEle = new JAXBElement<X509DataType>(
+            final var x509DataEle = new JAXBElement<>(
                             new QName("http://www.w3.org/2000/09/xmldsig#", "X509Data"), X509DataType.class, x509Data);
             keyInfo.setContent(Collections.singletonList(x509DataEle));
 
-            final var X509SubjectNameEle = new JAXBElement<String>(
+            final var X509SubjectNameEle = new JAXBElement<>(
                             new QName("http://www.w3.org/2000/09/xmldsig#", "X509SubjectName"), String.class,
                             certificate.getSubjectX500Principal().getName());
             x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509SubjectNameEle);
 
-            final var X509CertificateEle = new JAXBElement<byte[]>(
+            final var X509CertificateEle = new JAXBElement<>(
                             new QName("http://www.w3.org/2000/09/xmldsig#", "X509Certificate"), byte[].class,
                             certificate.getPublicKey().getEncoded());
             x509Data.addX509IssuerSerialOrX509SKIOrX509SubjectName(X509CertificateEle);
@@ -259,7 +259,7 @@ public class Signing
                 }
                 creditNote.getUBLExtensions().addUBLExtension(extension);
                 if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
-                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
                     UBL21NamespaceContext.getInstance().removeMapping("cec");
                     UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
                 }
@@ -277,7 +277,7 @@ public class Signing
                 }
                 invoice.getUBLExtensions().addUBLExtension(extension);
                 if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
-                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
                     UBL21NamespaceContext.getInstance().removeMapping("cec");
                     UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
                 }
@@ -320,7 +320,7 @@ public class Signing
                             signatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
                             Collections.singletonList(ref));
 
-            final var x509Content = new ArrayList<Object>();
+            final var x509Content = new ArrayList<>();
             final var cert = getCertificate();
             x509Content.add(cert.getSubjectX500Principal().getName());
             x509Content.add(cert);
@@ -378,7 +378,7 @@ public class Signing
             invoice.getUBLExtensions().addUBLExtension(extension);
 
             if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
-                UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE);
+                UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
                 UBL21NamespaceContext.getInstance().removeMapping("cec");
                 UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
             }
@@ -421,7 +421,7 @@ public class Signing
                             signatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
                             Collections.singletonList(ref));
 
-            final var x509Content = new ArrayList<Object>();
+            final var x509Content = new ArrayList<>();
             final var cert = getCertificate();
             x509Content.add(cert.getSubjectX500Principal().getName());
             x509Content.add(cert);

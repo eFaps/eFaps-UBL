@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-@XmlRootElement(name = "AdditionalInformation", namespace = Definitions.NAMESPACE)
+@XmlRootElement(name = "AdditionalInformation", namespace = Definitions.NAMESPACE_SUNATAGGREGATE)
 @XmlType(name = "AdditionalInformation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AdditionalInformation
@@ -33,7 +33,7 @@ public class AdditionalInformation
 
     private static final long serialVersionUID = 1L;
 
-    @XmlElement(name = "AdditionalProperty", namespace = Definitions.NAMESPACE)
+    @XmlElement(name = "AdditionalProperty", namespace = Definitions.NAMESPACE_SUNATAGGREGATE)
     private AdditionalProperty additionalProperty;
 
     public AdditionalProperty getAdditionalProperty()

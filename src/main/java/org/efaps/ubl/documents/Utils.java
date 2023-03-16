@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.efaps.ubl.extension.SummaryDocumentsLineType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +50,11 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Pri
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ResponseType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.StatusType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AllowanceChargeReasonCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ConditionCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditNoteTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
@@ -63,6 +66,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Install
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentMeansIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
@@ -472,6 +476,26 @@ public class Utils
         description.setValue(creditNoteTypeCode.getDescription());
         responseType.setDescription(Collections.singletonList(description));
         ret.add(responseType);
+        return ret;
+    }
+
+    public static List<SummaryDocumentsLineType> getSummaryLines(final List<ISummaryLine> lines)
+    {
+        final var ret = new ArrayList<SummaryDocumentsLineType>();
+        var idx = 1;
+        for (final var line: lines) {
+            final var type = new SummaryDocumentsLineType();
+            ret.add(type);
+            type.setLineId(new LineIDType(String.valueOf(idx)));
+            type.setDocumentTypeCode(new DocumentTypeCodeType(line.getDocType()));
+            type.setId(new IDType(line.getNumber()));
+            type.setAccountingCustomerParty(Utils.getCustomer(line.getCustomer()));
+            final var status = new StatusType();
+            status.setConditionCode(new ConditionCodeType(String.valueOf(line.getStatusCode())));
+            type.setStatus(status);
+            idx++;
+        }
+
         return ret;
     }
 }

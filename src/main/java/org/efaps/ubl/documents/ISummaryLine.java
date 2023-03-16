@@ -14,11 +14,17 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl.extension;
+package org.efaps.ubl.documents;
 
-
-public interface Definitions
+public interface ISummaryLine
 {
-    String NAMESPACE_SUNATAGGREGATE = "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1";
-    String NAMESPACE_SUMMARY = "urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1";
+    String getDocType();
+    String getNumber();
+    ICustomer getCustomer();
+    default int getStatusCode() {
+        // 1 = Adicionar
+        // 2 = Modificar
+        // 3 = Anulado
+        return 1;
+    }
 }
