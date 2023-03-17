@@ -16,6 +16,9 @@
  */
 package org.efaps.ubl.documents;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public interface ISummaryLine
 {
     String getDocType();
@@ -27,4 +30,8 @@ public interface ISummaryLine
         // 3 = Anulado
         return 1;
     }
+    BigDecimal getCrossTotal();
+    // 01: Valor de venta de las operaciones gravadas con el IGV
+    BigDecimal getNetTotal();
+    List<ITaxEntry> getTaxEntries();
 }

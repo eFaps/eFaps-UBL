@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.efaps.ubl.extension.BillingPaymentType;
 import org.efaps.ubl.extension.SummaryDocumentsLineType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,14 +64,17 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Documen
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstallmentDueDateType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstructionIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaidAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentMeansIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceTypeCodeType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TotalAmountType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
 
 public class Utils
@@ -493,6 +497,38 @@ public class Utils
             final var status = new StatusType();
             status.setConditionCode(new ConditionCodeType(String.valueOf(line.getStatusCode())));
             type.setStatus(status);
+            type.setTotalAmount(getAmount(TotalAmountType.class, line.getCrossTotal()));
+
+            final var billingPayments = new ArrayList<BillingPaymentType>();
+            //01: Valor de venta de las operaciones gravadas con el IGV
+            final var billingPayment1 =  new BillingPaymentType();
+            billingPayment1.setPaidAmountType(getAmount(PaidAmountType.class, line.getNetTotal()));
+            billingPayment1.setInstructionID(new InstructionIDType("01"));
+            billingPayments.add(billingPayment1);
+            // 02: Valores de venta de las operaciones exoneradas del IGV
+            final var billingPayment2 =  new BillingPaymentType();
+            billingPayment2.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            billingPayment2.setInstructionID(new InstructionIDType("02"));
+            billingPayments.add(billingPayment2);
+            // 03: Valores de venta de las operaciones inafectas del IGV
+            final var billingPayment3 =  new BillingPaymentType();
+            billingPayment3.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            billingPayment3.setInstructionID(new InstructionIDType("03"));
+            billingPayments.add(billingPayment3);
+            // 04: Valor de venta de las exportaciones del item
+            final var billingPayment4 =  new BillingPaymentType();
+            billingPayment4.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            billingPayment4.setInstructionID(new InstructionIDType("04"));
+            billingPayments.add(billingPayment4);
+            /**
+            // 05: Valor de venta de las operaciones gratuitas  (Condicional)
+            final var billingPayment5 =  new BillingPaymentType();
+            billingPayment5.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            billingPayment5.setInstructionID(new InstructionIDType("05"));
+            billingPayments.add(billingPayment5);
+             **/
+            type.setBillingPayments(billingPayments);
+            type.setTaxTotals(Taxes.getTaxTotal(line.getTaxEntries(), true));
             idx++;
         }
 

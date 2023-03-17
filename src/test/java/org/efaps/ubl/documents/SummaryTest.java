@@ -20,6 +20,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -70,6 +71,28 @@ public class SummaryTest
             public ICustomer getCustomer()
             {
                 return DocTest.getCustomer();
+            }
+
+            @Override
+            public BigDecimal getCrossTotal()
+            {
+                return new BigDecimal("6600.00");
+            }
+
+            @Override
+            public BigDecimal getNetTotal()
+            {
+                return new BigDecimal("5872.88");
+            }
+
+            @Override
+            public List<ITaxEntry> getTaxEntries()
+            {
+               final var taxEntries = new ArrayList<ITaxEntry>();
+               taxEntries.add(new Taxes.IGV()
+                                .setAmount(new BigDecimal("1057.12"))
+                                .setTaxableAmount(new BigDecimal("100")));
+                return taxEntries;
             }
         });
         return ret;

@@ -16,6 +16,8 @@
  */
 package org.efaps.ubl.extension;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,9 +26,11 @@ import com.helger.ubl21.CUBL21;
 
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.StatusType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineIDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TotalAmountType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class SummaryDocumentsLineType
@@ -42,6 +46,42 @@ public class SummaryDocumentsLineType
     private CustomerPartyType accountingCustomerParty;
     @XmlElement(name = "Status", namespace = CUBL21.XML_SCHEMA_CAC_NAMESPACE_URL, required = true)
     private StatusType status;
+    @XmlElement(name = "TotalAmount", namespace = Definitions.NAMESPACE_SUNATAGGREGATE, required = true)
+    private TotalAmountType totalAmount;
+    @XmlElement(name = "BillingPayment", namespace = Definitions.NAMESPACE_SUNATAGGREGATE, required = true)
+    private List<BillingPaymentType> billingPayments;
+    @XmlElement(name = "TaxTotal", namespace = CUBL21.XML_SCHEMA_CAC_NAMESPACE_URL, required = true)
+    private List<TaxTotalType> taxTotals;
+
+    public List<TaxTotalType> getTaxTotals()
+    {
+        return taxTotals;
+    }
+
+    public void setTaxTotals(List<TaxTotalType> taxTotals)
+    {
+        this.taxTotals = taxTotals;
+    }
+
+    public List<BillingPaymentType> getBillingPayments()
+    {
+        return billingPayments;
+    }
+
+    public void setBillingPayments(List<BillingPaymentType> billingPayments)
+    {
+        this.billingPayments = billingPayments;
+    }
+
+    public TotalAmountType getTotalAmount()
+    {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(TotalAmountType totalAmount)
+    {
+        this.totalAmount = totalAmount;
+    }
 
     public StatusType getStatus()
     {
