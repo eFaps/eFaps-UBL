@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl;
+package org.efaps.ubl.reader;
 
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 

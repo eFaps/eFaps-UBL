@@ -18,7 +18,7 @@ package org.efaps.ubl.documents;
 
 import java.nio.charset.StandardCharsets;
 
-import org.efaps.ubl.CreditNoteBuilder;
+import org.efaps.ubl.builder.CreditNoteBuilder;
 import org.efaps.ubl.extension.Definitions;
 
 import com.helger.ubl21.CUBL21;

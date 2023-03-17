@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.efaps.ubl.InvoiceBuilder;
+import org.efaps.ubl.builder.InvoiceBuilder;
 import org.efaps.ubl.extension.Definitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl;
+package org.efaps.ubl.reader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

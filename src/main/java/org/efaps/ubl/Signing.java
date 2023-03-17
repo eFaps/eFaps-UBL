@@ -65,8 +65,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.efaps.ubl.builder.CreditNoteBuilder;
+import org.efaps.ubl.builder.InvoiceBuilder;
+import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.dto.SignResponseDto;
 import org.efaps.ubl.extension.Definitions;
+import org.efaps.ubl.reader.CreditNoteReader;
+import org.efaps.ubl.reader.InvoiceReader;
+import org.efaps.ubl.reader.SummaryReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;

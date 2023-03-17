@@ -1,4 +1,4 @@
-package org.efaps.ubl;
+package org.efaps.ubl.reader;
 
 import org.efaps.ubl.extension.SummaryDocumentsType;
 

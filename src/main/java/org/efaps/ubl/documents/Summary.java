@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.efaps.ubl.SummaryBuilder;
+import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.extension.SummaryDocumentsType;
 

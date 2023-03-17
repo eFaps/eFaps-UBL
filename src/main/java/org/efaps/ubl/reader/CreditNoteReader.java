@@ -14,15 +14,15 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl;
+package org.efaps.ubl.reader;
 
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 
-public class CreditNoteBuilder
-    extends DocumentBuilder<CreditNoteType>
+public class CreditNoteReader
+    extends DocumentReader<CreditNoteType>
 {
 
-    public CreditNoteBuilder()
+    public CreditNoteReader()
     {
         super(CreditNoteType.class);
     }

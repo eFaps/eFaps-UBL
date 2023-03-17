@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl;
+package org.efaps.ubl.builder;
 
 import org.efaps.ubl.extension.SummaryDocumentsType;
 
