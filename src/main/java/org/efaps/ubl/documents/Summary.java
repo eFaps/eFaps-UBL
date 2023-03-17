@@ -18,6 +18,7 @@ package org.efaps.ubl.documents;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.efaps.ubl.builder.SummaryBuilder;
@@ -44,6 +45,15 @@ public class Summary
     public Summary setLines(List<ISummaryLine> lines)
     {
         this.lines = lines;
+        return this;
+    }
+
+    public Summary addLine(ISummaryLine line)
+    {
+        if (this.lines == null) {
+            this.lines = new ArrayList<>();
+        }
+        this.lines.add(line);
         return this;
     }
 

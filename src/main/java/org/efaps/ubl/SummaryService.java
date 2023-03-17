@@ -16,8 +16,149 @@
  */
 package org.efaps.ubl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.efaps.ubl.documents.ICustomer;
+import org.efaps.ubl.documents.ISummaryLine;
+import org.efaps.ubl.documents.ITaxEntry;
+import org.efaps.ubl.documents.Summary;
+import org.efaps.ubl.reader.InvoiceReader;
 
 public class SummaryService
 {
 
+    public Summary createSummary(String... xmls)
+    {
+        final var summary = new Summary();
+        for (final var xml : xmls) {
+            final var invoice = new InvoiceReader().read(xml);
+            summary.addLine(new ISummaryLine()
+            {
+
+                @Override
+                public String getDocType()
+                {
+                    return invoice.getInvoiceTypeCodeValue();
+                }
+
+                @Override
+                public String getNumber()
+                {
+                    return invoice.getIDValue();
+                }
+
+                @Override
+                public ICustomer getCustomer()
+                {
+                    return new ICustomer()
+                    {
+
+                        @Override
+                        public String getDoiType()
+                        {
+                            return invoice.getAccountingCustomerParty().getParty().getPartyIdentificationAtIndex(0)
+                                            .getID().getSchemeID();
+                        }
+
+                        @Override
+                        public String getDOI()
+                        {
+                            return invoice.getAccountingCustomerParty().getParty().getPartyIdentificationAtIndex(0)
+                                            .getID().getValue();
+                        }
+
+                        @Override
+                        public String getName()
+                        {
+                            return invoice.getAccountingCustomerParty().getParty().getPartyLegalEntityAtIndex(0)
+                                            .getRegistrationNameValue();
+                        }
+
+                        @Override
+                        public String getAddressLine()
+                        {
+                            return null;
+                        }
+
+                        @Override
+                        public String getCountry()
+                        {
+                            return null;
+                        }
+                    };
+                }
+
+                @Override
+                public BigDecimal getCrossTotal()
+                {
+                    return invoice.getLegalMonetaryTotal().getPayableAmountValue();
+                }
+
+                @Override
+                public BigDecimal getNetTotal()
+                {
+                    return invoice.getLegalMonetaryTotal().getTaxExclusiveAmountValue();
+                }
+
+                @Override
+                public List<ITaxEntry> getTaxEntries()
+                {
+                    final var entries = new ArrayList<ITaxEntry>();
+                    for (final var taxtotal : invoice.getTaxTotal()) {
+                        entries.add(new ITaxEntry()
+                        {
+
+                            @Override
+                            public BigDecimal getTaxableAmount()
+                            {
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxableAmountValue();
+                            }
+
+                            @Override
+                            public String getTaxExemptionReasonCode()
+                            {
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxCategory()
+                                                .getTaxExemptionReasonCodeValue();
+                            }
+
+                            @Override
+                            public BigDecimal getPercent()
+                            {
+                                return null;
+                            }
+
+                            @Override
+                            public String getName()
+                            {
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxCategory().getTaxScheme().getNameValue();
+                            }
+
+                            @Override
+                            public String getId()
+                            {
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxCategory().getTaxScheme().getIDValue();
+                            }
+
+                            @Override
+                            public String getCode()
+                            {
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxCategory().getTaxScheme()
+                                                .getTaxTypeCodeValue();
+                            }
+
+                            @Override
+                            public BigDecimal getAmount()
+                            {
+                                return taxtotal.getTaxAmountValue();
+                            }
+                        });
+                    }
+                    return entries;
+                }
+            });
+        }
+        return summary;
+    }
 }
