@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.efaps.ubl.Signing;
 import org.testng.annotations.Test;
 
 public class SummaryTest
@@ -37,8 +38,8 @@ public class SummaryTest
         throws IOException
     {
         final var summary = new Summary().setNumber("RC-20230228-1001")
-                        .setReferenceDate(LocalDate.of(25023, 02, 28))
-                        .setIssueDate(LocalDate.of(25023, 02, 28))
+                        .setReferenceDate(LocalDate.of(2023, 02, 28))
+                        .setIssueDate(LocalDate.of(2023, 02, 28))
                         .setSupplier(DocTest.getSupplier())
                         .setLines(getLines());
 
@@ -47,6 +48,30 @@ public class SummaryTest
         final File file = new File(classLoader.getResource("Summary1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         assertEquals(ubl, xml.trim());
+    }
+
+    @Test
+    public void createSummarySigning()
+        throws IOException
+    {
+        final var summary = new Summary().setNumber("RC-20230228-1001")
+                        .setReferenceDate(LocalDate.of(2023, 02, 28))
+                        .setIssueDate(LocalDate.of(2023, 02, 28))
+                        .setSupplier(DocTest.getSupplier())
+                        .setLines(getLines());
+
+        final var ubl = summary.getUBLXml();
+
+        final var dto = new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signDocument(ubl);
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("SummaryWithSignature.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(dto.getUbl(), xml.trim());
     }
 
     public static List<ISummaryLine> getLines()
@@ -88,8 +113,8 @@ public class SummaryTest
             @Override
             public List<ITaxEntry> getTaxEntries()
             {
-               final var taxEntries = new ArrayList<ITaxEntry>();
-               taxEntries.add(new Taxes.IGV()
+                final var taxEntries = new ArrayList<ITaxEntry>();
+                taxEntries.add(new Taxes.IGV()
                                 .setAmount(new BigDecimal("1057.12"))
                                 .setTaxableAmount(new BigDecimal("100")));
                 return taxEntries;
@@ -98,4 +123,3 @@ public class SummaryTest
         return ret;
     }
 }
-

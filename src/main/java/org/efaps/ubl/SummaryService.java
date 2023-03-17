@@ -16,18 +16,8 @@
  */
 package org.efaps.ubl;
 
-import org.efaps.ubl.extension.SummaryDocumentsType;
 
-import com.helger.jaxb.builder.JAXBDocumentType;
-import com.helger.jaxb.builder.JAXBWriterBuilder;
-import com.helger.ubl21.UBL21NamespaceContext;
-
-public class SummaryBuilder extends JAXBWriterBuilder<SummaryDocumentsType, SummaryBuilder>
+public class SummaryService
 {
 
-    public SummaryBuilder()
-    {
-        super(new JAXBDocumentType(SummaryDocumentsType.class, null, null));
-        setNamespaceContext(UBL21NamespaceContext.getInstance());
-    }
 }

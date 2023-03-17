@@ -35,12 +35,16 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ReferenceDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.UBLVersionIDType;
+import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(namespace = Definitions.NAMESPACE_SUMMARY)
 @XmlRootElement(name = "SummaryDocuments", namespace = Definitions.NAMESPACE_SUMMARY)
 public class SummaryDocumentsType
 {
+
+    @XmlElement(name = "UBLExtensions", namespace = CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL)
+    private UBLExtensionsType ublExtensions;
     @XmlElement(name = "UBLVersionID", namespace = CUBL21.XML_SCHEMA_CBC_NAMESPACE_URL)
     private UBLVersionIDType ublVersionID;
     @XmlElement(name = "CustomizationID", namespace = CUBL21.XML_SCHEMA_CBC_NAMESPACE_URL)
@@ -111,5 +115,15 @@ public class SummaryDocumentsType
             this.signature = new ArrayList<>();
         }
         this.signature.add(signature);
+    }
+
+    public UBLExtensionsType getUBLExtensions()
+    {
+        return ublExtensions;
+    }
+
+    public void setUBLExtensions(UBLExtensionsType ublExtensions)
+    {
+        this.ublExtensions = ublExtensions;
     }
 }

@@ -107,7 +107,7 @@ public class Summary
         summary.addSignature(Utils.getSignature(getSupplier()));
         summary.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         summary.setSummaryDocumentsLines(Utils.getSummaryLines(getLines()));
-        final var ret =  new SummaryBuilder().setCharset(StandardCharsets.UTF_8)
+        final var ret = new SummaryBuilder().setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(summary);
         UBL21NamespaceContext.getInstance().removeMapping("");

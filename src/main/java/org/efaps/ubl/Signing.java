@@ -267,6 +267,18 @@ public class Signing
                 xml2 = new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(creditNote);
+            } else if (xml.contains("<SummaryDocuments ")) {
+                final var summary = new SummaryReader().read(xml);
+                final var extension = new UBLExtensionType();
+                final var extensionContent = new ExtensionContentType();
+                extension.setExtensionContent(extensionContent);
+                if (summary.getUBLExtensions() == null) {
+                    summary.setUBLExtensions(new UBLExtensionsType());
+                }
+                summary.getUBLExtensions().addUBLExtension(extension);
+                xml2 = new SummaryBuilder().setCharset(StandardCharsets.UTF_8)
+                                .setUseSchema(false)
+                                .setFormattedOutput(true).getAsString(summary);
             } else {
                 final var invoice = new InvoiceReader().read(xml);
                 final var extension = new UBLExtensionType();

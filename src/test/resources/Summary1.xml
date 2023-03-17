@@ -3,8 +3,8 @@
   <cbc:UBLVersionID>2.0</cbc:UBLVersionID>
   <cbc:CustomizationID>1.1</cbc:CustomizationID>
   <cbc:ID>RC-20230228-1001</cbc:ID>
-  <cbc:ReferenceDate>+25023-02-28</cbc:ReferenceDate>
-  <cbc:IssueDate>+25023-02-28</cbc:IssueDate>
+  <cbc:ReferenceDate>2023-02-28</cbc:ReferenceDate>
+  <cbc:IssueDate>2023-02-28</cbc:IssueDate>
   <cac:Signature>
     <cbc:ID>SB001-000095</cbc:ID>
       <cac:SignatoryParty>
