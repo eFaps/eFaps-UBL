@@ -74,13 +74,13 @@
     <cbc:ID>FormaPago</cbc:ID>
       <cbc:PaymentMeansID>Cuoata001</cbc:PaymentMeansID>
       <cbc:Amount currencyID="PEN">150</cbc:Amount>
-      <cbc:InstallmentDueDate>2022-04-01</cbc:InstallmentDueDate>
+      <cbc:PaymentDueDate>2022-04-01</cbc:PaymentDueDate>
   </cac:PaymentTerms>
   <cac:PaymentTerms>
     <cbc:ID>FormaPago</cbc:ID>
       <cbc:PaymentMeansID>Cuoata002</cbc:PaymentMeansID>
       <cbc:Amount currencyID="PEN">250</cbc:Amount>
-      <cbc:InstallmentDueDate>2022-05-01</cbc:InstallmentDueDate>
+      <cbc:PaymentDueDate>2022-05-01</cbc:PaymentDueDate>
   </cac:PaymentTerms>
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="PEN">18.00</cbc:TaxAmount>

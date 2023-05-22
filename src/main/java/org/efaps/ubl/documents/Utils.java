@@ -63,7 +63,6 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Documen
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IdentificationCodeType;
-import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstallmentDueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstructionIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoiceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
@@ -71,6 +70,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExt
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaidAmountType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentDueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentMeansIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceTypeCodeType;
@@ -441,8 +441,10 @@ public class Utils
                     paymentTermsType4Installment.setAmount(getAmount(
                                     oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
                                     installment.getAmount(), installment.getCurrencyId()));
-                    paymentTermsType4Installment.setInstallmentDueDate(
-                                    new InstallmentDueDateType(installment.getDueDate()));
+                   // paymentTermsType4Installment.setInstallmentDueDate(
+                   //                 new InstallmentDueDateType(installment.getDueDate()));
+                    paymentTermsType4Installment.setPaymentDueDate(
+                                    new PaymentDueDateType(installment.getDueDate()));
                     i++;
                 }
             } else {
