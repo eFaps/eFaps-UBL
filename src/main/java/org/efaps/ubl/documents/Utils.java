@@ -435,14 +435,12 @@ public class Utils
                     ret.add(paymentTermsType4Installment);
                     paymentTermsType4Installment.setID("FormaPago");
                     final var paymentMeansIDType4Installment = new PaymentMeansIDType();
-                    paymentMeansIDType4Installment.setValue(String.format("Cuoata%03d", i));
+                    paymentMeansIDType4Installment.setValue(String.format("Cuota%03d", i));
                     paymentTermsType4Installment
                                     .setPaymentMeansID(Collections.singletonList(paymentMeansIDType4Installment));
                     paymentTermsType4Installment.setAmount(getAmount(
                                     oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AmountType.class,
                                     installment.getAmount(), installment.getCurrencyId()));
-                   // paymentTermsType4Installment.setInstallmentDueDate(
-                   //                 new InstallmentDueDateType(installment.getDueDate()));
                     paymentTermsType4Installment.setPaymentDueDate(
                                     new PaymentDueDateType(installment.getDueDate()));
                     i++;
