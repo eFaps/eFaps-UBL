@@ -26,6 +26,7 @@ import com.helger.jaxb.JAXBContextCache;
 import com.helger.ubl21.UBL21ReaderBuilder;
 import com.helger.xsds.xmldsig.SignatureType;
 
+import oasis.names.specification.ubl.schema.xsd.applicationresponse_21.ApplicationResponseType;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
@@ -47,6 +48,7 @@ public abstract class DocumentReader<JAXBTYPE>
         clazzes.add(CreditNoteType.class);
         clazzes.add(AdditionalInformation.class);
         clazzes.add(SignatureType.class);
+        clazzes.add(ApplicationResponseType.class);
 
         JAXBContext jaxbContext;
         if (isUseJAXBContextCache()) {
