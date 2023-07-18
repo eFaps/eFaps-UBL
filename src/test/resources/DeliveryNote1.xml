@@ -65,6 +65,10 @@
   </cac:DeliveryCustomerParty>
   <cac:Shipment>
     <cbc:ID>1</cbc:ID>
+      <cbc:HandlingCode listAgencyName="PE:SUNAT" listName="Motivo de traslado" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo20">01</cbc:HandlingCode>
+      <cbc:HandlingInstructions>Handle with care</cbc:HandlingInstructions>
+      <cbc:GrossWeightMeasure unitCode="KGM">13.5</cbc:GrossWeightMeasure>
+      <cbc:SpecialInstructions>SUNAT_Envio_IndicadorVehiculoConductoresTransp</cbc:SpecialInstructions>
   </cac:Shipment>
   <cac:DespatchLine>
     <cbc:ID>1</cbc:ID>

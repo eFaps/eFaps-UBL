@@ -426,13 +426,21 @@ public class DocTest
                         .withAdditionalItemProperties(Collections.singletonList(() -> ItemPropertyType.NORMALIZED))
                         .build());
 
+        final var shipment = new Shipment()
+                        .withHandlingCode("01")
+                        .withHandlingInstructions("Handle with care")
+                        .withCrossWeight(new BigDecimal("13.5"))
+                        .withCrossWeightUoM("KGM")
+                        .addInstruction("SUNAT_Envio_IndicadorVehiculoConductoresTransp");
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")
                         .withDate(LocalDate.of(2023, 6, 13))
                         .withTime(LocalTime.of(15, 11))
                         .withSupplier(getSupplier())
                         .withCustomer(getCustomer())
-                        .withLines(lines);
+                        .withLines(lines)
+                        .withShipment(shipment);
+
         final var ubl = deliveryNote.getUBLXml();
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("DeliveryNote1.xml").getFile());
