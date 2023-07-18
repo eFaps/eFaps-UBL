@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -422,6 +423,7 @@ public class DocTest
         lines.add(Line.builder().withSku("123.456")
                         .withDescription("Pasta larga salsa tradicional")
                         .withQuantity(BigDecimal.ONE)
+                        .withAdditionalItemProperties(Collections.singletonList(() -> ItemPropertyType.NORMALIZED))
                         .build());
 
         final var deliveryNote = new DeliveryNote()

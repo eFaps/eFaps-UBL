@@ -42,6 +42,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Doc
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemIdentificationType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemPropertyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.OrderLineReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
@@ -71,6 +72,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Invoice
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InvoicedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineExtensionAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.LineIDType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NameCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.NoteType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaidAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaymentDueDateType;
@@ -432,7 +434,32 @@ public class Utils
         final var itemIdentificationType = new ItemIdentificationType();
         itemIdentificationType.setID(line.getSku());
         ret.setSellersItemIdentification(itemIdentificationType);
+
+        for (final var prop: line.getAdditionalItemProperties()) {
+            ret.addAdditionalItemProperty(getAdditionalItemProperty(prop));
+        }
         return ret;
+    }
+
+    public static ItemPropertyType getAdditionalItemProperty(final IAdditionalItemProperty prop)
+    {
+        final var itemPropertyType = new ItemPropertyType();
+        switch (prop.type()) {
+            case NORMALIZED: {
+                itemPropertyType.setName("Indicador de bien normalizado");
+                final var nameCodeType = new NameCodeType();
+                nameCodeType.setListAgencyName(AGENCYNAME);
+                nameCodeType.setListName(Catalogs.ITEMPROP.getName());
+                nameCodeType.setListURI(Catalogs.ITEMPROP.getURI());
+                nameCodeType.setValue("7022");
+                itemPropertyType.setNameCode(nameCodeType);
+                itemPropertyType.setValue("0");
+            }
+                break;
+            default:
+                throw new IllegalArgumentException("Unexpected value: " + prop.type());
+        }
+        return itemPropertyType;
     }
 
     public static AllowanceChargeReasonCodeType getAllowanceChargeReasonCode(final String reason)

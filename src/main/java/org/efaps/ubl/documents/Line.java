@@ -19,6 +19,7 @@ package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Line
@@ -47,6 +48,8 @@ public class Line
 
     private String priceType;
 
+    private List<IAdditionalItemProperty> additionalItemProperties;
+
     private Line(final Builder builder)
     {
         taxEntries = builder.taxEntries;
@@ -59,6 +62,8 @@ public class Line
         description = builder.description;
         sku = builder.sku;
         priceType = builder.priceType;
+        additionalItemProperties = builder.additionalItemProperties == null ? Collections.emptyList()
+                        : builder.additionalItemProperties;
     }
 
     public Line()
@@ -196,6 +201,12 @@ public class Line
         return new Builder();
     }
 
+    @Override
+    public List<IAdditionalItemProperty> getAdditionalItemProperties()
+    {
+        return additionalItemProperties;
+    }
+
     /**
      * Builder to build {@link Line}.
      */
@@ -213,6 +224,7 @@ public class Line
         private String description;
         private String sku;
         private String priceType;
+        private List<IAdditionalItemProperty> additionalItemProperties;
 
         private Builder()
         {
@@ -291,6 +303,12 @@ public class Line
         public Builder withPriceType(final String priceType)
         {
             this.priceType = priceType;
+            return this;
+        }
+
+        public Builder withAdditionalItemProperties(final List<IAdditionalItemProperty> additionalItemProperties)
+        {
+            this.additionalItemProperties = additionalItemProperties;
             return this;
         }
 

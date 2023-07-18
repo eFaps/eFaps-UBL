@@ -24,12 +24,13 @@ public enum Catalogs
     TAX("Codigo de Tributos", "05"),
     DOI("Documento de Identidad", "06"),
     AIGV("Afectacion de IGV", "07"),
-    CADE("Cargo/descuento", "53");
+    CADE("Cargo/descuento", "53"),
+    ITEMPROP("Propiedad del item", "55");;
 
     private String name;
     private String number;
 
-    private Catalogs(final String name, final String number) {
+    Catalogs(final String name, final String number) {
         this.name = name;
         this.number = number;
     }

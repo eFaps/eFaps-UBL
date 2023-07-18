@@ -16,38 +16,8 @@
  */
 package org.efaps.ubl.documents;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 
-public interface ILine
+public interface IAdditionalItemProperty
 {
-
-    List<ITaxEntry> getTaxEntries();
-
-    List<IAllowanceChargeEntry> getAllowancesCharges();
-
-    BigDecimal getNetPrice();
-
-    BigDecimal getCrossPrice();
-
-    BigDecimal getNetUnitPrice();
-
-    BigDecimal getCrossUnitPrice();
-
-    String getUoMCode();
-
-    BigDecimal getQuantity();
-
-    String getDescription();
-
-    String getSku();
-
-    default String getPriceType() {
-        return "01";
-    }
-
-    default List<IAdditionalItemProperty> getAdditionalItemProperties() {
-        return Collections.emptyList();
-    }
+    ItemPropertyType type();
 }

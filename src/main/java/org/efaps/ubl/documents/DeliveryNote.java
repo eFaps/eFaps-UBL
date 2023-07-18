@@ -25,6 +25,7 @@ import org.efaps.ubl.extension.Definitions;
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueTimeType;
@@ -78,8 +79,12 @@ public class DeliveryNote
         despatchAdvice.addSignature(Utils.getSignature(getSupplier()));
         despatchAdvice.setDespatchSupplierParty(Utils.getSupplier(getSupplier()));
         despatchAdvice.setDeliveryCustomerParty(Utils.getCustomer(getCustomer()));
-        despatchAdvice.setBuyerCustomerParty(Utils.getCustomer(getCustomer()));
+       // despatchAdvice.setBuyerCustomerParty(Utils.getCustomer(getCustomer()));
         despatchAdvice.setDespatchLine(Utils.getDeliveryNoteLines(getLines()));
+
+        final var shipment = new ShipmentType();
+        shipment.setID("1");
+        despatchAdvice.setShipment(shipment);
 
         /**
         creditNote.setCreditNoteTypeCode(Utils.getCreditNoteType(getDocType()));
