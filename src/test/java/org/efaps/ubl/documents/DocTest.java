@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -409,6 +410,30 @@ public class DocTest
         final var ubl = invoice.getUBLXml();
         final ClassLoader classLoader = getClass().getClassLoader();
         final File file = new File(classLoader.getResource("CreditNote1.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        assertEquals(ubl, xml.trim());
+    }
+
+    @Test
+    public void createDeliveryNote()
+        throws IOException
+    {
+        final var lines = new ArrayList<ILine>();
+        lines.add(Line.builder().withSku("123.456")
+                        .withDescription("Pasta larga salsa tradicional")
+                        .withQuantity(BigDecimal.ONE)
+                        .build());
+
+        final var deliveryNote = new DeliveryNote()
+                        .withNumber("T001-000156")
+                        .withDate(LocalDate.of(2023, 6, 13))
+                        .withTime(LocalTime.of(15, 11))
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withLines(lines);
+        final var ubl = deliveryNote.getUBLXml();
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("DeliveryNote1.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         assertEquals(ubl, xml.trim());
     }

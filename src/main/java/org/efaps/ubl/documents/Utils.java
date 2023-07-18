@@ -37,11 +37,13 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Bil
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CountryType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CreditNoteLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CustomerPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DespatchLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DocumentReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ExternalReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemIdentificationType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ItemType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.OrderLineReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyIdentificationType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyLegalEntityType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
@@ -58,6 +60,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Allowan
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ConditionCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditNoteTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditedQuantityType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DeliveredQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentTypeCodeType;
@@ -299,7 +302,7 @@ public class Utils
                             .add(line.getTaxEntries().stream()
                                             .map(entry -> entry.isFreeOfCharge() ? BigDecimal.ZERO : entry.getAmount())
                                             .reduce(BigDecimal.ZERO, BigDecimal::add))
-                            .add(line.getAllowancesCharges().stream().map(entry -> entry.getAmount()).reduce(
+                            .add(line.getAllowancesCharges().stream().map(IAllowanceChargeEntry::getAmount).reduce(
                                             BigDecimal.ZERO, BigDecimal::add))
                             .divide(line.getQuantity(), RoundingMode.HALF_UP);
 
@@ -350,9 +353,9 @@ public class Utils
             // + Cargo no afecto por ítem - Descuento no afecto por ítem) /
             // Cantidad de unidades por ítem
             final var conditionPrice = line.getNetPrice()
-                            .add(line.getTaxEntries().stream().map(entry -> entry.getAmount()).reduce(BigDecimal.ZERO,
+                            .add(line.getTaxEntries().stream().map(ITaxEntry::getAmount).reduce(BigDecimal.ZERO,
                                             BigDecimal::add))
-                            .add(line.getAllowancesCharges().stream().map(entry -> entry.getAmount()).reduce(
+                            .add(line.getAllowancesCharges().stream().map(IAllowanceChargeEntry::getAmount).reduce(
                                             BigDecimal.ZERO, BigDecimal::add))
                             .divide(line.getQuantity(), RoundingMode.HALF_UP);
 
@@ -373,6 +376,23 @@ public class Utils
         return ret;
     }
 
+    public static List<DespatchLineType> getDeliveryNoteLines(final List<ILine> lines)
+    {
+        final var ret = new ArrayList<DespatchLineType>();
+        final var idx = 1;
+        for (final var line : lines) {
+            final var deliveryNoteLine = new DespatchLineType();
+            ret.add(deliveryNoteLine);
+            deliveryNoteLine.setID(String.valueOf(idx));
+            deliveryNoteLine.setDeliveredQuantity(getDeliveredQuantity(line));
+            final var orderLineRef = new OrderLineReferenceType();
+            orderLineRef.setLineID(String.valueOf(idx));
+            deliveryNoteLine.setOrderLineReference(Collections.singletonList(orderLineRef));
+            deliveryNoteLine.setItem(getItem(line));
+        }
+        return ret;
+    }
+
     public static InvoicedQuantityType getInvoicedQuantity(final ILine line)
     {
         final var ret = new InvoicedQuantityType();
@@ -386,6 +406,16 @@ public class Utils
     public static CreditedQuantityType getCreditedQuantity(final ILine line)
     {
         final var ret = new CreditedQuantityType();
+        ret.setUnitCode(line.getUoMCode());
+        ret.setUnitCodeListAgencyName("United Nations Economic Commission for Europe");
+        ret.setUnitCodeListID("UN/ECE rec 20");
+        ret.setValue(line.getQuantity());
+        return ret;
+    }
+
+    public static DeliveredQuantityType getDeliveredQuantity(final ILine line)
+    {
+        final var ret = new DeliveredQuantityType();
         ret.setUnitCode(line.getUoMCode());
         ret.setUnitCodeListAgencyName("United Nations Economic Commission for Europe");
         ret.setUnitCodeListID("UN/ECE rec 20");

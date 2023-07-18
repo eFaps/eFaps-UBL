@@ -27,6 +27,7 @@ import com.helger.ubl21.UBL21WriterBuilder;
 import com.helger.xsds.xmldsig.SignatureType;
 
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
+import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdviceType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
 public abstract class DocumentBuilder<JAXBTYPE>
@@ -45,6 +46,7 @@ public abstract class DocumentBuilder<JAXBTYPE>
         final var clazzes = new CommonsArrayList<Class<?>>();
         clazzes.add(InvoiceType.class);
         clazzes.add(CreditNoteType.class);
+        clazzes.add(DespatchAdviceType.class);
         clazzes.add(AdditionalInformation.class);
         clazzes.add(SignatureType.class);
 
