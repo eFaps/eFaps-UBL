@@ -146,7 +146,9 @@ public class DeliveryNote
             if (stage.getCarrier() != null) {
                 shipmentStageType.addCarrierParty(Utils.getCarrier(stage.getCarrier()));
             }
-
+            if (stage.getDriver() != null) {
+                shipmentStageType.setDriverPerson(Collections.singletonList(Utils.getPerson(stage.getDriver())));
+            }
             shipment.addShipmentStage(shipmentStageType);
         }
         despatchAdvice.setShipment(shipment);

@@ -83,6 +83,14 @@
                   <cbc:CompanyID>MTC-123465897</cbc:CompanyID>
         </cac:PartyLegalEntity>
       </cac:CarrierParty>
+          <cac:DriverPerson>
+        <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">87654321</cbc:ID>
+              <cbc:FirstName>Carlos</cbc:FirstName>
+              <cbc:FamilyName>Quispe</cbc:FamilyName>
+              <cac:IdentityDocumentReference>
+          <cbc:ID>12345666</cbc:ID>
+        </cac:IdentityDocumentReference>
+      </cac:DriverPerson>
     </cac:ShipmentStage>
   </cac:Shipment>
   <cac:DespatchLine>

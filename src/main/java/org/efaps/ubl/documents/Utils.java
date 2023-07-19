@@ -50,6 +50,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Par
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyNameType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PartyType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PaymentTermsType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PersonType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PriceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PricingReferenceType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ResponseType;
@@ -604,5 +605,26 @@ public class Utils
         }
 
         return ret;
+    }
+
+    public static PersonType getPerson(final IPerson person) {
+        final var personType = new PersonType();
+        final var idType = new IDType();
+        idType.setSchemeAgencyName(AGENCYNAME);
+        idType.setSchemeID(person.getDoiType());
+        idType.setSchemeName(Catalogs.DOI.getName());
+        idType.setSchemeURI(Catalogs.DOI.getURI());
+        idType.setValue(person.getDOI());
+        personType.setID(idType);
+
+        personType.setFirstName(person.getFirstName());
+        personType.setFamilyName(person.getFamilyName());
+
+        if (person instanceof IDriver) {
+            final var documentReferenceType = new DocumentReferenceType();
+            documentReferenceType.setID(((IDriver) person).getLicense());
+            personType.setIdentityDocumentReference(Collections.singletonList(documentReferenceType));
+        }
+        return personType;
     }
 }

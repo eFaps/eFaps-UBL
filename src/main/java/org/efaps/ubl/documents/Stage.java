@@ -24,13 +24,25 @@ public class Stage
     private String mode;
     private LocalDate startDate;
     private ICarrier carrier;
+    private Driver driver;
+
+    public Driver getDriver()
+    {
+        return driver;
+    }
+
+    public Stage withDriver(final Driver driver)
+    {
+        this.driver = driver;
+        return this;
+    }
 
     public ICarrier getCarrier()
     {
         return carrier;
     }
 
-    public Stage withCarrier(ICarrier carrier)
+    public Stage withCarrier(final ICarrier carrier)
     {
         this.carrier = carrier;
         return this;
@@ -41,7 +53,7 @@ public class Stage
         return startDate;
     }
 
-    public Stage withStartDate(LocalDate startDate)
+    public Stage withStartDate(final LocalDate startDate)
     {
         this.startDate = startDate;
         return this;

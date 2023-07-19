@@ -73,6 +73,17 @@ public class DocTest
         return ret;
     }
 
+    public static Driver getDriver()
+    {
+        return new Driver()
+                        .withDOI("87654321")
+                        .withDoiType("1")
+                        .withFamilyName("Quispe")
+                        .withFirstName("Carlos")
+                        .withLicense("12345666");
+
+    }
+
     public static List<ILine> getLines()
     {
         final var ret = new ArrayList<ILine>();
@@ -445,7 +456,8 @@ public class DocTest
                         .addStage(new Stage()
                                         .withMode("01")
                                         .withStartDate(LocalDate.of(2023, 6, 13))
-                                        .withCarrier(getCarrier()));
+                                        .withCarrier(getCarrier())
+                                        .withDriver(getDriver()));
 
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")
