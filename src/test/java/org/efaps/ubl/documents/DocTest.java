@@ -63,6 +63,16 @@ public class DocTest
         return ret;
     }
 
+    public static Carrier getCarrier()
+    {
+        final var ret = new Carrier();
+        ret.setDOI("12345678901");
+        ret.setDoiType("2");
+        ret.setName("Transportes - El mas rapido");
+        ret.withCompanyId("MTC-123465897");
+        return ret;
+    }
+
     public static List<ILine> getLines()
     {
         final var ret = new ArrayList<ILine>();
@@ -431,7 +441,12 @@ public class DocTest
                         .withHandlingInstructions("Handle with care")
                         .withCrossWeight(new BigDecimal("13.5"))
                         .withCrossWeightUoM("KGM")
-                        .addInstruction("SUNAT_Envio_IndicadorVehiculoConductoresTransp");
+                        .addInstruction("SUNAT_Envio_IndicadorVehiculoConductoresTransp")
+                        .addStage(new Stage()
+                                        .withMode("01")
+                                        .withStartDate(LocalDate.of(2023, 6, 13))
+                                        .withCarrier(getCarrier()));
+
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")
                         .withDate(LocalDate.of(2023, 6, 13))

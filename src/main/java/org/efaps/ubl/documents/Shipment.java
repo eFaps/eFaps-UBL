@@ -28,13 +28,29 @@ public class Shipment
     private BigDecimal crossWeight;
     private String crossWeightUoM;
     private List<String> instructions = new ArrayList<>();
+    private List<Stage> stages = new ArrayList<>();
 
+    public Shipment addStage(final Stage stage)
+    {
+        this.stages.add(stage);
+        return this;
+    }
+
+    public Shipment setStages(List<Stage> stages)
+    {
+        this.stages = stages;
+        return this;
+    }
+
+    public List<Stage> getStages()
+    {
+        return stages;
+    }
 
     public List<String> getInstructions()
     {
         return instructions;
     }
-
 
     public Shipment withInstructions(List<String> instructions)
     {

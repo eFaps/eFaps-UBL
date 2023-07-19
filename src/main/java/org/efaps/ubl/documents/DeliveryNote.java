@@ -26,6 +26,8 @@ import org.efaps.ubl.extension.Definitions;
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PeriodType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentStageType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.GrossWeightMeasureType;
@@ -34,6 +36,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Handlin
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueTimeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.SpecialInstructionsType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TransportModeCodeType;
 import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdviceType;
 
 public class DeliveryNote
@@ -105,8 +108,8 @@ public class DeliveryNote
         if (getShipment().getHandlingCode() != null) {
             final var handlingCodeType = new HandlingCodeType();
             handlingCodeType.setListAgencyName(Utils.AGENCYNAME);
-            handlingCodeType.setListName(Catalogs.TRASL.getName());
-            handlingCodeType.setListURI(Catalogs.TRASL.getURI());
+            handlingCodeType.setListName(Catalogs.MOTTRASL.getName());
+            handlingCodeType.setListURI(Catalogs.MOTTRASL.getURI());
             handlingCodeType.setValue(getShipment().getHandlingCode());
             shipment.setHandlingCode(handlingCodeType);
         }
@@ -125,6 +128,26 @@ public class DeliveryNote
             final var specialInstructionsType = new SpecialInstructionsType();
             specialInstructionsType.setValue(instruction);
             shipment.addSpecialInstructions(specialInstructionsType);
+        }
+        for (final var stage: getShipment().getStages()) {
+
+            final var shipmentStageType = new ShipmentStageType();
+            final var transportModeCodeType = new TransportModeCodeType();
+            transportModeCodeType.setListAgencyName(Utils.AGENCYNAME);
+            transportModeCodeType.setListName(Catalogs.MODTRASL.getName());
+            transportModeCodeType.setListURI(Catalogs.MODTRASL.getURI());
+            transportModeCodeType.setValue(stage.getMode());
+            shipmentStageType.setTransportModeCode(transportModeCodeType);
+
+            final var periodType = new PeriodType();
+            periodType.setStartDate(stage.getStartDate());
+            shipmentStageType.setTransitPeriod(periodType);
+
+            if (stage.getCarrier() != null) {
+                shipmentStageType.addCarrierParty(Utils.getCarrier(stage.getCarrier()));
+            }
+
+            shipment.addShipmentStage(shipmentStageType);
         }
         despatchAdvice.setShipment(shipment);
 

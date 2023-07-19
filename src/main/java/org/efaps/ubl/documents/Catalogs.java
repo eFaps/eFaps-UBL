@@ -24,7 +24,8 @@ public enum Catalogs
     TAX("Codigo de Tributos", "05"),
     DOI("Documento de Identidad", "06"),
     AIGV("Afectacion de IGV", "07"),
-    TRASL("Motivo de traslado", "20"),
+    MODTRASL("Modalidad de traslado", "18"),
+    MOTTRASL("Motivo de traslado", "20"),
     CADE("Cargo/descuento", "53"),
     ITEMPROP("Propiedad del item", "55");
 

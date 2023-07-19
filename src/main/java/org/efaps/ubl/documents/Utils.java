@@ -206,6 +206,15 @@ public class Utils
         return ret;
     }
 
+    public static PartyType getCarrier(final ICarrier carrier)
+    {
+        final var ret = new PartyType();
+        ret.setPartyIdentification(Collections.singletonList(getPartyIdentificationType(carrier)));
+        ret.setPartyLegalEntity(
+                        Collections.singletonList(getPartyLegalEntityType(carrier)));
+        return ret;
+    }
+
     public static PartyIdentificationType getPartyIdentificationType(final IParty party)
     {
         final var ret = new PartyIdentificationType();
@@ -223,7 +232,12 @@ public class Utils
     {
         final var ret = new PartyLegalEntityType();
         ret.setRegistrationName(party.getName());
-        ret.setRegistrationAddress(getAddress(party));
+        if (!(party instanceof ICarrier)) {
+            ret.setRegistrationAddress(getAddress(party));
+        }
+        if (party.getCompanyId() != null) {
+            ret.setCompanyID(party.getCompanyId());
+        }
         return ret;
     }
 

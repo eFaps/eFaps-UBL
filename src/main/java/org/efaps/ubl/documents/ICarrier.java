@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,8 @@
 
 package org.efaps.ubl.documents;
 
-public interface IParty
+
+public interface ICarrier extends IParty
 {
-
-    String getDoiType();
-
-    String getDOI();
-
-    String getName();
-
-    String getAddressLine();
-
-    String getCountry();
-
-    default String getCompanyId() {
-        return null;
-    }
 
 }
