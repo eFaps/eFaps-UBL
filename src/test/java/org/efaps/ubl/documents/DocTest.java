@@ -33,17 +33,19 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
 import org.efaps.ubl.documents.elements.AdditionalItemProperty;
+import org.efaps.ubl.documents.elements.AllowancesCharges.ChargeEntry;
 import org.efaps.ubl.documents.elements.Carrier;
 import org.efaps.ubl.documents.elements.Customer;
 import org.efaps.ubl.documents.elements.Delivery;
 import org.efaps.ubl.documents.elements.Driver;
+import org.efaps.ubl.documents.elements.Equipment;
 import org.efaps.ubl.documents.elements.Line;
 import org.efaps.ubl.documents.elements.Reference;
 import org.efaps.ubl.documents.elements.Shipment;
 import org.efaps.ubl.documents.elements.Stage;
 import org.efaps.ubl.documents.elements.Supplier;
 import org.efaps.ubl.documents.elements.Taxes;
-import org.efaps.ubl.documents.elements.AllowancesCharges.ChargeEntry;
+import org.efaps.ubl.documents.elements.Transport;
 import org.efaps.ubl.documents.interfaces.IAddress;
 import org.efaps.ubl.documents.interfaces.IInstallment;
 import org.efaps.ubl.documents.interfaces.ILine;
@@ -489,7 +491,11 @@ public class DocTest
                                             {
                                                 return getCustomer().getAddressLine();
                                             }
-                                        }));
+                                        }))
+                        .addTransportUnit(new Transport()
+                                            .addEquipment(new Equipment()
+                                                            .withLicensePlate("ABC-123")
+                                                            .withCertificate("CERT-001")));
 
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")

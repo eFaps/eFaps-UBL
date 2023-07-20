@@ -38,6 +38,9 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Des
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PeriodType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentStageType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TransportEquipmentType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TransportHandlingUnitType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TransportMeansType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.GrossWeightMeasureType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.HandlingCodeType;
@@ -170,22 +173,21 @@ public class DeliveryNote
         deliveryType.setDespatch(despatchType);
         shipment.setDelivery(deliveryType);
 
+        getShipment().getTransportUnits().forEach(tu -> {
+            final var transportHandlingUnitType = new TransportHandlingUnitType();
+            tu.getEquipments().forEach(e -> {
+                final var transportEquipmentType = new TransportEquipmentType();
+                transportEquipmentType.setID(e.getLicensePlate());
+                if (e.getCertificate() != null) {
+                    final var transportMeans = new TransportMeansType();
+                    transportMeans.setRegistrationNationalityID(e.getCertificate());
+                    transportEquipmentType.setApplicableTransportMeans(transportMeans);
+                }
+                transportHandlingUnitType.addTransportEquipment(transportEquipmentType);
+            });
+            shipment.addTransportHandlingUnit(transportHandlingUnitType);
+        });
         despatchAdvice.setShipment(shipment);
-
-        /**
-         * creditNote.setCreditNoteTypeCode(Utils.getCreditNoteType(getDocType()));
-         * creditNote.setDocumentCurrencyCode(Utils.getDocumentCurrencyCode(getCurrency()));
-         * creditNote.getNote().add(Utils.getWordsForAmount(getCrossTotal()));
-         *
-         * creditNote.setCreditNoteLine(Utils.getCreditNoteLines(getLines()));
-         * creditNote.setAllowanceCharge(AllowancesCharges.getAllowanceCharge(getAllowancesCharges()));
-         * creditNote.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
-         * creditNote.setLegalMonetaryTotal(getMonetaryTotal(creditNote));
-         * creditNote.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
-         * creditNote.setBillingReference(Utils.getBillingReferenceType(getReference()));
-         * creditNote.setDiscrepancyResponse(Utils.getDiscrepancyResponse(getCreditNoteTypeCode()));
-         **/
-
         return DocumentMarshaller.deliveryNote()
             .setCharset(StandardCharsets.UTF_8)
             .setFormattedOutput(true)

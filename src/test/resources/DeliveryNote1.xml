@@ -109,6 +109,14 @@
         </cac:DespatchAddress>
       </cac:Despatch>
     </cac:Delivery>
+    <cac:TransportHandlingUnit>
+      <cac:TransportEquipment>
+        <cbc:ID>ABC-123</cbc:ID>
+        <cac:ApplicableTransportMeans>
+          <cbc:RegistrationNationalityID>CERT-001</cbc:RegistrationNationalityID>
+        </cac:ApplicableTransportMeans>
+      </cac:TransportEquipment>
+    </cac:TransportHandlingUnit>
   </cac:Shipment>
   <cac:DespatchLine>
     <cbc:ID>1</cbc:ID>

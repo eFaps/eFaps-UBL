@@ -33,6 +33,24 @@ public class Shipment
     private List<String> instructions = new ArrayList<>();
     private List<Stage> stages = new ArrayList<>();
     private Delivery delivery = new Delivery();
+    private List<Transport> transportUnits = new ArrayList<>();
+
+    public List<Transport> getTransportUnits()
+    {
+        return transportUnits;
+    }
+
+    public Shipment addTransportUnit(final Transport transportUnit)
+    {
+        this.transportUnits.add(transportUnit);
+        return this;
+    }
+
+    public Shipment withTransportUnits(final List<Transport> transportUnits)
+    {
+        this.transportUnits = transportUnits;
+        return this;
+    }
 
     public Shipment addStage(final Stage stage)
     {
