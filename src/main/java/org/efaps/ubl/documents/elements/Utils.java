@@ -261,13 +261,7 @@ public class Utils
     {
         final var ret = new AddressType();
         if (address instanceof final ISupplier supplier) {
-            if (StringUtils.isNotEmpty(supplier.getUbigeo())) {
-                final var id = new IDType();
-                id.setSchemeAgencyName("PE:INEI");
-                id.setSchemeName("Ubigeos");
-                id.setValue(supplier.getUbigeo());
-                ret.setID(id);
-            }
+
             if (StringUtils.isNotEmpty(supplier.getAnexo())) {
                 ret.setAddressTypeCode(getAddressTypeCode(supplier.getAnexo()));
             }
@@ -282,6 +276,14 @@ public class Utils
         final var addressLineType = new AddressLineType();
         addressLineType.setLine(address.getAddressLine());
         ret.setAddressLine(Collections.singletonList(addressLineType));
+
+        if (StringUtils.isNotEmpty(address.getGeoLocationId())) {
+            final var id = new IDType();
+            id.setSchemeAgencyName("PE:INEI");
+            id.setSchemeName("Ubigeos");
+            id.setValue(address.getGeoLocationId());
+            ret.setID(id);
+        }
 
         if (StringUtils.isNotEmpty(address.getCountry())) {
             ret.setCountry(getCountryType(address.getCountry()));

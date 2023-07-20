@@ -23,7 +23,7 @@ public class Supplier
     implements ISupplier
 {
 
-    private String ubigeo;
+    private String geoLocationId;
 
     private String anexo;
 
@@ -32,14 +32,15 @@ public class Supplier
     private String streetName;
 
     @Override
-    public String getUbigeo()
+    public String getGeoLocationId()
     {
-        return ubigeo;
+        return geoLocationId;
     }
 
-    public void setUbigeo(final String ubigeo)
+    public Supplier withGeoLocationId(final String geoLocationId)
     {
-        this.ubigeo = ubigeo;
+        this.geoLocationId = geoLocationId;
+        return this;
     }
 
     @Override
@@ -48,9 +49,10 @@ public class Supplier
         return anexo;
     }
 
-    public void setAnexo(final String anexo)
+    public Supplier setAnexo(final String anexo)
     {
         this.anexo = anexo;
+        return this;
     }
 
     @Override
@@ -59,9 +61,10 @@ public class Supplier
         return district;
     }
 
-    public void setDistrict(final String district)
+    public Supplier setDistrict(final String district)
     {
         this.district = district;
+        return this;
     }
 
     @Override
@@ -70,8 +73,9 @@ public class Supplier
         return streetName;
     }
 
-    public void setStreetName(final String streetName)
+    public Supplier setStreetName(final String streetName)
     {
         this.streetName = streetName;
+        return this;
     }
 }

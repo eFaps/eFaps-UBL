@@ -19,13 +19,9 @@ package org.efaps.ubl.documents.interfaces;
 
 public interface ISupplier extends IParty
 {
-
-    String getUbigeo();
-
     String getAnexo();
 
     String getDistrict();
 
     String getStreetName();
-
 }

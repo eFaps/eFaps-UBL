@@ -20,5 +20,10 @@ package org.efaps.ubl.documents.interfaces;
 public interface IAddress
 {
     String getAddressLine();
-    String getCountry();
+    default String getCountry() {
+        return null;
+    }
+    default String getGeoLocationId() {
+        return null;
+    }
 }

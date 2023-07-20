@@ -63,7 +63,7 @@ public class DocTest
         ret.setDOI("20601327318");
         ret.setDoiType("6");
         ret.setName("Tiendas Mass");
-        ret.setUbigeo("150101");
+        ret.withGeoLocationId("150101");
         ret.setDistrict("Lima");
         ret.setAddressLine("JR. CRESPO Y CASTILLO NRO. 2087");
         return ret;
