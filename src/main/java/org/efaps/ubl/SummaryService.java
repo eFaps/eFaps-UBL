@@ -24,7 +24,7 @@ import org.efaps.ubl.documents.elements.Summary;
 import org.efaps.ubl.documents.interfaces.ICustomer;
 import org.efaps.ubl.documents.interfaces.ISummaryLine;
 import org.efaps.ubl.documents.interfaces.ITaxEntry;
-import org.efaps.ubl.reader.InvoiceReader;
+import org.efaps.ubl.marshaller.DocumentMarshaller;
 
 public class SummaryService
 {
@@ -33,7 +33,7 @@ public class SummaryService
     {
         final var summary = new Summary();
         for (final var xml : xmls) {
-            final var invoice = new InvoiceReader().read(xml);
+            final var invoice = DocumentMarshaller.invoice().read(xml);
             summary.addLine(new ISummaryLine()
             {
 

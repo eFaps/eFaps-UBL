@@ -64,14 +64,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.efaps.ubl.builder.CreditNoteBuilder;
-import org.efaps.ubl.builder.InvoiceBuilder;
 import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.dto.SignResponseDto;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.marshaller.DocumentMarshaller;
-import org.efaps.ubl.reader.CreditNoteReader;
-import org.efaps.ubl.reader.InvoiceReader;
 import org.efaps.ubl.reader.SummaryReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,7 +151,7 @@ public class Signing
                             xmlSignatureFactory.newSignatureMethod("http://www.w3.org/2000/09/xmldsig#rsa-sha1", null),
                             Collections.singletonList(ref));
 
-            final var invoice = new InvoiceReader().read(xml);
+            final var invoice = DocumentMarshaller.invoice().read(xml);
             final var extension = new UBLExtensionType();
             final var extensionContent = new ExtensionContentType();
             extension.setExtensionContent(extensionContent);
@@ -164,7 +160,8 @@ public class Signing
             }
             invoice.getUBLExtensions().addUBLExtension(extension);
 
-            final var doc = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
+            final var doc = DocumentMarshaller.invoice()
+                            .setCharset(StandardCharsets.UTF_8)
                             .setUseSchema(false)
                             .setFormattedOutput(false).getAsDocument(invoice);
 
@@ -236,8 +233,10 @@ public class Signing
 
             signatureT.setKeyInfo(keyInfo);
 
-            final var ubl = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
-                            .setFormattedOutput(false).getAsString(invoice);
+            final var ubl = DocumentMarshaller.invoice()
+                            .setCharset(StandardCharsets.UTF_8)
+                            .setFormattedOutput(false)
+                            .getAsString(invoice);
 
             ret = SignResponseDto.builder()
                             .withUbl(ubl)
@@ -257,7 +256,7 @@ public class Signing
         var xml2 = "";
         try {
             if (xml.contains("<CreditNote ")) {
-                final var creditNote = new CreditNoteReader().read(xml);
+                final var creditNote = DocumentMarshaller.creditNote().read(xml);
                 final var extension = new UBLExtensionType();
                 final var extensionContent = new ExtensionContentType();
                 extension.setExtensionContent(extensionContent);
@@ -271,7 +270,8 @@ public class Signing
                     UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
                 }
 
-                xml2 = new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
+                xml2 = DocumentMarshaller.creditNote()
+                                .setCharset(StandardCharsets.UTF_8)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(creditNote);
             } else if (xml.contains("<DespatchAdvice ")) {
@@ -306,7 +306,7 @@ public class Signing
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(summary);
             } else {
-                final var invoice = new InvoiceReader().read(xml);
+                final var invoice = DocumentMarshaller.invoice().read(xml);
                 final var extension = new UBLExtensionType();
                 final var extensionContent = new ExtensionContentType();
                 extension.setExtensionContent(extensionContent);
@@ -320,7 +320,8 @@ public class Signing
                     UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
                 }
 
-                xml2 = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
+                xml2 = DocumentMarshaller.invoice()
+                                .setCharset(StandardCharsets.UTF_8)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(invoice);
             }
@@ -406,7 +407,7 @@ public class Signing
     {
         SignResponseDto ret = null;
         try {
-            final var invoice = new InvoiceReader().read(xml);
+            final var invoice = DocumentMarshaller.invoice().read(xml);
             final var extension = new UBLExtensionType();
             final var extensionContent = new ExtensionContentType();
             extension.setExtensionContent(extensionContent);
@@ -421,7 +422,8 @@ public class Signing
                 UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
             }
 
-            final var xml2 = new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
+            final var xml2 = DocumentMarshaller.invoice()
+                            .setCharset(StandardCharsets.UTF_8)
                             .setUseSchema(false)
                             .setFormattedOutput(true).getAsString(invoice);
 

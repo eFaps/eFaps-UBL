@@ -18,13 +18,13 @@ package org.efaps.ubl.documents;
 
 import java.nio.charset.StandardCharsets;
 
-import org.efaps.ubl.builder.CreditNoteBuilder;
 import org.efaps.ubl.documents.elements.AllowancesCharges;
 import org.efaps.ubl.documents.elements.Reference;
 import org.efaps.ubl.documents.elements.Taxes;
 import org.efaps.ubl.documents.elements.Utils;
 import org.efaps.ubl.documents.values.CreditNoteTypeCode;
 import org.efaps.ubl.extension.Definitions;
+import org.efaps.ubl.marshaller.DocumentMarshaller;
 
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
@@ -109,7 +109,8 @@ public class CreditNote
         creditNote.setBillingReference(Utils.getBillingReferenceType(getReference()));
         creditNote.setDiscrepancyResponse(Utils.getDiscrepancyResponse(getCreditNoteTypeCode()));
 
-        return new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
+        return DocumentMarshaller.creditNote()
+                        .setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(creditNote);
     }

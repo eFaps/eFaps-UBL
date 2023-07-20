@@ -60,11 +60,22 @@ public class DocumentMarshaller<JAXBTYPE>
 
     public static DocumentMarshaller<DespatchAdviceType> deliveryNote()
     {
-        final var xsds = UBL21Marshaller.getAllDespatchAdviceXSDs();
-        final var m = new DocumentMarshaller<>(DespatchAdviceType.class,
-                        xsds,
+        return new DocumentMarshaller<>(DespatchAdviceType.class,
+                        UBL21Marshaller.getAllDespatchAdviceXSDs(),
                         oasis.names.specification.ubl.schema.xsd.despatchadvice_21.ObjectFactory._DespatchAdvice_QNAME);
+    }
 
-        return m;
+    public static DocumentMarshaller<InvoiceType> invoice()
+    {
+        return new DocumentMarshaller<>(InvoiceType.class,
+                        UBL21Marshaller.getAllInvoiceXSDs(),
+                        oasis.names.specification.ubl.schema.xsd.invoice_21.ObjectFactory._Invoice_QNAME);
+    }
+
+    public static DocumentMarshaller<CreditNoteType> creditNote()
+    {
+        return new DocumentMarshaller<>(CreditNoteType.class,
+                        UBL21Marshaller.getAllCreditNoteXSDs(),
+                        oasis.names.specification.ubl.schema.xsd.creditnote_21.ObjectFactory._CreditNote_QNAME);
     }
 }

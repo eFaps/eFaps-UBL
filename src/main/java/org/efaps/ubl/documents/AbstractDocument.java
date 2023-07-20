@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.efaps.ubl.builder.InvoiceBuilder;
 import org.efaps.ubl.documents.elements.AllowancesCharges;
 import org.efaps.ubl.documents.elements.Taxes;
 import org.efaps.ubl.documents.elements.Utils;
@@ -37,6 +36,7 @@ import org.efaps.ubl.documents.interfaces.IPaymentTerms;
 import org.efaps.ubl.documents.interfaces.ISupplier;
 import org.efaps.ubl.documents.interfaces.ITaxEntry;
 import org.efaps.ubl.extension.Definitions;
+import org.efaps.ubl.marshaller.DocumentMarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -433,7 +433,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setTaxTotal(Taxes.getTaxTotal(getTaxes(), false));
         invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
         invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
-        return new InvoiceBuilder().setCharset(StandardCharsets.UTF_8)
+        return DocumentMarshaller.invoice()
+                        .setCharset(StandardCharsets.UTF_8)
                         .setFormattedOutput(true)
                         .getAsString(invoice);
     }
