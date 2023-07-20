@@ -92,9 +92,8 @@ public class SignTest
         assertTrue(validation.isSignatureValid());
     }
 
-
     @Test
-    public void signFromFile()
+    public void signInvoiceFromFile()
         throws IOException, SAXException, ParserConfigurationException, XMLSignatureException
     {
         final ClassLoader classLoader = getClass().getClassLoader();
@@ -105,7 +104,30 @@ public class SignTest
                         .withKeyStorePwd("changeit")
                         .withKeyAlias("testkey")
                         .withKeyPwd("changeit")
-                        .signInvoice(xml);
+                        .signDocument(xml);
+        final var signed = signResponseDto.getUbl();
+        assertNotNull(signed);
+
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        final Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signed.getBytes()));
+        final var validation = XMLDSigValidator.validateSignature(doc);
+        assertTrue(validation.isSignatureValid());
+    }
+
+    @Test
+    public void signDeliveryNoteFromFile()
+        throws IOException, SAXException, ParserConfigurationException, XMLSignatureException
+    {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("DeliveryNote1.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        final var signResponseDto = new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signDocument(xml);
         final var signed = signResponseDto.getUbl();
         assertNotNull(signed);
 

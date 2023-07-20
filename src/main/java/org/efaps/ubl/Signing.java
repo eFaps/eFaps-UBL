@@ -66,11 +66,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.efaps.ubl.builder.CreditNoteBuilder;
+import org.efaps.ubl.builder.DeliveryNoteBuilder;
 import org.efaps.ubl.builder.InvoiceBuilder;
 import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.dto.SignResponseDto;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.reader.CreditNoteReader;
+import org.efaps.ubl.reader.DeliveryNoteReader;
 import org.efaps.ubl.reader.InvoiceReader;
 import org.efaps.ubl.reader.SummaryReader;
 import org.slf4j.Logger;
@@ -273,6 +275,23 @@ public class Signing
                 xml2 = new CreditNoteBuilder().setCharset(StandardCharsets.UTF_8)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(creditNote);
+            } else if (xml.contains("<DespatchAdvice ")) {
+                final var deliveryNote = new DeliveryNoteReader().read(xml);
+                final var extension = new UBLExtensionType();
+                final var extensionContent = new ExtensionContentType();
+                extension.setExtensionContent(extensionContent);
+                if (deliveryNote.getUBLExtensions() == null) {
+                    deliveryNote.setUBLExtensions(new UBLExtensionsType());
+                }
+                deliveryNote.getUBLExtensions().addUBLExtension(extension);
+                if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
+                    UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
+                    UBL21NamespaceContext.getInstance().removeMapping("cec");
+                    UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+                }
+                xml2 = new DeliveryNoteBuilder().setCharset(StandardCharsets.UTF_8)
+                                .setUseSchema(false)
+                                .setFormattedOutput(true).getAsString(deliveryNote);
             } else if (xml.contains("<SummaryDocuments ")) {
                 final var summary = new SummaryReader().read(xml);
                 final var extension = new UBLExtensionType();
