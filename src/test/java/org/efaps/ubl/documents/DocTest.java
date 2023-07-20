@@ -444,7 +444,7 @@ public class DocTest
         lines.add(Line.builder().withSku("123.456")
                         .withDescription("Pasta larga salsa tradicional")
                         .withQuantity(BigDecimal.ONE)
-                        .withAdditionalItemProperties(Collections.singletonList(() -> ItemPropertyType.NORMALIZED))
+                        .withAdditionalItemProperties(Collections.singletonList(new AdditionalItemProperty()))
                         .build());
 
         final var shipment = new Shipment()

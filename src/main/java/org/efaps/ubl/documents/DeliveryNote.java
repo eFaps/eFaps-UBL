@@ -20,8 +20,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.Collections;
 
-import org.efaps.ubl.builder.DeliveryNoteBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.efaps.ubl.extension.Definitions;
+import org.efaps.ubl.marshaller.DocumentMarshaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
@@ -44,6 +48,7 @@ import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdvice
 public class DeliveryNote
     extends AbstractDocument<DeliveryNote>
 {
+    private static final Logger LOG = LoggerFactory.getLogger(DeliveryNote.class);
 
     private LocalTime time;
     private Shipment shipment;
@@ -85,6 +90,8 @@ public class DeliveryNote
     @Override
     public String getUBLXml()
     {
+        LOG.debug("Converting to UBL: {}", this);
+
         if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
             UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
             UBL21NamespaceContext.getInstance().removeMapping("cec");
@@ -175,8 +182,16 @@ public class DeliveryNote
          * creditNote.setBillingReference(Utils.getBillingReferenceType(getReference()));
          * creditNote.setDiscrepancyResponse(Utils.getDiscrepancyResponse(getCreditNoteTypeCode()));
          **/
-        return new DeliveryNoteBuilder().setCharset(StandardCharsets.UTF_8)
-                        .setFormattedOutput(true)
-                        .getAsString(despatchAdvice);
+
+        return DocumentMarshaller.deliveryNote()
+            .setCharset(StandardCharsets.UTF_8)
+            .setFormattedOutput(true)
+            .getAsString(despatchAdvice);
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

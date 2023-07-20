@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2023 The eFaps Team
+ * Copyright 2003 - 2020 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,24 @@
  * limitations under the License.
  *
  */
-package org.efaps.ubl.builder;
+package org.efaps.ubl.documents;
 
-import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdviceType;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class DeliveryNoteBuilder
-    extends DocumentBuilder<DespatchAdviceType>
+public class AdditionalItemProperty
+    implements IAdditionalItemProperty
 {
 
-    public DeliveryNoteBuilder()
+    @Override
+    public ItemPropertyType type()
     {
-        super(DespatchAdviceType.class);
+        return ItemPropertyType.NORMALIZED;
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

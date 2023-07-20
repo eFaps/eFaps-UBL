@@ -18,6 +18,9 @@ package org.efaps.ubl.documents;
 
 import java.time.LocalDate;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Stage
 {
 
@@ -68,5 +71,11 @@ public class Stage
     {
         this.mode = mode;
         return this;
+    }
+
+    @Override
+    public String toString()
+    {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

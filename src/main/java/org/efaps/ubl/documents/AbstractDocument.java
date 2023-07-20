@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.efaps.ubl.builder.InvoiceBuilder;
 import org.efaps.ubl.extension.Definitions;
 import org.slf4j.Logger;
@@ -33,7 +34,10 @@ import org.slf4j.LoggerFactory;
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.CreditNoteLineType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.InvoiceLineType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.MonetaryTotalType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.TaxTotalType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ChargeTotalAmountType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CustomizationIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IssueDateType;
@@ -271,7 +275,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     @Override
     public String toString()
     {
-        return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     protected abstract T getThis();
@@ -285,9 +289,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
 
         // TaxExclusiveAmount + all taxes
-        final var taxInclusive = getNetTotal().add(invoice.getTaxTotal().stream().map(tax -> {
-            return tax.getTaxAmountValue();
-        }).reduce(BigDecimal.ZERO, BigDecimal::add));
+        final var taxInclusive = getNetTotal().add(invoice.getTaxTotal().stream().map(TaxTotalType::getTaxAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
 
         // we do not have allowances yet
@@ -311,9 +313,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
 
         // TaxExclusiveAmount + all taxes
-        final var taxInclusive = getNetTotal().add(creditNote.getTaxTotal().stream().map(tax -> {
-            return tax.getTaxAmountValue();
-        }).reduce(BigDecimal.ZERO, BigDecimal::add));
+        final var taxInclusive = getNetTotal().add(creditNote.getTaxTotal().stream().map(TaxTotalType::getTaxAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
 
         // we do not have allowances yet
@@ -346,9 +346,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     //
     protected BigDecimal evalLineExtensionForTotal(final InvoiceType invoice)
     {
-        var lineExt = invoice.getInvoiceLine().stream().map(line -> {
-            return line.getLineExtensionAmountValue();
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var lineExt = invoice.getInvoiceLine().stream().map(InvoiceLineType::getLineExtensionAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         if (invoice.hasAllowanceChargeEntries()) {
             for (final var allowanceCharge : invoice.getAllowanceCharge()) {
                 if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
@@ -364,9 +362,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 
     protected BigDecimal evalLineExtensionForTotal(final CreditNoteType creditNote)
     {
-        var lineExt = creditNote.getCreditNoteLine().stream().map(line -> {
-            return line.getLineExtensionAmountValue();
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var lineExt = creditNote.getCreditNoteLine().stream().map(CreditNoteLineType::getLineExtensionAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         if (creditNote.hasAllowanceChargeEntries()) {
             for (final var allowanceCharge : creditNote.getAllowanceCharge()) {
                 if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
@@ -432,5 +428,4 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
                         .setFormattedOutput(true)
                         .getAsString(invoice);
     }
-
 }

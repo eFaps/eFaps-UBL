@@ -20,4 +20,7 @@ package org.efaps.ubl.documents;
 public interface IAdditionalItemProperty
 {
     ItemPropertyType type();
+    default String value() {
+        return null;
+    }
 }
