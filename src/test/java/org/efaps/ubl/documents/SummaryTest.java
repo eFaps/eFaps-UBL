@@ -28,6 +28,11 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
+import org.efaps.ubl.documents.elements.Summary;
+import org.efaps.ubl.documents.elements.Taxes;
+import org.efaps.ubl.documents.interfaces.ICustomer;
+import org.efaps.ubl.documents.interfaces.ISummaryLine;
+import org.efaps.ubl.documents.interfaces.ITaxEntry;
 import org.testng.annotations.Test;
 
 public class SummaryTest

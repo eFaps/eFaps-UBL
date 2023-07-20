@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
+import org.efaps.ubl.documents.elements.Taxes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;

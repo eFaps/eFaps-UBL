@@ -19,6 +19,11 @@ package org.efaps.ubl.documents;
 import java.nio.charset.StandardCharsets;
 
 import org.efaps.ubl.builder.CreditNoteBuilder;
+import org.efaps.ubl.documents.elements.AllowancesCharges;
+import org.efaps.ubl.documents.elements.Reference;
+import org.efaps.ubl.documents.elements.Taxes;
+import org.efaps.ubl.documents.elements.Utils;
+import org.efaps.ubl.documents.values.CreditNoteTypeCode;
 import org.efaps.ubl.extension.Definitions;
 
 import com.helger.ubl21.CUBL21;

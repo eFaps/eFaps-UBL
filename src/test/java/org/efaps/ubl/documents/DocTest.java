@@ -32,7 +32,22 @@ import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.efaps.ubl.Signing;
-import org.efaps.ubl.documents.AllowancesCharges.ChargeEntry;
+import org.efaps.ubl.documents.elements.AdditionalItemProperty;
+import org.efaps.ubl.documents.elements.Carrier;
+import org.efaps.ubl.documents.elements.Customer;
+import org.efaps.ubl.documents.elements.Delivery;
+import org.efaps.ubl.documents.elements.Driver;
+import org.efaps.ubl.documents.elements.Line;
+import org.efaps.ubl.documents.elements.Reference;
+import org.efaps.ubl.documents.elements.Shipment;
+import org.efaps.ubl.documents.elements.Stage;
+import org.efaps.ubl.documents.elements.Supplier;
+import org.efaps.ubl.documents.elements.Taxes;
+import org.efaps.ubl.documents.elements.AllowancesCharges.ChargeEntry;
+import org.efaps.ubl.documents.interfaces.IAddress;
+import org.efaps.ubl.documents.interfaces.IInstallment;
+import org.efaps.ubl.documents.interfaces.ILine;
+import org.efaps.ubl.documents.interfaces.IPaymentTerms;
 import org.testng.annotations.Test;
 
 public class DocTest

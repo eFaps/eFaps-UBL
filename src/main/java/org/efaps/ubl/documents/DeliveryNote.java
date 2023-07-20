@@ -22,6 +22,9 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.efaps.ubl.documents.elements.Shipment;
+import org.efaps.ubl.documents.elements.Utils;
+import org.efaps.ubl.documents.values.Catalogs;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.marshaller.DocumentMarshaller;
 import org.slf4j.Logger;

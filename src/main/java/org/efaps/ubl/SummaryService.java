@@ -20,10 +20,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.efaps.ubl.documents.ICustomer;
-import org.efaps.ubl.documents.ISummaryLine;
-import org.efaps.ubl.documents.ITaxEntry;
-import org.efaps.ubl.documents.Summary;
+import org.efaps.ubl.documents.elements.Summary;
+import org.efaps.ubl.documents.interfaces.ICustomer;
+import org.efaps.ubl.documents.interfaces.ISummaryLine;
+import org.efaps.ubl.documents.interfaces.ITaxEntry;
 import org.efaps.ubl.reader.InvoiceReader;
 
 public class SummaryService
