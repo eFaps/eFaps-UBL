@@ -92,6 +92,23 @@
         </cac:IdentityDocumentReference>
       </cac:DriverPerson>
     </cac:ShipmentStage>
+      <cac:Delivery>
+      <cac:DeliveryAddress>
+        <cac:AddressLine>
+          <cbc:Line>Av parque alto 291-A Lima - Lima - Santiago De Surco</cbc:Line>
+        </cac:AddressLine>
+              <cac:Country>
+          <cbc:IdentificationCode listID="ISO 3166-1" listAgencyName="United Nations Economic Commission for Europe" listName="Country">PE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:DeliveryAddress>
+          <cac:Despatch>
+        <cac:DespatchAddress>
+          <cac:AddressLine>
+            <cbc:Line>Av parque alto 291-A Lima - Lima - Santiago De Surco</cbc:Line>
+          </cac:AddressLine>
+        </cac:DespatchAddress>
+      </cac:Despatch>
+    </cac:Delivery>
   </cac:Shipment>
   <cac:DespatchLine>
     <cbc:ID>1</cbc:ID>

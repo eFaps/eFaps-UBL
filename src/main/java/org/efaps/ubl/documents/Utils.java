@@ -242,12 +242,10 @@ public class Utils
         return ret;
     }
 
-    public static AddressType getAddress(final IParty party)
+    public static AddressType getAddress(final IAddress address)
     {
         final var ret = new AddressType();
-        if (party instanceof ISupplier) {
-            final var supplier = (ISupplier) party;
-
+        if (address instanceof final ISupplier supplier) {
             if (StringUtils.isNotEmpty(supplier.getUbigeo())) {
                 final var id = new IDType();
                 id.setSchemeAgencyName("PE:INEI");
@@ -267,11 +265,11 @@ public class Utils
         }
 
         final var addressLineType = new AddressLineType();
-        addressLineType.setLine(party.getAddressLine());
+        addressLineType.setLine(address.getAddressLine());
         ret.setAddressLine(Collections.singletonList(addressLineType));
 
-        if (StringUtils.isNotEmpty(party.getCountry())) {
-            ret.setCountry(getCountryType(party.getCountry()));
+        if (StringUtils.isNotEmpty(address.getCountry())) {
+            ret.setCountry(getCountryType(address.getCountry()));
         }
         return ret;
     }

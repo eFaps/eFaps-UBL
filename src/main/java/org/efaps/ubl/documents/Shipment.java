@@ -29,6 +29,7 @@ public class Shipment
     private String crossWeightUoM;
     private List<String> instructions = new ArrayList<>();
     private List<Stage> stages = new ArrayList<>();
+    private Delivery delivery = new Delivery();
 
     public Shipment addStage(final Stage stage)
     {
@@ -105,6 +106,17 @@ public class Shipment
     public Shipment withCrossWeightUoM(final String crossWeightUoM)
     {
         this.crossWeightUoM = crossWeightUoM;
+        return this;
+    }
+
+    public Delivery getDelivery()
+    {
+        return delivery;
+    }
+
+    public Shipment withDelivery(final Delivery delivery)
+    {
+        this.delivery = delivery;
         return this;
     }
 }

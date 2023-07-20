@@ -26,6 +26,8 @@ import org.efaps.ubl.extension.Definitions;
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
 
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DeliveryType;
+import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.DespatchType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.PeriodType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentStageType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.ShipmentType;
@@ -151,6 +153,13 @@ public class DeliveryNote
             }
             shipment.addShipmentStage(shipmentStageType);
         }
+        final var deliveryType = new DeliveryType();
+        deliveryType.setDeliveryAddress(Utils.getAddress(getShipment().getDelivery().getDeliveryAddress()));
+        final var despatchType = new DespatchType();
+        despatchType.setDespatchAddress(Utils.getAddress(getShipment().getDelivery().getDespatchAddress()));
+        deliveryType.setDespatch(despatchType);
+        shipment.setDelivery(deliveryType);
+
         despatchAdvice.setShipment(shipment);
 
         /**

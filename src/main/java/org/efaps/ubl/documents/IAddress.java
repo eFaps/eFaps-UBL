@@ -1,5 +1,5 @@
 /*
- * Copyright 2003 - 2020 The eFaps Team
+ * Copyright 2003 - 2023 The eFaps Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  *
  */
-
 package org.efaps.ubl.documents;
 
-public interface IParty extends IAddress
+
+public interface IAddress
 {
-
-    String getDoiType();
-
-    String getDOI();
-
-    String getName();
-
-    default String getCompanyId() {
-        return null;
-    }
-
+    String getAddressLine();
+    String getCountry();
 }

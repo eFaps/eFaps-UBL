@@ -457,7 +457,24 @@ public class DocTest
                                         .withMode("01")
                                         .withStartDate(LocalDate.of(2023, 6, 13))
                                         .withCarrier(getCarrier())
-                                        .withDriver(getDriver()));
+                                        .withDriver(getDriver()))
+                        .withDelivery(new Delivery()
+                                        .withDeliveryAddress(getCustomer())
+                                        .withDespatchAddress(new IAddress()
+                                        {
+
+                                            @Override
+                                            public String getCountry()
+                                            {
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public String getAddressLine()
+                                            {
+                                                return getCustomer().getAddressLine();
+                                            }
+                                        }));
 
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")
