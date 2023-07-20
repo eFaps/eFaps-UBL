@@ -16,12 +16,12 @@
  */
 package org.efaps.ubl.extension;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 
 import com.helger.ubl21.CUBL21;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.InstructionIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PaidAmountType;
 

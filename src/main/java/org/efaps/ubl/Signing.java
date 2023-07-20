@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBElement;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -97,6 +96,7 @@ import com.helger.xsds.xmldsig.TransformType;
 import com.helger.xsds.xmldsig.TransformsType;
 import com.helger.xsds.xmldsig.X509DataType;
 
+import jakarta.xml.bind.JAXBElement;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.ExtensionContentType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionType;
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;

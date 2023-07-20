@@ -16,8 +16,6 @@
  */
 package org.efaps.ubl.reader;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.efaps.ubl.extension.AdditionalInformation;
 
@@ -26,6 +24,8 @@ import com.helger.jaxb.JAXBContextCache;
 import com.helger.ubl21.UBL21ReaderBuilder;
 import com.helger.xsds.xmldsig.SignatureType;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 import oasis.names.specification.ubl.schema.xsd.applicationresponse_21.ApplicationResponseType;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdviceType;
