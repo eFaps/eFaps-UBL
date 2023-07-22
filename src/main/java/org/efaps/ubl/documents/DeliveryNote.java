@@ -113,6 +113,7 @@ public class DeliveryNote
         despatchAdvice.setIssueDate(new IssueDateType(getDate()));
         despatchAdvice.setIssueTime(new IssueTimeType(getTime()));
         despatchAdvice.addSignature(Utils.getSignature(getSupplier()));
+        despatchAdvice.setDespatchAdviceTypeCode(Utils.getDespatchAdviceType(getDocType()));
         despatchAdvice.setDespatchSupplierParty(Utils.getSupplier(getSupplier()));
         despatchAdvice.setDeliveryCustomerParty(Utils.getCustomer(getCustomer()));
         // despatchAdvice.setBuyerCustomerParty(Utils.getCustomer(getCustomer()));

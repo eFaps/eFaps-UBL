@@ -5,6 +5,7 @@
   <cbc:ID>T001-000156</cbc:ID>
   <cbc:IssueDate>2023-06-13</cbc:IssueDate>
   <cbc:IssueTime>15:11:00</cbc:IssueTime>
+  <cbc:DespatchAdviceTypeCode listID="0101" listAgencyName="PE:SUNAT" listName="Tipo de Documento" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo01">09</cbc:DespatchAdviceTypeCode>
   <cac:Signature>
     <cbc:ID>SB001-000095</cbc:ID>
     <cac:SignatoryParty>

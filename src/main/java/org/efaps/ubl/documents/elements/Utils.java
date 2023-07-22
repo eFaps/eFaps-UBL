@@ -79,6 +79,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditN
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.CreditedQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DeliveredQuantityType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DescriptionType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DespatchAdviceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentCurrencyCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.DocumentTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.IDType;
@@ -97,6 +98,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceAm
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.PriceTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.TotalAmountType;
 import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.AmountType;
+import oasis.names.specification.ubl.schema.xsd.unqualifieddatatypes_21.CodeType;
 
 public class Utils
 {
@@ -108,23 +110,32 @@ public class Utils
     public static InvoiceTypeCodeType getInvoiceType(final String type)
     {
         final var ret = new InvoiceTypeCodeType();
-        ret.setListAgencyName("PE:SUNAT");
-        ret.setListID("0101");
-        ret.setListName(Catalogs.TDOC.getName());
-        ret.setListURI(Catalogs.TDOC.getURI());
-        ret.setValue(type);
+        fillCodeType(ret, type);
         return ret;
     }
 
     public static CreditNoteTypeCodeType getCreditNoteType(final String type)
     {
         final var ret = new CreditNoteTypeCodeType();
-        ret.setListAgencyName("PE:SUNAT");
-        ret.setListID("0101");
-        ret.setListName(Catalogs.TDOC.getName());
-        ret.setListURI(Catalogs.TDOC.getURI());
-        ret.setValue(type);
+        fillCodeType(ret, type);
         return ret;
+    }
+
+    public static DespatchAdviceTypeCodeType getDespatchAdviceType(final String type)
+    {
+        final var ret = new DespatchAdviceTypeCodeType();
+        fillCodeType(ret, type);
+        return ret;
+    }
+
+    public static void fillCodeType(final CodeType codeType,
+                                    final String type)
+    {
+        codeType.setListAgencyName("PE:SUNAT");
+        codeType.setListID("0101");
+        codeType.setListName(Catalogs.TDOC.getName());
+        codeType.setListURI(Catalogs.TDOC.getURI());
+        codeType.setValue(type);
     }
 
     public static DocumentCurrencyCodeType getDocumentCurrencyCode(final String isoCode)
