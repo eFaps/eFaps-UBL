@@ -112,9 +112,9 @@
     </cac:Delivery>
     <cac:TransportHandlingUnit>
       <cac:TransportEquipment>
-        <cbc:ID>ABC-123</cbc:ID>
+        <cbc:ID>ABC123</cbc:ID>
         <cac:ApplicableTransportMeans>
-          <cbc:RegistrationNationalityID>CERT-001</cbc:RegistrationNationalityID>
+          <cbc:RegistrationNationalityID>CERT001589</cbc:RegistrationNationalityID>
         </cac:ApplicableTransportMeans>
       </cac:TransportEquipment>
     </cac:TransportHandlingUnit>
