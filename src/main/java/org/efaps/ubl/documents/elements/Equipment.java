@@ -16,6 +16,7 @@
  */
 package org.efaps.ubl.documents.elements;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -31,9 +32,9 @@ public class Equipment
         return licensePlate;
     }
 
-    public Equipment withLicensePlate(String licensePlate)
+    public Equipment withLicensePlate(final String licensePlate)
     {
-        this.licensePlate = licensePlate;
+        this.licensePlate = StringUtils.upperCase(licensePlate).replaceAll("\\W", "");
         return this;
     }
 
@@ -42,9 +43,9 @@ public class Equipment
         return certificate;
     }
 
-    public Equipment withCertificate(String certificate)
+    public Equipment withCertificate(final String certificate)
     {
-        this.certificate = certificate;
+        this.certificate = StringUtils.upperCase(certificate).replaceAll("\\W", "");
         return this;
     }
 

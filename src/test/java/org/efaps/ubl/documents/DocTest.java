@@ -494,8 +494,8 @@ public class DocTest
                                         }))
                         .addTransportUnit(new Transport()
                                             .addEquipment(new Equipment()
-                                                            .withLicensePlate("ABC-123")
-                                                            .withCertificate("CERT-001")));
+                                                            .withLicensePlate("ABC-123 ")
+                                                            .withCertificate("CERT-00158 9")));
 
         final var deliveryNote = new DeliveryNote()
                         .withNumber("T001-000156")
