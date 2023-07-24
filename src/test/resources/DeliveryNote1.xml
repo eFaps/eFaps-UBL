@@ -88,6 +88,7 @@
         <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">87654321</cbc:ID>
         <cbc:FirstName>Carlos</cbc:FirstName>
         <cbc:FamilyName>Quispe</cbc:FamilyName>
+        <cbc:JobTitle>Principal</cbc:JobTitle>
         <cac:IdentityDocumentReference>
           <cbc:ID>12345666</cbc:ID>
         </cac:IdentityDocumentReference>

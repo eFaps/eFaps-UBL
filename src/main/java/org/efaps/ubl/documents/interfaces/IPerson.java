@@ -27,4 +27,9 @@ public interface IPerson
 
     String getFamilyName();
 
+    default String getJobTitle()
+    {
+        return null;
+    }
+
 }

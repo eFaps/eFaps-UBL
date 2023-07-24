@@ -97,8 +97,8 @@ public class DocTest
                         .withDoiType("1")
                         .withFamilyName("Quispe")
                         .withFirstName("Carlos")
-                        .withLicense("12345666");
-
+                        .withLicense("12345666")
+                        .withJobTitle("Principal");
     }
 
     public static List<ILine> getLines()

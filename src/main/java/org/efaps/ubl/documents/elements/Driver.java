@@ -27,6 +27,14 @@ public class Driver
     private String firstName;
     private String familyName;
     private String license;
+    private String jobTitle;
+
+    @Override
+    public String getJobTitle()
+    {
+        return jobTitle;
+    }
+
 
     @Override
     public String getDoiType()
@@ -90,6 +98,12 @@ public class Driver
     public Driver withLicense(String license)
     {
         this.license = license;
+        return this;
+    }
+
+    public Driver withJobTitle(String jobTitle)
+    {
+        this.jobTitle = jobTitle;
         return this;
     }
 

@@ -651,6 +651,9 @@ public class Utils
             documentReferenceType.setID(((IDriver) person).getLicense());
             personType.setIdentityDocumentReference(Collections.singletonList(documentReferenceType));
         }
+        if (person.getJobTitle() != null) {
+            personType.setJobTitle(person.getJobTitle());
+        }
         return personType;
     }
 }
