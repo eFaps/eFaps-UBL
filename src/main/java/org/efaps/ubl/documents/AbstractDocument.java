@@ -19,6 +19,7 @@ package org.efaps.ubl.documents;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
 
 public abstract class AbstractDocument<T extends AbstractDocument<T>>
 {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDocument.class);
 
     private String currency;
@@ -75,6 +77,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     private List<IAllowanceChargeEntry> allowancesCharges = new ArrayList<>();
     private List<ILine> lines = new ArrayList<>();
     private IPaymentTerms paymentTerms;
+    private Charset encoding = StandardCharsets.UTF_8;
 
     public String getCurrency()
     {
@@ -155,7 +158,6 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         setNetTotal(netTotal);
         return getThis();
     }
-
 
     public BigDecimal getPayableAmount()
     {
@@ -281,6 +283,22 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         this.chargeTotal = chargeTotal;
     }
 
+    public Charset getEncoding()
+    {
+        return encoding;
+    }
+
+    public void setEncoding(final Charset encoding)
+    {
+        this.encoding = encoding;
+    }
+
+    public T withEncoding(final Charset encoding)
+    {
+        this.encoding = encoding;
+        return getThis();
+    }
+
     @Override
     public String toString()
     {
@@ -298,7 +316,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
 
         // TaxExclusiveAmount + all taxes
-        final var taxInclusive = getNetTotal().add(invoice.getTaxTotal().stream().map(TaxTotalType::getTaxAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+        final var taxInclusive = getNetTotal().add(invoice.getTaxTotal().stream().map(TaxTotalType::getTaxAmountValue)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
 
         // we do not have allowances yet
@@ -314,15 +333,16 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         return ret;
     }
 
-
     protected MonetaryTotalType getMonetaryTotal(final CreditNoteType creditNote)
     {
         final var ret = new MonetaryTotalType();
-        ret.setLineExtensionAmount(Utils.getAmount(LineExtensionAmountType.class, evalLineExtensionForTotal(creditNote)));
+        ret.setLineExtensionAmount(
+                        Utils.getAmount(LineExtensionAmountType.class, evalLineExtensionForTotal(creditNote)));
         ret.setTaxExclusiveAmount(Utils.getAmount(TaxExclusiveAmountType.class, getNetTotal()));
 
         // TaxExclusiveAmount + all taxes
-        final var taxInclusive = getNetTotal().add(creditNote.getTaxTotal().stream().map(TaxTotalType::getTaxAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add));
+        final var taxInclusive = getNetTotal().add(creditNote.getTaxTotal().stream()
+                        .map(TaxTotalType::getTaxAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add));
         ret.setTaxInclusiveAmount(Utils.getAmount(TaxInclusiveAmountType.class, taxInclusive));
 
         // we do not have allowances yet
@@ -334,7 +354,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         // descuentas (que no afecta la base imponible)
         // PayableAmount
         final var amount = getPayableAmount() == null || getPayableAmount().compareTo(BigDecimal.ZERO) == 0
-                        ? getCrossTotal() : getPayableAmount();
+                        ? getCrossTotal()
+                        : getPayableAmount();
         ret.setPayableAmount(Utils.getAmount(PayableAmountType.class, amount));
         if (amount.subtract(getCrossTotal()).compareTo(BigDecimal.ZERO) != 0) {
             ret.setPayableRoundingAmount(Utils.getAmount(PayableRoundingAmountType.class,
@@ -345,17 +366,25 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
     }
 
     // 2021-09-09 Bizlinks:
-    // LegalMonetaryTotal/LineExtensionAmount = SUM of all InvoiceLine/LineExtensionAmount
+    // LegalMonetaryTotal/LineExtensionAmount = SUM of all
+    // InvoiceLine/LineExtensionAmount
 
     // 2021-10-14
-    // 'Valor de venta por ítem' (cbc:LineExtensionAmount): sumatoria de los ítems con 'Código de tributo por línea'
-    // igual a  '1000', '1016', '9995', '9997' y '9998'  y cuyo 'Monto base' es mayor a cero (cbc:TaxableAmount > 0),
-    // menos 'Montos de descuentos globales' (cbc:AllowanceCharge) que afectan la base ('Código de motivo de descuento' igual a '02') (cbc:AllowanceChargeReasonCode)
-    // más 'Montos de cargos globales' (cbc:AllowanceCharge) que afectan la base ('Código de motivo de cargo' igual a '49')(cbc:AllowanceChargeReasonCode), con una tolerancia de + - 1
+    // 'Valor de venta por ítem' (cbc:LineExtensionAmount): sumatoria de los
+    // ítems con 'Código de tributo por línea'
+    // igual a '1000', '1016', '9995', '9997' y '9998' y cuyo 'Monto base' es
+    // mayor a cero (cbc:TaxableAmount > 0),
+    // menos 'Montos de descuentos globales' (cbc:AllowanceCharge) que afectan
+    // la base ('Código de motivo de descuento' igual a '02')
+    // (cbc:AllowanceChargeReasonCode)
+    // más 'Montos de cargos globales' (cbc:AllowanceCharge) que afectan la base
+    // ('Código de motivo de cargo' igual a
+    // '49')(cbc:AllowanceChargeReasonCode), con una tolerancia de + - 1
     //
     protected BigDecimal evalLineExtensionForTotal(final InvoiceType invoice)
     {
-        var lineExt = invoice.getInvoiceLine().stream().map(InvoiceLineType::getLineExtensionAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var lineExt = invoice.getInvoiceLine().stream().map(InvoiceLineType::getLineExtensionAmountValue)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (invoice.hasAllowanceChargeEntries()) {
             for (final var allowanceCharge : invoice.getAllowanceCharge()) {
                 if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
@@ -371,7 +400,8 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
 
     protected BigDecimal evalLineExtensionForTotal(final CreditNoteType creditNote)
     {
-        var lineExt = creditNote.getCreditNoteLine().stream().map(CreditNoteLineType::getLineExtensionAmountValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+        var lineExt = creditNote.getCreditNoteLine().stream().map(CreditNoteLineType::getLineExtensionAmountValue)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (creditNote.hasAllowanceChargeEntries()) {
             for (final var allowanceCharge : creditNote.getAllowanceCharge()) {
                 if ("02".equals(allowanceCharge.getAllowanceChargeReasonCodeValue())) {
@@ -412,7 +442,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         if (!UBL21NamespaceContext.getInstance().getPrefixToNamespaceURIMap().containsKey("sac")) {
             UBL21NamespaceContext.getInstance().addMapping("sac", Definitions.NAMESPACE_SUNATAGGREGATE);
             UBL21NamespaceContext.getInstance().removeMapping("cec");
-            UBL21NamespaceContext.getInstance().addMapping ("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
+            UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
         }
         final InvoiceType invoice = new InvoiceType();
         invoice.setUBLVersionID("2.1");
@@ -434,7 +464,7 @@ public abstract class AbstractDocument<T extends AbstractDocument<T>>
         invoice.setLegalMonetaryTotal(getMonetaryTotal(invoice));
         invoice.setPaymentTerms(Utils.getPaymentTerms(getPaymentTerms()));
         return DocumentMarshaller.invoice()
-                        .setCharset(StandardCharsets.UTF_8)
+                        .setCharset(getEncoding())
                         .setFormattedOutput(true)
                         .getAsString(invoice);
     }

@@ -118,6 +118,24 @@ public class DocTest
         return ret;
     }
 
+    public static List<ILine> getMoreLines()
+    {
+        final var ret = getLines();
+        ret.add(Line.builder().withSku("123.456")
+                        .withDescription("Test acute: á, é, í, ó, ú, ü, ñ ")
+                        .withQuantity(BigDecimal.ONE)
+                        .withCrossUnitPrice(new BigDecimal("118"))
+                        .withCrossPrice(new BigDecimal("118"))
+                        .withNetUnitPrice(new BigDecimal("100"))
+                        .withNetPrice(new BigDecimal("100"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .build());
+        return ret;
+    }
+
+
     @Test
     public void createInvoice()
         throws DatatypeConfigurationException
@@ -142,6 +160,37 @@ public class DocTest
                         .withKeyAlias("testkey")
                         .withKeyPwd("changeit")
                         .signDocument(ubl);
+    }
+
+    @Test
+    public void createInvoiceEncoding()
+        throws DatatypeConfigurationException, IOException
+    {
+        final var invoice = new Invoice()
+                        .withEncoding(StandardCharsets.ISO_8859_1)
+                        .withSupplier(getSupplier())
+                        .withCustomer(getCustomer())
+                        .withCurrency("PEN")
+                        .withNumber("F001-000156")
+                        .withDate(LocalDate.of(2020, 8, 16))
+                        .withNetTotal(new BigDecimal("100"))
+                        .withCrossTotal(new BigDecimal("118"))
+                        .withTax(new Taxes.IGV()
+                                        .setAmount(new BigDecimal("18"))
+                                        .setTaxableAmount(new BigDecimal("100")))
+                        .withLines(getMoreLines());
+
+        final var ubl = invoice.getUBLXml();
+        new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signDocument(ubl);
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("Invoice6.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.ISO_8859_1);
+        assertEquals(ubl, xml.trim());
     }
 
     @Test
