@@ -163,7 +163,7 @@ public class DocTest
     }
 
     @Test
-    public void createInvoiceEncoding()
+    public void createInvoiceISOEncoding()
         throws DatatypeConfigurationException, IOException
     {
         final var invoice = new Invoice()
@@ -181,14 +181,8 @@ public class DocTest
                         .withLines(getMoreLines());
 
         final var ubl = invoice.getUBLXml();
-        new Signing()
-                        .withKeyStorePath("keystore.jks")
-                        .withKeyStorePwd("changeit")
-                        .withKeyAlias("testkey")
-                        .withKeyPwd("changeit")
-                        .signDocument(ubl);
         final ClassLoader classLoader = getClass().getClassLoader();
-        final File file = new File(classLoader.getResource("Invoice6.xml").getFile());
+        final File file = new File(classLoader.getResource("InvoiceISOEncoding.xml").getFile());
         final var xml = FileUtils.readFileToString(file, StandardCharsets.ISO_8859_1);
         assertEquals(ubl, xml.trim());
     }

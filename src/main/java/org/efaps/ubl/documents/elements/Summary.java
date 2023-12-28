@@ -16,6 +16,7 @@
  */
 package org.efaps.ubl.documents.elements;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Summary
     private LocalDate issueDate;
     private ISupplier supplier;
     private List<ISummaryLine> lines;
+    private Charset encoding = StandardCharsets.UTF_8;
 
     public List<ISummaryLine> getLines()
     {
@@ -103,6 +105,17 @@ public class Summary
         return this;
     }
 
+    public Charset getEncoding()
+    {
+        return encoding;
+    }
+
+    public void setEncoding(final Charset encoding)
+    {
+        this.encoding = encoding;
+    }
+
+
     public String getUBLXml()
     {
         UBL21NamespaceContext.getInstance().setDefaultNamespaceURI(Definitions.NAMESPACE_SUMMARY);
@@ -119,7 +132,8 @@ public class Summary
         summary.addSignature(Utils.getSignature(getSupplier()));
         summary.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         summary.setSummaryDocumentsLines(Utils.getSummaryLines(getLines()));
-        final var ret = new SummaryBuilder().setCharset(StandardCharsets.UTF_8)
+        final var ret = new SummaryBuilder()
+                        .setCharset(getEncoding())
                         .setFormattedOutput(true)
                         .getAsString(summary);
         UBL21NamespaceContext.getInstance().removeMapping("");

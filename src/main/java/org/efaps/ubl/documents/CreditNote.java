@@ -16,8 +16,6 @@
  */
 package org.efaps.ubl.documents;
 
-import java.nio.charset.StandardCharsets;
-
 import org.efaps.ubl.documents.elements.AllowancesCharges;
 import org.efaps.ubl.documents.elements.Reference;
 import org.efaps.ubl.documents.elements.Taxes;
@@ -110,7 +108,7 @@ public class CreditNote
         creditNote.setDiscrepancyResponse(Utils.getDiscrepancyResponse(getCreditNoteTypeCode()));
 
         return DocumentMarshaller.creditNote()
-                        .setCharset(StandardCharsets.UTF_8)
+                        .setCharset(getEncoding())
                         .setFormattedOutput(true)
                         .getAsString(creditNote);
     }

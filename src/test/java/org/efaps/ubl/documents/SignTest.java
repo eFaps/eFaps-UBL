@@ -16,6 +16,7 @@
  */
 package org.efaps.ubl.documents;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -112,6 +113,30 @@ public class SignTest
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         final Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signed.getBytes()));
+        final var validation = XMLDSigValidator.validateSignature(doc);
+        assertTrue(validation.isSignatureValid());
+    }
+
+    @Test
+    public void signInvoiceFromFileISOEncoding()
+        throws IOException, SAXException, ParserConfigurationException, XMLSignatureException
+    {
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final File file = new File(classLoader.getResource("InvoiceISOEncoding.xml").getFile());
+        final var xml = FileUtils.readFileToString(file, StandardCharsets.ISO_8859_1);
+        final var signResponseDto = new Signing()
+                        .withKeyStorePath("keystore.jks")
+                        .withKeyStorePwd("changeit")
+                        .withKeyAlias("testkey")
+                        .withKeyPwd("changeit")
+                        .signDocument(xml, StandardCharsets.ISO_8859_1);
+        final var signed = signResponseDto.getUbl();
+        assertNotNull(signed);
+
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        final Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(signed.getBytes()));
+        assertEquals(doc.getXmlEncoding(), "ISO-8859-1");
         final var validation = XMLDSigValidator.validateSignature(doc);
         assertTrue(validation.isSignatureValid());
     }

@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
@@ -252,6 +253,11 @@ public class Signing
 
     public SignResponseDto signDocument(final String xml)
     {
+        return signDocument(xml, StandardCharsets.UTF_8);
+    }
+
+    public SignResponseDto signDocument(final String xml, final Charset charset)
+    {
         SignResponseDto ret = null;
         var xml2 = "";
         try {
@@ -271,7 +277,7 @@ public class Signing
                 }
 
                 xml2 = DocumentMarshaller.creditNote()
-                                .setCharset(StandardCharsets.UTF_8)
+                                .setCharset(charset)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(creditNote);
             } else if (xml.contains("<DespatchAdvice ")) {
@@ -289,7 +295,7 @@ public class Signing
                     UBL21NamespaceContext.getInstance().addMapping("ext", CUBL21.XML_SCHEMA_CEC_NAMESPACE_URL);
                 }
                 xml2 = DocumentMarshaller.deliveryNote()
-                                .setCharset(StandardCharsets.UTF_8)
+                                .setCharset(charset)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true)
                                 .getAsString(deliveryNote);
@@ -302,11 +308,13 @@ public class Signing
                     summary.setUBLExtensions(new UBLExtensionsType());
                 }
                 summary.getUBLExtensions().addUBLExtension(extension);
-                xml2 = new SummaryBuilder().setCharset(StandardCharsets.UTF_8)
+                xml2 = new SummaryBuilder()
+                                .setCharset(charset)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(summary);
             } else {
                 final var invoice = DocumentMarshaller.invoice().read(xml);
+
                 final var extension = new UBLExtensionType();
                 final var extensionContent = new ExtensionContentType();
                 extension.setExtensionContent(extensionContent);
@@ -321,7 +329,7 @@ public class Signing
                 }
 
                 xml2 = DocumentMarshaller.invoice()
-                                .setCharset(StandardCharsets.UTF_8)
+                                .setCharset(charset)
                                 .setUseSchema(false)
                                 .setFormattedOutput(true).getAsString(invoice);
             }
@@ -388,7 +396,7 @@ public class Signing
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
             final Transformer transformer = transformerFactory.newTransformer();
 
-            transformer.setOutputProperty("encoding", "UTF-8");
+            transformer.setOutputProperty("encoding", charset.displayName());
             transformer.transform(source, result);
 
             ret = SignResponseDto.builder()
