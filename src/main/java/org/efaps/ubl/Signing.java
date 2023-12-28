@@ -336,7 +336,7 @@ public class Signing
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
             final DocumentBuilder builder = dbf.newDocumentBuilder();
-            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes(StandardCharsets.UTF_8)));
+            final var doc = builder.parse(new ByteArrayInputStream(xml2.getBytes(charset)));
             final XPathFactory factory = XPathFactory.newInstance();
             final XPath xPath = factory.newXPath();
             xPath.setNamespaceContext(new UniversalNamespaceResolver(doc));
