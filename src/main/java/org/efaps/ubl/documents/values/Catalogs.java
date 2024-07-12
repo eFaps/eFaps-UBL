@@ -22,14 +22,14 @@ public enum Catalogs
     TDOC("Tipo de Documento", "01"),
     TAX("Codigo de Tributos", "05"),
     DOI("Documento de Identidad", "06"),
-    AIGV("Afectacion de IGV", "07"),
+    AIGV("Afectacion del IGV", "07"),
     MODTRASL("Modalidad de traslado", "18"),
     MOTTRASL("Motivo de traslado", "20"),
     CADE("Cargo/descuento", "53"),
     ITEMPROP("Propiedad del item", "55");
 
-    private String name;
-    private String number;
+    private final String name;
+    private final String number;
 
     Catalogs(final String name, final String number) {
         this.name = name;
