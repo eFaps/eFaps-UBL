@@ -20,7 +20,7 @@ public enum Catalogs
 {
 
     TDOC("Tipo de Documento", "01"),
-    TAX("Codigo de Tributos", "05"),
+    TAX("Codigo de tributos", "05"),
     DOI("Documento de Identidad", "06"),
     AIGV("Afectacion del IGV", "07"),
     MODTRASL("Modalidad de traslado", "18"),

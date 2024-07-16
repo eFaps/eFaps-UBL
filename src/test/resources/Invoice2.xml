@@ -80,7 +80,7 @@
       <cac:TaxCategory>
         <cbc:Percent>18</cbc:Percent>
         <cac:TaxScheme>
-          <cbc:ID schemeName="Codigo de Tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
+          <cbc:ID schemeName="Codigo de tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
           <cbc:Name>IGV</cbc:Name>
           <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
         </cac:TaxScheme>
@@ -91,7 +91,7 @@
       <cbc:TaxAmount currencyID="PEN">0.20</cbc:TaxAmount>
       <cac:TaxCategory>
         <cac:TaxScheme>
-          <cbc:ID schemeName="Codigo de Tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">9999</cbc:ID>
+          <cbc:ID schemeName="Codigo de tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">9999</cbc:ID>
           <cbc:Name>OTROS</cbc:Name>
           <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
         </cac:TaxScheme>
@@ -124,7 +124,7 @@
           <cbc:Percent>18</cbc:Percent>
           <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" listName="Afectacion del IGV" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">40</cbc:TaxExemptionReasonCode>
           <cac:TaxScheme>
-            <cbc:ID schemeName="Codigo de Tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
+            <cbc:ID schemeName="Codigo de tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
             <cbc:Name>IGV</cbc:Name>
             <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
           </cac:TaxScheme>
@@ -160,7 +160,7 @@
           <cbc:Percent>0.20</cbc:Percent>
           <cbc:PerUnitAmount currencyID="PEN">0.20</cbc:PerUnitAmount>
           <cac:TaxScheme>
-            <cbc:ID schemeName="Codigo de Tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">9999</cbc:ID>
+            <cbc:ID schemeName="Codigo de tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">9999</cbc:ID>
             <cbc:Name>OTROS</cbc:Name>
             <cbc:TaxTypeCode>OTH</cbc:TaxTypeCode>
           </cac:TaxScheme>

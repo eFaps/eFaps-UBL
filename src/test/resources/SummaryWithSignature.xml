@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><SummaryDocuments xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sac="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1">
 <ext:UBLExtensions>
 <ext:UBLExtension>
-<ext:ExtensionContent><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SB001-000095"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>K/AuC1wOEq3jpCokGa8RZJGtJcY=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>XhzHAsz3wBlqoDdKiCkCmhqBltVuWz+r17ynqa3lx75IzjfNLjMl295CFXBMNFuPWuQhcYu8S0WG&#13;
-O9qW+/6sa2d1mUrMPcnmiU5CHd4DuC/4yN1e6mXl+8pt3ujZFb+Hwf2OJAZWcqAW4mZgFIlfbi7R&#13;
-SsAwmI95IM+4fK+xglOvCaI/75oTrq3h8mUchcgZeJqG0/W/yR2Ubp7FAbsHlI0+y8C/L4rxFabZ&#13;
-VWS/U3YzdeFc25BhkYkjBDTgNHrr3MXht1K4cuhlUrby3li+SWlakF8Z7+eb0DpSO3iql0cKni/a&#13;
-nc5OAFIPN1Xn4EmNBLq7z8T5dgx6N+shbVoei3utTQ7vaBLbD01MhyHCfb0h+8Dpn2Hqv/doYJU8&#13;
-1OVavjQIGX01AVh3TRJYCGrlLHoJ8B+O1hB9FSG1AJyUWN6/BcXKWvdfabsEpwwrIcOZKlBNIu7V&#13;
-at9XqhndK64MCIZl0mNr9eCKFu2cQViKPygL/oCVmBK/gq0kZZahtHOe0eiYQwcgHVRlAeHCF+TE&#13;
-MenzepjJQdYKoM1BBZ0tzA/Pmjw5DvH/vgVSvz+uDtXsZLayD4/y/lFy3FGAM8qCW074mFciP+5P&#13;
-n1NZjjBvCGZafS3BRT1k0BomhF3NsFjEjBpwMeUVSZV5PCA2se2/WBk1oCkcgLyrFn65bYlyHfQ=</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509SubjectName>CN=Jan Moxter,O=eFaps,L=Lima,ST=Lima,C=PE</ds:X509SubjectName><ds:X509Certificate>MIIFgTCCA2mgAwIBAgIUcjeviz1BymdL/MIh82m3eAh3z68wDQYJKoZIhvcNAQELBQAwUDELMAkG&#13;
+<ext:ExtensionContent><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SB001-000095"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>SgEHChHo5dmpXolFm8LCPJctsec=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>l72czdfXIQhe1gDtum/6NO0FSiK4Jq9RQrjQXOJqb4/AgICOXXmQQnYLpnWmalFOYpkBSJQTT6fz&#13;
+lE1YQKJp+3BvxhJzWJP+0phuaPOj8HbuNEF6mG7NeWZg8VuwMWq4T9BVYVHmJ7LOd3pfPynSBKAY&#13;
+5UPcS5WzB/B6PDBsc4cipe47iYD1dLPQ7tXvFy0E/VS7ShTJTxt+7NlKAsiwhfA3r+SUw0YdutRh&#13;
+KiHRv/jEF3XCSGRg+3cwAXsfE43NX94OHqYPlmM3YIpTd98mpye75NojKuBlXGDh4RS6e/zoUy21&#13;
+54Axcz8sSpFF/oeOrGYXe08qiXYYoyg3OY9gVeQx3jSRsfIR08BxbKVzTrGz5uhD2SoNMVEIGJAX&#13;
+a1vERYn5B33M1+A5T1tXXaKZ4Alqh05CCyG3esCB6IZApR8imlXGkTGGw6WrAX8g1+LIF+WGGLkk&#13;
+0ZVFpnJhEc+DOk9uNJcGSV72Y+4mlU4e/E11zLmChYdxvzJ5D0g1Zh0Whmt+6EwsqP6f/PuO479Y&#13;
+fEB6uI/yomq2EeVt1tSZTNHJYzaHbPHbI+ffQ3ZRVonvGOVgHjzYEUPnkYd+tCnSFVPX3p9ynJ5I&#13;
+eJ2O9H/4n1OzsZDWD6EKIHw4UciK/I9n8sXGpfhiKa5MCP6APLYnc8mH4y7+tb9jPUFTwIdvvEg=</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509SubjectName>CN=Jan Moxter,O=eFaps,L=Lima,ST=Lima,C=PE</ds:X509SubjectName><ds:X509Certificate>MIIFgTCCA2mgAwIBAgIUcjeviz1BymdL/MIh82m3eAh3z68wDQYJKoZIhvcNAQELBQAwUDELMAkG&#13;
 A1UEBhMCUEUxDTALBgNVBAgMBExpbWExDTALBgNVBAcMBExpbWExDjAMBgNVBAoMBWVGYXBzMRMw&#13;
 EQYDVQQDDApKYW4gTW94dGVyMB4XDTIwMDgxNDAzNTQ1MVoXDTMwMDgxMjAzNTQ1MVowUDELMAkG&#13;
 A1UEBhMCUEUxDTALBgNVBAgMBExpbWExDTALBgNVBAcMBExpbWExDjAMBgNVBAoMBWVGYXBzMRMw&#13;
@@ -132,7 +132,7 @@ jvhFS7kOBt5RALKY4Kbbr7uof94+t4PGuvthDXaQ1VIRKG+i7p946ZZf+SM3</ds:X509Certificate
 <cbc:Percent>18</cbc:Percent>
 <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" listName="Afectacion del IGV" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">40</cbc:TaxExemptionReasonCode>
 <cac:TaxScheme>
-<cbc:ID schemeAgencyName="PE:SUNAT" schemeName="Codigo de Tributos" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
+<cbc:ID schemeAgencyName="PE:SUNAT" schemeName="Codigo de tributos" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
 <cbc:Name>IGV</cbc:Name>
 <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
 </cac:TaxScheme>
