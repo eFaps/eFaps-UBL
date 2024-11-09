@@ -38,9 +38,11 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Taxable
 public class Taxes
 {
 
-    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries, final boolean isItem)
+    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries,
+                                                 final boolean isItem)
     {
-        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cbc:TaxAmount (Monto total de tributos del ítem) -> n(12,2)
+        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cbc:TaxAmount (Monto total de
+        // tributos del ítem) -> n(12,2)
         // /Invoice/cac:TaxTotal/cbc:TaxAmount -> n(12,2)
         final var ret = new ArrayList<TaxTotalType>();
         final var taxTotal = new TaxTotalType();
@@ -58,10 +60,13 @@ public class Taxes
         return ret;
     }
 
-    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry, final boolean isItem)
+    public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry,
+                                                 final boolean isItem)
     {
-        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Monto base) -> n(12,2)
-        // /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Total valor de venta) -> n(12,2)
+        // /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount
+        // (Monto base) -> n(12,2)
+        // /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Total valor
+        // de venta) -> n(12,2)
         final var ret = new TaxSubtotalType();
         if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
             ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getTaxableAmount()
@@ -75,7 +80,8 @@ public class Taxes
                                 .setScale(2, RoundingMode.HALF_UP).stripTrailingZeros());
                 ret.setBaseUnitMeasure(baseUnitMeasure);
             } else {
-                // for per unit the taxable amount for the doc is the same as the amount
+                // for per unit the taxable amount for the doc is the same as
+                // the amount
                 ret.setTaxableAmount(Utils.getAmount(TaxableAmountType.class, taxEntry.getAmount()));
             }
         }
@@ -84,7 +90,8 @@ public class Taxes
         return ret;
     }
 
-    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry, final boolean isItem)
+    public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry,
+                                                 final boolean isItem)
     {
         final var ret = new TaxCategoryType();
         if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
@@ -177,6 +184,41 @@ public class Taxes
         public String getCode()
         {
             return "VAT";
+        }
+
+        @Override
+        public String getTaxExemptionReasonCode()
+        {
+            return "40";
+        }
+    }
+
+    public static class GRA
+        extends TaxEntry
+    {
+
+        @Override
+        public BigDecimal getPercent()
+        {
+            return new BigDecimal("18");
+        }
+
+        @Override
+        public String getId()
+        {
+            return "9996";
+        }
+
+        @Override
+        public String getName()
+        {
+            return "GRA";
+        }
+
+        @Override
+        public String getCode()
+        {
+            return "FRE";
         }
 
         @Override
