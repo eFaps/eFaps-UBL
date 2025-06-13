@@ -24,7 +24,7 @@
         <artifactId>efaps-parent</artifactId>
         <version>17.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>ubl</artifactId>
+    <artifactId>efaps-ubl</artifactId>
     <version>3.0.0-SNAPSHOT</version>
 
     <build>
