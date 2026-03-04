@@ -18,6 +18,8 @@ package org.efaps.ubl.marshaller;
 import javax.xml.namespace.QName;
 
 import org.efaps.ubl.extension.AdditionalInformation;
+import org.efaps.ubl.extension.Definitions;
+import org.efaps.ubl.extension.SummaryDocumentsType;
 
 import com.helger.commons.collection.impl.CommonsArrayList;
 import com.helger.commons.collection.impl.ICommonsList;
@@ -76,5 +78,26 @@ public class DocumentMarshaller<JAXBTYPE>
         return new DocumentMarshaller<>(CreditNoteType.class,
                         UBL21Marshaller.getAllCreditNoteXSDs(),
                         oasis.names.specification.ubl.schema.xsd.creditnote_21.ObjectFactory._CreditNote_QNAME);
+    }
+
+    public static DocumentMarshaller<SummaryDocumentsType> summary()
+    {
+        final ICommonsList<ClassPathResource> resources = new CommonsArrayList<>();
+        resources.addAll(UBL21Marshaller.getAllCreditNoteXSDs());
+        return new DocumentMarshaller<>(SummaryDocumentsType.class,
+                        null,
+                        new QName(Definitions.NAMESPACE_SUMMARY, "SummaryDocuments"))
+        {
+
+            @Override
+            protected JAXBContext getJAXBContext(ClassLoader classloader)
+                throws JAXBException
+            {
+                final var clazzes = new CommonsArrayList<Class<?>>();
+                clazzes.add(SummaryDocumentsType.class);
+                final var context = JAXBContext.newInstance(clazzes.toArray(new Class[clazzes.size()]));
+                return context;
+            }
+        };
     }
 }

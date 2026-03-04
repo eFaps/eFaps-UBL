@@ -36,7 +36,7 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.UBLVers
 import oasis.names.specification.ubl.schema.xsd.commonextensioncomponents_21.UBLExtensionsType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(namespace = Definitions.NAMESPACE_SUMMARY)
+@XmlType(name = "SummaryDocuments", namespace = Definitions.NAMESPACE_SUMMARY)
 @XmlRootElement(name = "SummaryDocuments", namespace = Definitions.NAMESPACE_SUMMARY)
 public class SummaryDocumentsType
 {

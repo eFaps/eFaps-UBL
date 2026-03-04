@@ -64,11 +64,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.dto.SignResponseDto;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.marshaller.DocumentMarshaller;
-import org.efaps.ubl.reader.SummaryReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -299,7 +297,7 @@ public class Signing
                                 .setFormattedOutput(true)
                                 .getAsString(deliveryNote);
             } else if (xml.contains("<SummaryDocuments ")) {
-                final var summary = new SummaryReader().read(xml);
+                final var summary = DocumentMarshaller.summary().read(xml);
                 final var extension = new UBLExtensionType();
                 final var extensionContent = new ExtensionContentType();
                 extension.setExtensionContent(extensionContent);
@@ -307,10 +305,11 @@ public class Signing
                     summary.setUBLExtensions(new UBLExtensionsType());
                 }
                 summary.getUBLExtensions().addUBLExtension(extension);
-                xml2 = new SummaryBuilder()
+                xml2 = DocumentMarshaller.summary()
                                 .setCharset(charset)
                                 .setUseSchema(false)
-                                .setFormattedOutput(true).getAsString(summary);
+                                .setFormattedOutput(true)
+                                .getAsString(summary);
             } else {
                 final var invoice = DocumentMarshaller.invoice().read(xml);
 

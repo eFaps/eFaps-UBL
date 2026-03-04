@@ -21,11 +21,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.efaps.ubl.builder.SummaryBuilder;
 import org.efaps.ubl.documents.interfaces.ISummaryLine;
 import org.efaps.ubl.documents.interfaces.ISupplier;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.extension.SummaryDocumentsType;
+import org.efaps.ubl.marshaller.DocumentMarshaller;
 
 import com.helger.ubl21.CUBL21;
 import com.helger.ubl21.UBL21NamespaceContext;
@@ -114,7 +114,6 @@ public class Summary
         this.encoding = encoding;
     }
 
-
     public String getUBLXml()
     {
         UBL21NamespaceContext.getInstance().setDefaultNamespaceURI(Definitions.NAMESPACE_SUMMARY);
@@ -131,10 +130,12 @@ public class Summary
         summary.addSignature(Utils.getSignature(getSupplier()));
         summary.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
         summary.setSummaryDocumentsLines(Utils.getSummaryLines(getLines()));
-        final var ret = new SummaryBuilder()
+
+        final var ret = DocumentMarshaller.summary()
                         .setCharset(getEncoding())
                         .setFormattedOutput(true)
                         .getAsString(summary);
+
         UBL21NamespaceContext.getInstance().removeMapping("");
         return ret;
     }
