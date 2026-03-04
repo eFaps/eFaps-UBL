@@ -21,9 +21,9 @@ import org.efaps.ubl.extension.AdditionalInformation;
 import org.efaps.ubl.extension.Definitions;
 import org.efaps.ubl.extension.SummaryDocumentsType;
 
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
+import com.helger.collection.commons.CommonsArrayList;
+import com.helger.collection.commons.ICommonsList;
+import com.helger.io.resource.ClassPathResource;
 import com.helger.ubl21.UBL21Marshaller;
 import com.helger.ubl21.UBL21Marshaller.UBL21JAXBMarshaller;
 import com.helger.xsds.xmldsig.SignatureType;
