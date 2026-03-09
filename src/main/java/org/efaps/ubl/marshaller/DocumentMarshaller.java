@@ -30,6 +30,7 @@ import com.helger.xsds.xmldsig.SignatureType;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
+import oasis.names.specification.ubl.schema.xsd.applicationresponse_21.ApplicationResponseType;
 import oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType;
 import oasis.names.specification.ubl.schema.xsd.despatchadvice_21.DespatchAdviceType;
 import oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType;
@@ -55,6 +56,7 @@ public class DocumentMarshaller<JAXBTYPE>
         clazzes.add(DespatchAdviceType.class);
         clazzes.add(AdditionalInformation.class);
         clazzes.add(SignatureType.class);
+        clazzes.add(ApplicationResponseType.class);
         final var context = JAXBContext.newInstance(clazzes.toArray(new Class[clazzes.size()]));
         return context;
     }
@@ -78,6 +80,13 @@ public class DocumentMarshaller<JAXBTYPE>
         return new DocumentMarshaller<>(CreditNoteType.class,
                         UBL21Marshaller.getAllCreditNoteXSDs(),
                         oasis.names.specification.ubl.schema.xsd.creditnote_21.ObjectFactory._CreditNote_QNAME);
+    }
+
+    public static DocumentMarshaller<ApplicationResponseType> applicationResponse()
+    {
+        return new DocumentMarshaller<>(ApplicationResponseType.class,
+                        UBL21Marshaller.getAllApplicationResponseXSDs(),
+                        oasis.names.specification.ubl.schema.xsd.applicationresponse_21.ObjectFactory._ApplicationResponse_QNAME);
     }
 
     public static DocumentMarshaller<SummaryDocumentsType> summary()
