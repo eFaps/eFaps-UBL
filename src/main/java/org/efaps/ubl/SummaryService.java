@@ -16,9 +16,11 @@
 package org.efaps.ubl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.efaps.ubl.documents.elements.Summary;
 import org.efaps.ubl.documents.interfaces.ICustomer;
 import org.efaps.ubl.documents.interfaces.ISummaryLine;
@@ -57,8 +59,10 @@ public class SummaryService
                         @Override
                         public String getDoiType()
                         {
-                            return invoice.getAccountingCustomerParty().getParty().getPartyIdentificationAtIndex(0)
+                            final var doiType = invoice.getAccountingCustomerParty().getParty()
+                                            .getPartyIdentificationAtIndex(0)
                                             .getID().getSchemeID();
+                            return StringUtils.isNumeric(doiType) ? doiType : "0";
                         }
 
                         @Override
@@ -92,13 +96,14 @@ public class SummaryService
                 @Override
                 public BigDecimal getCrossTotal()
                 {
-                    return invoice.getLegalMonetaryTotal().getPayableAmountValue();
+                    return invoice.getLegalMonetaryTotal().getPayableAmountValue().setScale(2, RoundingMode.HALF_UP);
                 }
 
                 @Override
                 public BigDecimal getNetTotal()
                 {
-                    return invoice.getLegalMonetaryTotal().getTaxExclusiveAmountValue();
+                    return invoice.getLegalMonetaryTotal().getTaxExclusiveAmountValue().setScale(2,
+                                    RoundingMode.HALF_UP);
                 }
 
                 @Override
@@ -112,7 +117,8 @@ public class SummaryService
                             @Override
                             public BigDecimal getTaxableAmount()
                             {
-                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxableAmountValue();
+                                return taxtotal.getTaxSubtotalAtIndex(0).getTaxableAmountValue().setScale(2,
+                                                RoundingMode.HALF_UP);
                             }
 
                             @Override
@@ -125,7 +131,7 @@ public class SummaryService
                             @Override
                             public BigDecimal getPercent()
                             {
-                                return null;
+                                return null;// taxtotal.getTaxSubtotalAtIndex(0).getTaxCategory().getPercentValue();
                             }
 
                             @Override
@@ -150,7 +156,7 @@ public class SummaryService
                             @Override
                             public BigDecimal getAmount()
                             {
-                                return taxtotal.getTaxAmountValue();
+                                return taxtotal.getTaxAmountValue().setScale(2, RoundingMode.HALF_UP);
                             }
                         });
                     }

@@ -128,7 +128,7 @@ public class Summary
         summary.setReferenceDate(getReferenceDate());
         summary.setIssueDate(getIssueDate());
         summary.addSignature(Utils.getSignature(getSupplier()));
-        summary.setAccountingSupplierParty(Utils.getSupplier(getSupplier()));
+        summary.setAccountingSupplierParty(Utils.getSupplierAccountId(getSupplier()));
         summary.setSummaryDocumentsLines(Utils.getSummaryLines(getLines()));
 
         final var ret = DocumentMarshaller.summary()

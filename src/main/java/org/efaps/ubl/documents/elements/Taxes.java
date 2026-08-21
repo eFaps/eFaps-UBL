@@ -37,9 +37,15 @@ import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.Taxable
 
 public class Taxes
 {
-
     public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries,
                                                  final boolean isItem)
+    {
+        return getTaxTotal(taxEntries, isItem, true);
+    }
+
+    public static List<TaxTotalType> getTaxTotal(final List<ITaxEntry> taxEntries,
+                                                 final boolean isItem,
+                                                 boolean includeShema)
     {
         // /Invoice/cac:InvoiceLine/cac:TaxTotal/cbc:TaxAmount (Monto total de
         // tributos del ítem) -> n(12,2)
@@ -49,7 +55,7 @@ public class Taxes
         ret.add(taxTotal);
         final var subTotals = new ArrayList<TaxSubtotalType>();
         for (final var taxEntry : taxEntries) {
-            subTotals.add(getTaxSubtotal(taxEntry, isItem));
+            subTotals.add(getTaxSubtotal(taxEntry, isItem, includeShema));
         }
         taxTotal.setTaxSubtotal(subTotals);
 
@@ -61,7 +67,8 @@ public class Taxes
     }
 
     public static TaxSubtotalType getTaxSubtotal(final ITaxEntry taxEntry,
-                                                 final boolean isItem)
+                                                 final boolean isItem,
+                                                 boolean includeShema)
     {
         // /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount
         // (Monto base) -> n(12,2)
@@ -86,17 +93,20 @@ public class Taxes
             }
         }
         ret.setTaxAmount(Utils.getAmount(TaxAmountType.class, taxEntry.getAmount().setScale(2, RoundingMode.HALF_UP)));
-        ret.setTaxCategory(getTaxCategory(taxEntry, isItem));
+        ret.setTaxCategory(getTaxCategory(taxEntry, isItem, includeShema));
         return ret;
     }
 
     public static TaxCategoryType getTaxCategory(final ITaxEntry taxEntry,
-                                                 final boolean isItem)
+                                                 final boolean isItem,
+                                                 boolean includeShema)
     {
         final var ret = new TaxCategoryType();
         if (TaxType.ADVALOREM.equals(taxEntry.getTaxType())) {
-            ret.setPercent(taxEntry.getPercent());
-            if (isItem) {
+            if (taxEntry.getPercent() != null) {
+                ret.setPercent(taxEntry.getPercent());
+            }
+            if (isItem && taxEntry.getTaxExemptionReasonCode() != null) {
                 final var taxExemptionReasonCode = new TaxExemptionReasonCodeType();
                 taxExemptionReasonCode.setListAgencyName(Utils.AGENCYNAME);
                 taxExemptionReasonCode.setListName(Catalogs.AIGV.getName());
@@ -115,9 +125,11 @@ public class Taxes
 
         final var taxScheme = new TaxSchemeType();
         final var idType = new IDType();
-        idType.setSchemeAgencyName(Utils.AGENCYNAME);
-        idType.setSchemeName(Catalogs.TAX.getName());
-        idType.setSchemeURI(Catalogs.TAX.getURI());
+        if (includeShema) {
+            idType.setSchemeAgencyName(Utils.AGENCYNAME);
+            idType.setSchemeName(Catalogs.TAX.getName());
+            idType.setSchemeURI(Catalogs.TAX.getURI());
+        }
         idType.setValue(taxEntry.getId());
         taxScheme.setID(idType);
         taxScheme.setName(taxEntry.getName());

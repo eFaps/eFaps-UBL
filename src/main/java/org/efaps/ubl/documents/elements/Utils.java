@@ -71,6 +71,7 @@ import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.Res
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SignatureType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.StatusType;
 import oasis.names.specification.ubl.schema.xsd.commonaggregatecomponents_21.SupplierPartyType;
+import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AdditionalAccountIDType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AddressTypeCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.AllowanceChargeReasonCodeType;
 import oasis.names.specification.ubl.schema.xsd.commonbasiccomponents_21.ConditionCodeType;
@@ -206,6 +207,20 @@ public class Utils
         return ret;
     }
 
+    public static SupplierPartyType getSupplierAccountId(final ISupplier supplier)
+    {
+        final var ret = new SupplierPartyType();
+        ret.setCustomerAssignedAccountID(supplier.getDOI());
+        ret.addAdditionalAccountID(new AdditionalAccountIDType(supplier.getDoiType()));
+        final var party = new PartyType();
+        ret.setParty(party);
+
+        final var partyLegalEntityType = new PartyLegalEntityType();
+        partyLegalEntityType.setRegistrationName(supplier.getName());
+        party.addPartyLegalEntity(partyLegalEntityType);
+        return ret;
+    }
+
     public static SupplierPartyType getSupplier(final ISupplier supplier)
     {
         final var ret = new SupplierPartyType();
@@ -218,6 +233,14 @@ public class Utils
         party.setPartyName(Collections.singletonList(partyNameType));
         party.setPartyLegalEntity(
                         Collections.singletonList(getPartyLegalEntityType(supplier)));
+        return ret;
+    }
+
+    public static CustomerPartyType getCustomerAccountId(final ICustomer customer)
+    {
+        final var ret = new CustomerPartyType();
+        ret.setCustomerAssignedAccountID(customer.getDOI());
+        ret.addAdditionalAccountID(new AdditionalAccountIDType(customer.getDoiType()));
         return ret;
     }
 
@@ -245,6 +268,7 @@ public class Utils
     {
         final var ret = new PartyIdentificationType();
         final var idType = new IDType();
+
         idType.setSchemeAgencyName(AGENCYNAME);
         idType.setSchemeID(party.getDoiType());
         idType.setSchemeName(Catalogs.DOI.getName());
@@ -385,7 +409,8 @@ public class Utils
             ret.add(creditNoteLine);
             creditNoteLine.setID(String.valueOf(idx));
             creditNoteLine.setCreditedQuantity(getCreditedQuantity(line));
-            // //CreditNote/cac:CreditNoteLine/cbc:LineExtensionAmount  --> n(12,2)
+            // //CreditNote/cac:CreditNoteLine/cbc:LineExtensionAmount -->
+            // n(12,2)
             creditNoteLine.setLineExtensionAmount(getAmount(LineExtensionAmountType.class,
                             line.getNetPrice().setScale(2, RoundingMode.HALF_UP)));
 
@@ -475,7 +500,7 @@ public class Utils
         itemIdentificationType.setID(line.getSku());
         ret.setSellersItemIdentification(itemIdentificationType);
 
-        for (final var prop: line.getAdditionalItemProperties()) {
+        for (final var prop : line.getAdditionalItemProperties()) {
             ret.addAdditionalItemProperty(getAdditionalItemProperty(prop));
         }
         return ret;
@@ -485,7 +510,7 @@ public class Utils
     {
         final var itemPropertyType = new ItemPropertyType();
         switch (prop.type()) {
-            case NORMALIZED: {
+            case NORMALIZED -> {
                 itemPropertyType.setName("Indicador de bien normalizado");
                 final var nameCodeType = new NameCodeType();
                 nameCodeType.setListAgencyName(AGENCYNAME);
@@ -495,9 +520,7 @@ public class Utils
                 itemPropertyType.setNameCode(nameCodeType);
                 itemPropertyType.setValue("0");
             }
-                break;
-            default:
-                throw new IllegalArgumentException("Unexpected value: " + prop.type());
+            default -> throw new IllegalArgumentException("Unexpected value: " + prop.type());
         }
         return itemPropertyType;
     }
@@ -584,55 +607,58 @@ public class Utils
     {
         final var ret = new ArrayList<SummaryDocumentsLineType>();
         var idx = 1;
-        for (final var line: lines) {
+        for (final var line : lines) {
             final var type = new SummaryDocumentsLineType();
             ret.add(type);
             type.setLineId(new LineIDType(String.valueOf(idx)));
             type.setDocumentTypeCode(new DocumentTypeCodeType(line.getDocType()));
             type.setId(new IDType(line.getNumber()));
-            type.setAccountingCustomerParty(Utils.getCustomer(line.getCustomer()));
+            type.setAccountingCustomerParty(Utils.getCustomerAccountId(line.getCustomer()));
+
             final var status = new StatusType();
             status.setConditionCode(new ConditionCodeType(String.valueOf(line.getStatusCode())));
             type.setStatus(status);
             type.setTotalAmount(getAmount(TotalAmountType.class, line.getCrossTotal()));
 
             final var billingPayments = new ArrayList<BillingPaymentType>();
-            //01: Valor de venta de las operaciones gravadas con el IGV
-            final var billingPayment1 =  new BillingPaymentType();
+            // 01: Valor de venta de las operaciones gravadas con el IGV
+            final var billingPayment1 = new BillingPaymentType();
             billingPayment1.setPaidAmountType(getAmount(PaidAmountType.class, line.getNetTotal()));
             billingPayment1.setInstructionID(new InstructionIDType("01"));
             billingPayments.add(billingPayment1);
             // 02: Valores de venta de las operaciones exoneradas del IGV
-            final var billingPayment2 =  new BillingPaymentType();
-            billingPayment2.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            final var billingPayment2 = new BillingPaymentType();
+            billingPayment2.setPaidAmountType(getAmount(PaidAmountType.class,
+                            BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)));
             billingPayment2.setInstructionID(new InstructionIDType("02"));
             billingPayments.add(billingPayment2);
             // 03: Valores de venta de las operaciones inafectas del IGV
-            final var billingPayment3 =  new BillingPaymentType();
-            billingPayment3.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            final var billingPayment3 = new BillingPaymentType();
+            billingPayment3.setPaidAmountType(getAmount(PaidAmountType.class,
+                            BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)));
             billingPayment3.setInstructionID(new InstructionIDType("03"));
             billingPayments.add(billingPayment3);
             // 04: Valor de venta de las exportaciones del item
-            final var billingPayment4 =  new BillingPaymentType();
-            billingPayment4.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            final var billingPayment4 = new BillingPaymentType();
+            billingPayment4.setPaidAmountType(getAmount(PaidAmountType.class,
+                            BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)));
             billingPayment4.setInstructionID(new InstructionIDType("04"));
             billingPayments.add(billingPayment4);
-            /**
-            // 05: Valor de venta de las operaciones gratuitas  (Condicional)
-            final var billingPayment5 =  new BillingPaymentType();
-            billingPayment5.setPaidAmountType(getAmount(PaidAmountType.class, BigDecimal.ZERO));
+            // 05: Valor de venta de las operaciones gratuitas (Condicional)
+            final var billingPayment5 = new BillingPaymentType();
+            billingPayment5.setPaidAmountType(getAmount(PaidAmountType.class,
+                            BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)));
             billingPayment5.setInstructionID(new InstructionIDType("05"));
             billingPayments.add(billingPayment5);
-             **/
             type.setBillingPayments(billingPayments);
-            type.setTaxTotals(Taxes.getTaxTotal(line.getTaxEntries(), true));
+            type.setTaxTotals(Taxes.getTaxTotal(line.getTaxEntries(), true, false));
             idx++;
         }
-
         return ret;
     }
 
-    public static PersonType getPerson(final IPerson person) {
+    public static PersonType getPerson(final IPerson person)
+    {
         final var personType = new PersonType();
         final var idType = new IDType();
         idType.setSchemeAgencyName(AGENCYNAME);
