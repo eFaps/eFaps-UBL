@@ -22,26 +22,11 @@
     </cac:DigitalSignatureAttachment>
   </cac:Signature>
   <cac:AccountingSupplierParty>
+    <cbc:CustomerAssignedAccountID>20601327318</cbc:CustomerAssignedAccountID>
+    <cbc:AdditionalAccountID>6</cbc:AdditionalAccountID>
     <cac:Party>
-      <cac:PartyIdentification>
-        <cbc:ID schemeID="6" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20601327318</cbc:ID>
-      </cac:PartyIdentification>
-      <cac:PartyName>
-        <cbc:Name>Tiendas Mass</cbc:Name>
-      </cac:PartyName>
       <cac:PartyLegalEntity>
         <cbc:RegistrationName>Tiendas Mass</cbc:RegistrationName>
-        <cac:RegistrationAddress>
-          <cbc:ID schemeName="Ubigeos" schemeAgencyName="PE:INEI">150101</cbc:ID>
-          <cbc:AddressTypeCode listAgencyName="PE:SUNAT" listName="Establecimientos anexos">1000</cbc:AddressTypeCode>
-          <cbc:District>Lima</cbc:District>
-          <cac:AddressLine>
-            <cbc:Line>JR. CRESPO Y CASTILLO NRO. 2087</cbc:Line>
-          </cac:AddressLine>
-          <cac:Country>
-            <cbc:IdentificationCode listID="ISO 3166-1" listAgencyName="United Nations Economic Commission for Europe" listName="Country">PE</cbc:IdentificationCode>
-          </cac:Country>
-        </cac:RegistrationAddress>
       </cac:PartyLegalEntity>
     </cac:Party>
   </cac:AccountingSupplierParty>
@@ -50,22 +35,8 @@
     <cbc:DocumentTypeCode>03</cbc:DocumentTypeCode>
     <cbc:ID>B001-000116</cbc:ID>
     <cac:AccountingCustomerParty>
-      <cac:Party>
-        <cac:PartyIdentification>
-          <cbc:ID schemeID="1" schemeName="Documento de Identidad" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">43289672</cbc:ID>
-        </cac:PartyIdentification>
-        <cac:PartyLegalEntity>
-          <cbc:RegistrationName>ovar Lopez, Julio Odair</cbc:RegistrationName>
-          <cac:RegistrationAddress>
-            <cac:AddressLine>
-              <cbc:Line>Av parque alto 291-A Lima - Lima - Santiago De Surco</cbc:Line>
-            </cac:AddressLine>
-            <cac:Country>
-              <cbc:IdentificationCode listID="ISO 3166-1" listAgencyName="United Nations Economic Commission for Europe" listName="Country">PE</cbc:IdentificationCode>
-            </cac:Country>
-          </cac:RegistrationAddress>
-        </cac:PartyLegalEntity>
-      </cac:Party>
+      <cbc:CustomerAssignedAccountID>43289672</cbc:CustomerAssignedAccountID>
+      <cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
     </cac:AccountingCustomerParty>
     <cac:Status>
       <cbc:ConditionCode>1</cbc:ConditionCode>
@@ -76,16 +47,20 @@
       <cbc:InstructionID>01</cbc:InstructionID>
     </sac:BillingPayment>
     <sac:BillingPayment>
-      <cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+      <cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
       <cbc:InstructionID>02</cbc:InstructionID>
     </sac:BillingPayment>
     <sac:BillingPayment>
-      <cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+      <cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
       <cbc:InstructionID>03</cbc:InstructionID>
     </sac:BillingPayment>
     <sac:BillingPayment>
-      <cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+      <cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
       <cbc:InstructionID>04</cbc:InstructionID>
+    </sac:BillingPayment>
+    <sac:BillingPayment>
+      <cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
+      <cbc:InstructionID>05</cbc:InstructionID>
     </sac:BillingPayment>
     <cac:TaxTotal>
       <cbc:TaxAmount currencyID="PEN">1057.12</cbc:TaxAmount>
@@ -96,7 +71,7 @@
           <cbc:Percent>18</cbc:Percent>
           <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" listName="Afectacion del IGV" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">40</cbc:TaxExemptionReasonCode>
           <cac:TaxScheme>
-            <cbc:ID schemeName="Codigo de tributos" schemeAgencyName="PE:SUNAT" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
+            <cbc:ID>1000</cbc:ID>
             <cbc:Name>IGV</cbc:Name>
             <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
           </cac:TaxScheme>

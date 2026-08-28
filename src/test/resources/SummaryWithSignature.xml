@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><SummaryDocuments xmlns="urn:sunat:names:specification:ubl:peru:schema:xsd:SummaryDocuments-1" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:sac="urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1">
 <ext:UBLExtensions>
 <ext:UBLExtension>
-<ext:ExtensionContent><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SB001-000095"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>SgEHChHo5dmpXolFm8LCPJctsec=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>l72czdfXIQhe1gDtum/6NO0FSiK4Jq9RQrjQXOJqb4/AgICOXXmQQnYLpnWmalFOYpkBSJQTT6fz&#13;
-lE1YQKJp+3BvxhJzWJP+0phuaPOj8HbuNEF6mG7NeWZg8VuwMWq4T9BVYVHmJ7LOd3pfPynSBKAY&#13;
-5UPcS5WzB/B6PDBsc4cipe47iYD1dLPQ7tXvFy0E/VS7ShTJTxt+7NlKAsiwhfA3r+SUw0YdutRh&#13;
-KiHRv/jEF3XCSGRg+3cwAXsfE43NX94OHqYPlmM3YIpTd98mpye75NojKuBlXGDh4RS6e/zoUy21&#13;
-54Axcz8sSpFF/oeOrGYXe08qiXYYoyg3OY9gVeQx3jSRsfIR08BxbKVzTrGz5uhD2SoNMVEIGJAX&#13;
-a1vERYn5B33M1+A5T1tXXaKZ4Alqh05CCyG3esCB6IZApR8imlXGkTGGw6WrAX8g1+LIF+WGGLkk&#13;
-0ZVFpnJhEc+DOk9uNJcGSV72Y+4mlU4e/E11zLmChYdxvzJ5D0g1Zh0Whmt+6EwsqP6f/PuO479Y&#13;
-fEB6uI/yomq2EeVt1tSZTNHJYzaHbPHbI+ffQ3ZRVonvGOVgHjzYEUPnkYd+tCnSFVPX3p9ynJ5I&#13;
-eJ2O9H/4n1OzsZDWD6EKIHw4UciK/I9n8sXGpfhiKa5MCP6APLYnc8mH4y7+tb9jPUFTwIdvvEg=</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509SubjectName>CN=Jan Moxter,O=eFaps,L=Lima,ST=Lima,C=PE</ds:X509SubjectName><ds:X509Certificate>MIIFgTCCA2mgAwIBAgIUcjeviz1BymdL/MIh82m3eAh3z68wDQYJKoZIhvcNAQELBQAwUDELMAkG&#13;
+<ext:ExtensionContent><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#" Id="SB001-000095"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/><ds:Reference URI=""><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><ds:DigestValue>EJuORcfi0/BHNJKri2e5TfUUCiE=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>icXUCWhXXSzpVckgkTUKXqUYbnts2Zfp+ifohur3Mf13jFJ121ye0rz0Yc+VjxNBXXdYoBExBkAS&#13;
+QnOrfK9kVbKVPnLg7+G9n7YtnBN5Bop+JKx2Aays6SUI/Bdv3I1JFvxs0s8GVz+X2WAgPDpEAzxY&#13;
+0JXqmlUc/8zglKu7Q2SnmNfXqakj2cNu9Tgj+s9m1xVwWfdOQNNbe87WFIdQuHmj3DPjOEp1gKYb&#13;
+uZ1OAnkRUM3OEYZJEd8LxbBxErPAGaKTc/09Nej/QcfA9WIhhFqBz4wKF42iXRqCdUZ3EJdtOtaC&#13;
+2WcbUsnVv4Fd73g98i/fBYRZhKViz1ehSaJ5OEjtfpC7gtb6jp+GkuO/CvAv9D0wboHwlZrHJ8eF&#13;
+kZnrxtzQHOqXXXbqwng0A7jStuBQAWRdW0UAORFuJISQBxEafG7/PYdD332qD2IC7ciV0gpRaGtK&#13;
+2jz2PzSQrQZKwxNb0uIo58SeWkWdNpWaNu3I+yCuGmCdaFgUXaoM+I/5kgOmdtlaaX3p6qtTuEH2&#13;
+nTW2AgQjVfZAi04t84zVD6OzOxnDdei0i5FSVaobg7Vm5sUyOrog4phK1OmU4NOp0ye+VISgvJI9&#13;
+dADbydqdyYgmT5X9HZB6SQ1IUkpWpVG2U+xsTVuxr2AYPBlTMoLY1bAirntWXIXUmOhCyE9/FlM=</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509SubjectName>CN=Jan Moxter,O=eFaps,L=Lima,ST=Lima,C=PE</ds:X509SubjectName><ds:X509Certificate>MIIFgTCCA2mgAwIBAgIUcjeviz1BymdL/MIh82m3eAh3z68wDQYJKoZIhvcNAQELBQAwUDELMAkG&#13;
 A1UEBhMCUEUxDTALBgNVBAgMBExpbWExDTALBgNVBAcMBExpbWExDjAMBgNVBAoMBWVGYXBzMRMw&#13;
 EQYDVQQDDApKYW4gTW94dGVyMB4XDTIwMDgxNDAzNTQ1MVoXDTMwMDgxMjAzNTQ1MVowUDELMAkG&#13;
 A1UEBhMCUEUxDTALBgNVBAgMBExpbWExDTALBgNVBAcMBExpbWExDjAMBgNVBAoMBWVGYXBzMRMw&#13;
@@ -58,26 +58,11 @@ jvhFS7kOBt5RALKY4Kbbr7uof94+t4PGuvthDXaQ1VIRKG+i7p946ZZf+SM3</ds:X509Certificate
 </cac:DigitalSignatureAttachment>
 </cac:Signature>
 <cac:AccountingSupplierParty>
+<cbc:CustomerAssignedAccountID>20601327318</cbc:CustomerAssignedAccountID>
+<cbc:AdditionalAccountID>6</cbc:AdditionalAccountID>
 <cac:Party>
-<cac:PartyIdentification>
-<cbc:ID schemeAgencyName="PE:SUNAT" schemeID="6" schemeName="Documento de Identidad" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">20601327318</cbc:ID>
-</cac:PartyIdentification>
-<cac:PartyName>
-<cbc:Name>Tiendas Mass</cbc:Name>
-</cac:PartyName>
 <cac:PartyLegalEntity>
 <cbc:RegistrationName>Tiendas Mass</cbc:RegistrationName>
-<cac:RegistrationAddress>
-<cbc:ID schemeAgencyName="PE:INEI" schemeName="Ubigeos">150101</cbc:ID>
-<cbc:AddressTypeCode listAgencyName="PE:SUNAT" listName="Establecimientos anexos">1000</cbc:AddressTypeCode>
-<cbc:District>Lima</cbc:District>
-<cac:AddressLine>
-<cbc:Line>JR. CRESPO Y CASTILLO NRO. 2087</cbc:Line>
-</cac:AddressLine>
-<cac:Country>
-<cbc:IdentificationCode listAgencyName="United Nations Economic Commission for Europe" listID="ISO 3166-1" listName="Country">PE</cbc:IdentificationCode>
-</cac:Country>
-</cac:RegistrationAddress>
 </cac:PartyLegalEntity>
 </cac:Party>
 </cac:AccountingSupplierParty>
@@ -86,22 +71,8 @@ jvhFS7kOBt5RALKY4Kbbr7uof94+t4PGuvthDXaQ1VIRKG+i7p946ZZf+SM3</ds:X509Certificate
 <cbc:DocumentTypeCode>03</cbc:DocumentTypeCode>
 <cbc:ID>B001-000116</cbc:ID>
 <cac:AccountingCustomerParty>
-<cac:Party>
-<cac:PartyIdentification>
-<cbc:ID schemeAgencyName="PE:SUNAT" schemeID="1" schemeName="Documento de Identidad" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo06">43289672</cbc:ID>
-</cac:PartyIdentification>
-<cac:PartyLegalEntity>
-<cbc:RegistrationName>ovar Lopez, Julio Odair</cbc:RegistrationName>
-<cac:RegistrationAddress>
-<cac:AddressLine>
-<cbc:Line>Av parque alto 291-A Lima - Lima - Santiago De Surco</cbc:Line>
-</cac:AddressLine>
-<cac:Country>
-<cbc:IdentificationCode listAgencyName="United Nations Economic Commission for Europe" listID="ISO 3166-1" listName="Country">PE</cbc:IdentificationCode>
-</cac:Country>
-</cac:RegistrationAddress>
-</cac:PartyLegalEntity>
-</cac:Party>
+<cbc:CustomerAssignedAccountID>43289672</cbc:CustomerAssignedAccountID>
+<cbc:AdditionalAccountID>1</cbc:AdditionalAccountID>
 </cac:AccountingCustomerParty>
 <cac:Status>
 <cbc:ConditionCode>1</cbc:ConditionCode>
@@ -112,16 +83,20 @@ jvhFS7kOBt5RALKY4Kbbr7uof94+t4PGuvthDXaQ1VIRKG+i7p946ZZf+SM3</ds:X509Certificate
 <cbc:InstructionID>01</cbc:InstructionID>
 </sac:BillingPayment>
 <sac:BillingPayment>
-<cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+<cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
 <cbc:InstructionID>02</cbc:InstructionID>
 </sac:BillingPayment>
 <sac:BillingPayment>
-<cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+<cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
 <cbc:InstructionID>03</cbc:InstructionID>
 </sac:BillingPayment>
 <sac:BillingPayment>
-<cbc:PaidAmount currencyID="PEN">0</cbc:PaidAmount>
+<cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
 <cbc:InstructionID>04</cbc:InstructionID>
+</sac:BillingPayment>
+<sac:BillingPayment>
+<cbc:PaidAmount currencyID="PEN">0.00</cbc:PaidAmount>
+<cbc:InstructionID>05</cbc:InstructionID>
 </sac:BillingPayment>
 <cac:TaxTotal>
 <cbc:TaxAmount currencyID="PEN">1057.12</cbc:TaxAmount>
@@ -132,7 +107,7 @@ jvhFS7kOBt5RALKY4Kbbr7uof94+t4PGuvthDXaQ1VIRKG+i7p946ZZf+SM3</ds:X509Certificate
 <cbc:Percent>18</cbc:Percent>
 <cbc:TaxExemptionReasonCode listAgencyName="PE:SUNAT" listName="Afectacion del IGV" listURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07">40</cbc:TaxExemptionReasonCode>
 <cac:TaxScheme>
-<cbc:ID schemeAgencyName="PE:SUNAT" schemeName="Codigo de tributos" schemeURI="urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo05">1000</cbc:ID>
+<cbc:ID>1000</cbc:ID>
 <cbc:Name>IGV</cbc:Name>
 <cbc:TaxTypeCode>VAT</cbc:TaxTypeCode>
 </cac:TaxScheme>
