@@ -60,6 +60,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.helger.commons</groupId>
+                <artifactId>ph-commons-parent-pom</artifactId>
+                <version>12.3.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -73,9 +80,27 @@
             <artifactId>ph-ubl21-codelists</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.helger.commons</groupId>
+            <artifactId>ph-security</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>com.helger.commons</groupId>
+            <artifactId>ph-bc</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-xmldsig</artifactId>
             <version>6.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.helger.commons</groupId>
+                    <artifactId>ph-bc</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.helger.commons</groupId>
+                    <artifactId>ph-security</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
